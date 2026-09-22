@@ -1,0 +1,13 @@
+# Entorno virtual
+.venv/
+# Cache de pytest
+.pytest_cache/
+# Cache Python
+__pycache__/
+*.pyc
+# VS Code
+.vscode/
+# Sistema operativo
+.DS_Store
+# Logs
+*.log
