@@ -1,0 +1,129 @@
+﻿id,nombre,tipo,torre,apartamento,telefono,email,mascota,casillero,parqueadero_1,placa_1,parqueadero_2,placa_2
+1,Diego López,propietario,1,101,3000000001,diego.lopez.1@example.com,No posee,C101,P1011,KXW694,P1012,SFZ795
+2,Isabella García,residente,1,101,3000000002,isabella.garcia.2@example.com,No posee,C101,P1011,KXW694,P1012,SFZ795
+3,Laura Jiménez,residente,1,101,3000000003,laura.jimenez.3@example.com,No posee,C101,P1011,KXW694,P1012,SFZ795
+4,Sofía Vargas,propietario,1,102,3000000004,sofia.vargas.4@example.com,perro,C102,P1021,WGB442,P1022,libre
+5,Tatiana Medina,residente,1,102,3000000005,tatiana.medina.5@example.com,perro,C102,P1021,WGB442,P1022,libre
+6,Miguel Suárez,residente,1,102,3000000006,miguel.suarez.6@example.com,perro,C102,P1021,WGB442,P1022,libre
+7,Patricia Hernández,residente,1,102,3000000007,patricia.hernandez.7@example.com,perro,C102,P1021,WGB442,P1022,libre
+8,Andrés Castro,residente,1,102,3000000008,andres.castro.8@example.com,perro,C102,P1021,WGB442,P1022,libre
+9,Esteban García,residente,1,103,3000000009,esteban.garcia.9@example.com,No posee,C103,P1031,FRW817,P1032,LZR692
+10,Óscar Acosta,residente,1,103,3000000010,oscar.acosta.10@example.com,No posee,C103,P1031,FRW817,P1032,LZR692
+11,Tatiana Navarro,residente,1,103,3000000011,tatiana.navarro.11@example.com,No posee,C103,P1031,FRW817,P1032,LZR692
+12,Claudia Cárdenas,residente,1,103,3000000012,claudia.cardenas.12@example.com,No posee,C103,P1031,FRW817,P1032,LZR692
+13,Isabella Castro,propietario,1,104,3000000013,isabella.castro.13@example.com,gato,C104,P1041,LEK180,P1042,libre
+14,Mónica Medina,residente,1,104,3000000014,monica.medina.14@example.com,gato,C104,P1041,LEK180,P1042,libre
+15,Diego López,residente,1,104,3000000015,diego.lopez.15@example.com,gato,C104,P1041,LEK180,P1042,libre
+16,Carlos Acosta,residente,1,104,3000000016,carlos.acosta.16@example.com,gato,C104,P1041,LEK180,P1042,libre
+17,Óscar García,propietario,1,201,3000000017,oscar.garcia.17@example.com,perro,C201,P2011,libre,P2012,libre
+18,Fernando Ortiz,residente,1,201,3000000018,fernando.ortiz.18@example.com,perro,C201,P2011,libre,P2012,libre
+19,Luis López,residente,1,202,3000000019,luis.lopez.19@example.com,No posee,C202,P2021,ZFM781,P2022,XLM355
+20,Camilo Díaz,residente,1,202,3000000020,camilo.diaz.20@example.com,No posee,C202,P2021,ZFM781,P2022,XLM355
+21,Felipe Torres,residente,1,202,3000000021,felipe.torres.21@example.com,No posee,C202,P2021,ZFM781,P2022,XLM355
+22,Carlos Gómez,residente,1,202,3000000022,carlos.gomez.22@example.com,No posee,C202,P2021,ZFM781,P2022,XLM355
+23,Felipe Díaz,residente,1,202,3000000023,felipe.diaz.23@example.com,No posee,C202,P2021,ZFM781,P2022,XLM355
+24,Laura Castro,propietario,1,203,3000000024,laura.castro.24@example.com,gato,C203,P2031,CJX881,P2032,MGU546
+25,Jorge Rojas,residente,1,203,3000000025,jorge.rojas.25@example.com,gato,C203,P2031,CJX881,P2032,MGU546
+26,Claudia Jiménez,residente,1,203,3000000026,claudia.jimenez.26@example.com,gato,C203,P2031,CJX881,P2032,MGU546
+27,Gabriela Gómez,residente,1,203,3000000027,gabriela.gomez.27@example.com,gato,C203,P2031,CJX881,P2032,MGU546
+28,Felipe Castro,propietario,1,204,3000000028,felipe.castro.28@example.com,No posee,C204,P2041,MKF775,P2042,libre
+29,Claudia Ortiz,residente,1,204,3000000029,claudia.ortiz.29@example.com,No posee,C204,P2041,MKF775,P2042,libre
+30,Óscar Suárez,residente,1,204,3000000030,oscar.suarez.30@example.com,No posee,C204,P2041,MKF775,P2042,libre
+31,Paola Castro,residente,1,204,3000000031,paola.castro.31@example.com,No posee,C204,P2041,MKF775,P2042,libre
+32,Fernando Gómez,residente,1,204,3000000032,fernando.gomez.32@example.com,No posee,C204,P2041,MKF775,P2042,libre
+33,Diego Moreno,propietario,1,301,3000000033,diego.moreno.33@example.com,perro,C301,P3011,libre,P3012,libre
+34,Óscar Acosta,residente,1,301,3000000034,oscar.acosta.34@example.com,perro,C301,P3011,libre,P3012,libre
+35,Sebastián Martínez,residente,1,301,3000000035,sebastian.martinez.35@example.com,perro,C301,P3011,libre,P3012,libre
+36,Gabriela Pardo,residente,1,301,3000000036,gabriela.pardo.36@example.com,perro,C301,P3011,libre,P3012,libre
+37,María Cárdenas,propietario,1,302,3000000037,maria.cardenas.37@example.com,No posee,C302,P3021,libre,P3022,libre
+38,Fernando Guerrero,residente,1,302,3000000038,fernando.guerrero.38@example.com,No posee,C302,P3021,libre,P3022,libre
+39,Claudia Torres,residente,1,302,3000000039,claudia.torres.39@example.com,No posee,C302,P3021,libre,P3022,libre
+40,Natalia Suárez,propietario,1,303,3000000040,natalia.suarez.40@example.com,No posee,C303,P3031,PWJ254,P3032,BXJ483
+41,Tatiana Medina,residente,1,303,3000000041,tatiana.medina.41@example.com,No posee,C303,P3031,PWJ254,P3032,BXJ483
+42,Juliana Jiménez,residente,1,303,3000000042,juliana.jimenez.42@example.com,No posee,C303,P3031,PWJ254,P3032,BXJ483
+43,Carlos Vargas,residente,1,303,3000000043,carlos.vargas.43@example.com,No posee,C303,P3031,PWJ254,P3032,BXJ483
+44,Natalia Acosta,residente,1,303,3000000044,natalia.acosta.44@example.com,No posee,C303,P3031,PWJ254,P3032,BXJ483
+45,Mónica Suárez,residente,1,304,3000000045,monica.suarez.45@example.com,gato,C304,P3041,libre,P3042,libre
+46,Diego Mendoza,residente,1,304,3000000046,diego.mendoza.46@example.com,gato,C304,P3041,libre,P3042,libre
+47,Juliana Medina,residente,1,304,3000000047,juliana.medina.47@example.com,gato,C304,P3041,libre,P3042,libre
+48,Ricardo Gómez,residente,1,304,3000000048,ricardo.gomez.48@example.com,gato,C304,P3041,libre,P3042,libre
+49,Santiago Mendoza,propietario,1,401,3000000049,santiago.mendoza.49@example.com,perro,C401,P4011,libre,P4012,ESV710
+50,Valentina Pardo,residente,1,401,3000000050,valentina.pardo.50@example.com,perro,C401,P4011,libre,P4012,ESV710
+51,Mateo Castro,residente,1,401,3000000051,mateo.castro.51@example.com,perro,C401,P4011,libre,P4012,ESV710
+52,Andrés Romero,residente,1,401,3000000052,andres.romero.52@example.com,perro,C401,P4011,libre,P4012,ESV710
+53,Camilo Ramírez,residente,1,401,3000000053,camilo.ramirez.53@example.com,perro,C401,P4011,libre,P4012,ESV710
+54,Sofía Díaz,residente,1,401,3000000054,sofia.diaz.54@example.com,perro,C401,P4011,libre,P4012,ESV710
+55,Mateo Moreno,residente,1,402,3000000055,mateo.moreno.55@example.com,No posee,C402,P4021,BVS032,P4022,libre
+56,Natalia Hernández,residente,1,402,3000000056,natalia.hernandez.56@example.com,No posee,C402,P4021,BVS032,P4022,libre
+57,Adriana Moreno,residente,1,402,3000000057,adriana.moreno.57@example.com,No posee,C402,P4021,BVS032,P4022,libre
+58,Isabella García,propietario,1,403,3000000058,isabella.garcia.58@example.com,No posee,C403,P4031,libre,P4032,YNZ057
+59,Luis Salazar,residente,1,403,3000000059,luis.salazar.59@example.com,No posee,C403,P4031,libre,P4032,YNZ057
+60,Jorge Medina,residente,1,403,3000000060,jorge.medina.60@example.com,No posee,C403,P4031,libre,P4032,YNZ057
+61,Camilo Castro,residente,1,403,3000000061,camilo.castro.61@example.com,No posee,C403,P4031,libre,P4032,YNZ057
+62,Fernando Suárez,propietario,1,404,3000000062,fernando.suarez.62@example.com,perro,C404,P4041,libre,P4042,YUK143
+63,Sebastián Medina,residente,1,404,3000000063,sebastian.medina.63@example.com,perro,C404,P4041,libre,P4042,YUK143
+64,Valentina López,residente,1,404,3000000064,valentina.lopez.64@example.com,perro,C404,P4041,libre,P4042,YUK143
+65,Diego Rodríguez,propietario,1,501,3000000065,diego.rodriguez.65@example.com,No posee,C501,P5011,MRP081,P5012,libre
+66,Natalia Guerrero,residente,1,501,3000000066,natalia.guerrero.66@example.com,No posee,C501,P5011,MRP081,P5012,libre
+67,Paola Mendoza,residente,1,501,3000000067,paola.mendoza.67@example.com,No posee,C501,P5011,MRP081,P5012,libre
+68,Mateo Romero,residente,1,501,3000000068,mateo.romero.68@example.com,No posee,C501,P5011,MRP081,P5012,libre
+69,Ricardo Medina,propietario,1,502,3000000069,ricardo.medina.69@example.com,gato,C502,P5021,VHP482,P5022,ZSL525
+70,Diego Rojas,residente,1,502,3000000070,diego.rojas.70@example.com,gato,C502,P5021,VHP482,P5022,ZSL525
+71,Tatiana López,residente,1,502,3000000071,tatiana.lopez.71@example.com,gato,C502,P5021,VHP482,P5022,ZSL525
+72,María Salazar,residente,1,502,3000000072,maria.salazar.72@example.com,gato,C502,P5021,VHP482,P5022,ZSL525
+73,Ana Castro,residente,1,502,3000000073,ana.castro.73@example.com,gato,C502,P5021,VHP482,P5022,ZSL525
+74,Alejandra Ramírez,residente,1,503,3000000074,alejandra.ramirez.74@example.com,No posee,C503,P5031,PZP492,P5032,DSH455
+75,Lorena Medina,residente,1,503,3000000075,lorena.medina.75@example.com,No posee,C503,P5031,PZP492,P5032,DSH455
+76,Santiago Salazar,propietario,1,504,3000000076,santiago.salazar.76@example.com,perro,C504,P5041,CEJ471,P5042,NWZ713
+77,Lorena Moreno,residente,1,504,3000000077,lorena.moreno.77@example.com,perro,C504,P5041,CEJ471,P5042,NWZ713
+78,Ricardo López,residente,1,504,3000000078,ricardo.lopez.78@example.com,perro,C504,P5041,CEJ471,P5042,NWZ713
+79,Tatiana Guerrero,residente,1,504,3000000079,tatiana.guerrero.79@example.com,perro,C504,P5041,CEJ471,P5042,NWZ713
+80,Daniela Navarro,residente,1,504,3000000080,daniela.navarro.80@example.com,perro,C504,P5041,CEJ471,P5042,NWZ713
+81,Gabriela Ruiz,propietario,1,601,3000000081,gabriela.ruiz.81@example.com,gato,C601,P6011,WGY375,P6012,VJW572
+82,Nicolás Navarro,residente,1,601,3000000082,nicolas.navarro.82@example.com,gato,C601,P6011,WGY375,P6012,VJW572
+83,Samuel Hernández,residente,1,601,3000000083,samuel.hernandez.83@example.com,gato,C601,P6011,WGY375,P6012,VJW572
+84,Andrés López,propietario,1,602,3000000084,andres.lopez.84@example.com,No posee,C602,P6021,libre,P6022,UZB479
+85,Laura Martínez,residente,1,602,3000000085,laura.martinez.85@example.com,No posee,C602,P6021,libre,P6022,UZB479
+86,Valentina Rojas,residente,1,602,3000000086,valentina.rojas.86@example.com,No posee,C602,P6021,libre,P6022,UZB479
+87,Santiago Ortiz,residente,1,602,3000000087,santiago.ortiz.87@example.com,No posee,C602,P6021,libre,P6022,UZB479
+88,Manuel Romero,propietario,1,603,3000000088,manuel.romero.88@example.com,perro,C603,P6031,TDX410,P6032,BYE810
+89,Fernando García,residente,1,603,3000000089,fernando.garcia.89@example.com,perro,C603,P6031,TDX410,P6032,BYE810
+90,María Gómez,residente,1,603,3000000090,maria.gomez.90@example.com,perro,C603,P6031,TDX410,P6032,BYE810
+91,Daniela García,residente,1,603,3000000091,daniela.garcia.91@example.com,perro,C603,P6031,TDX410,P6032,BYE810
+92,Natalia Moreno,residente,1,603,3000000092,natalia.moreno.92@example.com,perro,C603,P6031,TDX410,P6032,BYE810
+93,Miguel Ramírez,residente,1,604,3000000093,miguel.ramirez.93@example.com,No posee,C604,P6041,CJY747,P6042,XKL911
+94,Mónica Díaz,residente,1,604,3000000094,monica.diaz.94@example.com,No posee,C604,P6041,CJY747,P6042,XKL911
+95,Luis Acosta,residente,1,604,3000000095,luis.acosta.95@example.com,No posee,C604,P6041,CJY747,P6042,XKL911
+96,Juan Pardo,residente,1,604,3000000096,juan.pardo.96@example.com,No posee,C604,P6041,CJY747,P6042,XKL911
+97,Nicolás Rodríguez,propietario,1,701,3000000097,nicolas.rodriguez.97@example.com,No posee,C701,P7011,AGY478,P7012,XXC538
+98,Diana Romero,residente,1,701,3000000098,diana.romero.98@example.com,No posee,C701,P7011,AGY478,P7012,XXC538
+99,Mónica Rodríguez,residente,1,701,3000000099,monica.rodriguez.99@example.com,No posee,C701,P7011,AGY478,P7012,XXC538
+100,Mateo Suárez,residente,1,701,3000000100,mateo.suarez.100@example.com,No posee,C701,P7011,AGY478,P7012,XXC538
+101,Mónica Medina,residente,1,701,3000000101,monica.medina.101@example.com,No posee,C701,P7011,AGY478,P7012,XXC538
+102,Sebastián Salazar,residente,1,702,3000000102,sebastian.salazar.102@example.com,No posee,C702,P7021,STT499,P7022,MUY876
+103,Isabella García,residente,1,702,3000000103,isabella.garcia.103@example.com,No posee,C702,P7021,STT499,P7022,MUY876
+104,Daniela Guerrero,residente,1,702,3000000104,daniela.guerrero.104@example.com,No posee,C702,P7021,STT499,P7022,MUY876
+105,Andrés Acosta,propietario,1,703,3000000105,andres.acosta.105@example.com,No posee,C703,P7031,libre,P7032,LZS000
+106,Sofía Salazar,residente,1,703,3000000106,sofia.salazar.106@example.com,No posee,C703,P7031,libre,P7032,LZS000
+107,Mónica Castro,residente,1,703,3000000107,monica.castro.107@example.com,No posee,C703,P7031,libre,P7032,LZS000
+108,Felipe Pardo,residente,1,703,3000000108,felipe.pardo.108@example.com,No posee,C703,P7031,libre,P7032,LZS000
+109,Daniela Ruiz,propietario,1,704,3000000109,daniela.ruiz.109@example.com,gato,C704,P7041,TDM182,P7042,PJW669
+110,Carolina Ortiz,residente,1,704,3000000110,carolina.ortiz.110@example.com,gato,C704,P7041,TDM182,P7042,PJW669
+111,Natalia García,residente,1,704,3000000111,natalia.garcia.111@example.com,gato,C704,P7041,TDM182,P7042,PJW669
+112,María García,residente,1,704,3000000112,maria.garcia.112@example.com,gato,C704,P7041,TDM182,P7042,PJW669
+113,Alejandra López,propietario,1,801,3000000113,alejandra.lopez.113@example.com,perro,C801,P8011,CFA126,P8012,libre
+114,Mateo Hernández,residente,1,801,3000000114,mateo.hernandez.114@example.com,perro,C801,P8011,CFA126,P8012,libre
+115,Camilo Suárez,propietario,1,802,3000000115,camilo.suarez.115@example.com,gato,C802,P8021,LFG569,P8022,UCJ788
+116,Óscar Castro,residente,1,802,3000000116,oscar.castro.116@example.com,gato,C802,P8021,LFG569,P8022,UCJ788
+117,Juliana Mendoza,residente,1,802,3000000117,juliana.mendoza.117@example.com,gato,C802,P8021,LFG569,P8022,UCJ788
+118,Natalia García,residente,1,802,3000000118,natalia.garcia.118@example.com,gato,C802,P8021,LFG569,P8022,UCJ788
+119,Juan Gómez,residente,1,802,3000000119,juan.gomez.119@example.com,gato,C802,P8021,LFG569,P8022,UCJ788
+120,Miguel Gómez,residente,1,802,3000000120,miguel.gomez.120@example.com,gato,C802,P8021,LFG569,P8022,UCJ788
+121,Natalia Castro,residente,1,803,3000000121,natalia.castro.121@example.com,No posee,C803,P8031,libre,P8032,KHM753
+122,Natalia Acosta,residente,1,803,3000000122,natalia.acosta.122@example.com,No posee,C803,P8031,libre,P8032,KHM753
+123,Alejandra Torres,residente,1,803,3000000123,alejandra.torres.123@example.com,No posee,C803,P8031,libre,P8032,KHM753
+124,Ana Torres,residente,1,803,3000000124,ana.torres.124@example.com,No posee,C803,P8031,libre,P8032,KHM753
+125,Tatiana Hernández,propietario,1,804,3000000125,tatiana.hernandez.125@example.com,No posee,C804,P8041,XPD762,P8042,libre
+126,Juliana Martínez,residente,1,804,3000000126,juliana.martinez.126@example.com,No posee,C804,P8041,XPD762,P8042,libre
+127,Felipe Rodríguez,residente,1,804,3000000127,felipe.rodriguez.127@example.com,No posee,C804,P8041,XPD762,P8042,libre
+128,Laura Salazar,residente,1,804,3000000128,laura.salazar.128@example.com,No posee,C804,P8041,XPD762,P8042,libre
