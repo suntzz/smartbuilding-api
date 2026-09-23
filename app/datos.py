@@ -9,6 +9,9 @@ def cargar_residentes():
                 "id": int(fila["id"]),
                 "full_name": fila["nombre"],
                 "tower": int(fila["torre"]),
-                "apartment": int(fila["apartamento"])
+                "apartment": int(fila["apartamento"]),
+                "tipo": fila["tipo"],
+                "telefono": fila["telefono"],
+                "email": fila["email"]
             })
     return residentes

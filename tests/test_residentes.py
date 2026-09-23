@@ -10,7 +10,7 @@ client = TestClient(app)
         "tower": 1,
         "apartment": 101
     }
-'''
+
 def test_get_residente_csv():
     response = client.get("/residentes/10")
     assert response.status_code == 200
@@ -20,3 +20,11 @@ def test_get_residente_csv():
         "tower": 1,
         "apartment": 103
     }
+'''
+def test_get_residente_con_campos_ampliados():
+    response = client.get("/residentes/10")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["tipo"] == "residente"
+    assert data["telefono"] == "3000000010"
+    assert data["email"] == "oscar.acosta.10@example.com"
