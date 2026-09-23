@@ -28,3 +28,8 @@ def test_get_residente_con_campos_ampliados():
     assert data["tipo"] == "residente"
     assert data["telefono"] == "3000000010"
     assert data["email"] == "oscar.acosta.10@example.com"
+
+def test_get_residente_no_existente():
+    response = client.get("/residentes/999")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Residente no encontrado"}

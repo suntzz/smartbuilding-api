@@ -1,24 +1,10 @@
-import csv
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from app.datos import cargar_residentes
 
-
 app = FastAPI()
-'''residentes = [
-    {
-        "id": 1,
-        "full_name": "Juan Perez",
-        "tower": 1,
-        "apartment": 101
-    },
-    {
-        "id": 2,
-        "full_name": "Maria Gomez",
-        "tower": 2,
-        "apartment": 305
-    }
-]
-'''
+
+residentes = cargar_residentes()
+
 @app.get("/")
 def root():
     return {"message": "Bienvenido a SmartBuilding API"}
@@ -32,16 +18,4 @@ def get_residente_por_id(residente_id: int):
     for residente in residentes:
         if residente["id"] == residente_id:
             return residente
-'''
-residentes = []
-with open("data/residentes_san_carlos.csv", encoding="utf-8-sig") as archivo:
-    lector = csv.DictReader(archivo)
-    for fila in lector:
-        residentes.append({
-            "id": int(fila["id"]),
-            "full_name": fila["nombre"],
-            "tower": int(fila["torre"]),
-            "apartment": int(fila["apartamento"])
-        })
-'''
-residentes = cargar_residentes()
+    raise HTTPException(status_code=404, detail="Residente no encontrado")
