@@ -92,6 +92,11 @@
       border: 1px solid rgba(16, 185, 129, 0.4);
       color: #34d399;
     }
+    .pill-red {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+    }
     .pill-gh {
       background: var(--panel-2);
       border: 1px solid var(--border);
@@ -134,6 +139,15 @@
       border-color: transparent;
       font-weight: 600;
       box-shadow: 0 2px 10px rgba(2, 132, 199, 0.35);
+    }
+    .tab-btn.cam-tab {
+      background: #1e1b4b;
+      border-color: #4f46e5;
+      color: #c7d2fe;
+    }
+    .tab-btn.cam-tab.active {
+      background: linear-gradient(135deg, #ef4444, #9333ea);
+      color: #fff;
     }
 
     main {
@@ -187,13 +201,13 @@
       align-items: center;
       justify-content: center;
     }
-    video#mainVideo {
+    video#mainVideo, video#webcamVideo {
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
     }
-    canvas#overlayCanvas {
+    canvas#overlayCanvas, canvas#webcamCanvas {
       position: absolute;
       top: 0;
       left: 0;
@@ -247,10 +261,15 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.15s;
     }
     .btn-ctrl:hover { background: #475569; }
     .btn-ctrl.primary { background: #0284c7; }
     .btn-ctrl.primary:hover { background: #0369a1; }
+    .btn-ctrl.danger { background: #dc2626; color:#fff; }
+    .btn-ctrl.danger:hover { background: #b91c1c; }
+    .btn-ctrl.success { background: #059669; color:#fff; }
+    .btn-ctrl.success:hover { background: #047857; }
     .time-slider {
       flex: 1;
       min-width: 120px;
@@ -294,7 +313,7 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 14px;
-      max-height: 380px;
+      max-height: 420px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -308,8 +327,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       font-size: 0.83rem;
+    }
+    .feed-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      background: #000;
+      flex-shrink: 0;
     }
     .swatch {
       display: inline-block;
@@ -325,6 +353,7 @@
       border-radius: 6px;
       font-size: 0.72rem;
       font-weight: 700;
+      white-space: nowrap;
     }
     .badge-green { background: rgba(16,185,129,0.18); color: #34d399; }
     .badge-yellow { background: rgba(245,158,11,0.18); color: #fbbf24; }
@@ -398,8 +427,11 @@
       <button class="tab-btn" onclick="cambiarReto(7)">
         <span>7. Casilleros Apto</span>
       </button>
+      <button class="tab-btn cam-tab" onclick="mostrarWebcamLive()">
+        <span style="color:#ef4444;font-size:0.9rem;">●</span> <span>📹 Mi Cámara en Vivo & Registro</span>
+      </button>
       <button class="tab-btn" onclick="mostrarSubirFoto()">
-        <span>📸 Probar con Foto Propia</span>
+        <span>📸 Probar con Foto</span>
       </button>
       <button class="tab-btn" onclick="mostrarDirectorioResidentes()">
         <span>📋 Residentes San Carlos</span>
@@ -408,6 +440,7 @@
   </div>
 
   <main>
+    <!-- VISTA PRINCIPAL DE RETOS EN VIDEO -->
     <div class="layout-grid" id="cctvView">
       <div class="card">
         <div class="card-header">
@@ -448,6 +481,87 @@
       </div>
     </div>
 
+    <!-- VISTA WEBCAM EN VIVO CON REGISTRO DE EVENTOS -->
+    <div class="layout-grid" id="webcamPanel" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <span>📹 Detección en Vivo con Cámara Web Propia</span>
+          </h2>
+          <span class="pill pill-red" id="webcamStatusBadge">● Cámara Inactiva</span>
+        </div>
+
+        <div class="video-viewport" id="webcamViewport">
+          <div class="alert-banner" id="webcamAlertBanner">
+            <span id="webcamAlertMsg">ALERTA</span>
+            <span style="font-size:0.75rem;background:#000;padding:2px 6px;border-radius:4px;">WEBCAM LIVE</span>
+          </div>
+          <video id="webcamVideo" playsinline autoplay muted style="transform: scaleX(-1);"></video>
+          <canvas id="webcamCanvas" style="transform: scaleX(-1);"></canvas>
+          <div id="webcamPlaceholder" style="position:absolute;color:var(--muted);text-align:center;padding:20px;">
+            <div style="font-size:3rem;margin-bottom:10px;">🎥</div>
+            <div style="font-weight:600;font-size:1rem;color:#f8fafc;">Presiona "Activar Cámara Web" para iniciar</div>
+            <div style="font-size:0.8rem;margin-top:4px;">Tu navegador te solicitará permiso para acceder a la cámara</div>
+          </div>
+        </div>
+
+        <div class="video-controls">
+          <button class="btn-ctrl primary" id="btnToggleWebcam" onclick="toggleWebcam()">▶ Activar Cámara Web</button>
+          <button class="btn-ctrl" onclick="calibrarFondoWebcam()">📷 Calibrar Fondo</button>
+
+          <label style="font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:auto;">
+            Modo:
+            <select id="webcamModeSelect" style="background:#0f172a;border:1px solid var(--border);color:#fff;padding:5px 8px;border-radius:6px;font-size:0.8rem;" onchange="cambiarModoWebcam(this.value)">
+              <option value="demografia">1. Demografía & Vestimenta</option>
+              <option value="conteo">2. Cruce de Línea (Entrada/Salida)</option>
+              <option value="merodeo">3. Detección de Merodeo</option>
+              <option value="caidas">6. Detección de Caídas</option>
+            </select>
+          </label>
+
+          <button class="btn-ctrl success" onclick="capturarRegistroManual()">📸 Registrar Ahora</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>📋 Bitácora / Registro de Cosas Detectadas</h2>
+          <span style="font-size:0.78rem;color:var(--muted);"><span id="totalCapturasLabel">0</span> eventos</span>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="num" id="webcamKpiPersonas">0</div>
+            <div class="desc">Capturas Registradas</div>
+          </div>
+          <div class="kpi-card">
+            <div class="num" id="webcamKpiAlertas">0</div>
+            <div class="desc">Alertas Emitidas</div>
+          </div>
+          <div class="kpi-card">
+            <div class="num" id="webcamKpiInact">0</div>
+            <div class="desc">Entradas / Salidas</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-ctrl" onclick="descargarBitacoraJSON()">📥 Exportar JSON</button>
+          <button class="btn-ctrl" onclick="descargarBitacoraCSV()">📊 Exportar CSV</button>
+          <button class="btn-ctrl danger" onclick="limpiarBitacora()">🗑 Limpiar</button>
+          <label style="font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:auto;">
+            <input type="checkbox" id="autoCaptureCheck" checked> Auto-capturar al detectar
+          </label>
+        </div>
+
+        <div class="feed-container" id="webcamLogContainer">
+          <div style="color:var(--muted);text-align:center;padding:24px;">
+            Aún no hay eventos registrados.<br/>
+            Activa la cámara y muévete frente a ella para registrar tus datos demográficos, vestimenta o cruces.
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Panel de carga de imagen propia -->
     <div class="card" id="customPhotoPanel" style="display:none;margin-top:10px;">
       <div class="card-header">
@@ -455,7 +569,7 @@
         <span class="pill pill-blue">Procesamiento Canvas en vivo</span>
       </div>
       <p style="color:var(--muted);font-size:0.88rem;">
-        Sube cualquier foto desde tu computador (o toma una con la cámara). El algoritmo extraerá la silueta, tonos de piel en YCrCb/HSV, proporciones anatómicas y colores de prendas superior e inferior sin necesidad de backend externo.
+        Sube cualquier foto desde tu computador. El algoritmo extraerá la silueta, tonos de piel en YCrCb/HSV, proporciones anatómicas y colores de prendas superior e inferior sin necesidad de backend externo.
       </p>
 
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
@@ -500,81 +614,53 @@
     const btnSpeed = document.getElementById('btnSpeed');
 
     let currentReto = 1;
-    let animFrameId = null;
     let videoSpeeds = [1.0, 1.5, 0.5];
     let speedIdx = 0;
 
     const retosMeta = {
       1: {
         titulo: "Cámara 1: Recepción y Lobby (Demografía y Vestimenta)",
-        video: "data/videos/reto1_demografia_vestimenta.mp4",
-        kpis: [
-          { key: "total", label: "Personas Detectadas" },
-          { key: "demog", label: "Sexo Aparente" },
-          { key: "conf", label: "Confianza Media" }
-        ]
+        video: "data/videos/reto1_demografia_vestimenta.mp4"
       },
       2: {
         titulo: "Cámara 2: Control de Acceso y Torniquetes (Conteo y Hora Pico)",
-        video: "data/videos/reto2_conteo_flujo.mp4",
-        kpis: [
-          { key: "entradas", label: "Total Entradas" },
-          { key: "salidas", label: "Total Salidas" },
-          { key: "pico", label: "Hora Pico" }
-        ]
+        video: "data/videos/reto2_conteo_flujo.mp4"
       },
       3: {
         titulo: "Cámara 3: Pasillo Común y Áreas Sociales (Detección de Merodeo)",
-        video: "data/videos/reto3_merodeo.mp4",
-        kpis: [
-          { key: "alertas_m", label: "Alertas Merodeo" },
-          { key: "social", label: "Conversando" },
-          { key: "transito", label: "Paso Normal" }
-        ]
+        video: "data/videos/reto3_merodeo.mp4"
       },
       4: {
         titulo: "Cámara 4: Pasillo ABODA (Detección de Objeto Abandonado)",
-        video: "data/videos/reto4_objeto_abandonado.mp4",
-        kpis: [
-          { key: "alertas_obj", label: "Alertas Abandono" },
-          { key: "dataset", label: "Benchmark" },
-          { key: "estado_obj", label: "Supervisión" }
-        ]
+        video: "data/videos/reto4_objeto_abandonado.mp4"
       },
       5: {
         titulo: "Cámara 5: Portería Vehicular (Lectura de Placas Día y Noche)",
-        video: "data/videos/reto5_lectura_placas.mp4",
-        kpis: [
-          { key: "vehiculos", label: "Vehículos Únicos" },
-          { key: "autorizados", label: "Residentes Autorizados" },
-          { key: "modo_luz", label: "Filtro Óptico" }
-        ]
+        video: "data/videos/reto5_lectura_placas.mp4"
       },
       6: {
         titulo: "Cámara 6: Sala y Pasillo Interior (Caídas y Comportamientos de Riesgo)",
-        video: "data/videos/reto6_caidas_riesgo.mp4",
-        kpis: [
-          { key: "alertas_fall", label: "Caídas Confirmadas" },
-          { key: "agachado", label: "Agachado (Ignorado)" },
-          { key: "sentado", label: "Sentado (Ignorado)" }
-        ]
+        video: "data/videos/reto6_caidas_riesgo.mp4"
       },
       7: {
         titulo: "Cámara 7: Casilleros de Correspondencia por Apartamento",
-        video: "data/videos/reto7_casilleros.mp4",
-        kpis: [
-          { key: "ocupados", label: "Casilleros con Correo" },
-          { key: "total_cas", label: "Total Casilleros" },
-          { key: "directorio", label: "Cruce Residencia" }
-        ]
+        video: "data/videos/reto7_casilleros.mp4"
       }
     };
 
-    function cambiarReto(id) {
-      currentReto = id;
-      document.getElementById('cctvView').style.display = 'grid';
+    function ocultarTodosLosPaneles() {
+      document.getElementById('cctvView').style.display = 'none';
+      document.getElementById('webcamPanel').style.display = 'none';
       document.getElementById('customPhotoPanel').style.display = 'none';
       document.getElementById('residentesPanel').style.display = 'none';
+    }
+
+    function cambiarReto(id) {
+      currentReto = id;
+      ocultarTodosLosPaneles();
+      document.getElementById('cctvView').style.display = 'grid';
+
+      if (webcamStream) detenerWebcam();
 
       document.querySelectorAll('.tab-btn').forEach((b, idx) => {
         b.classList.toggle('active', idx + 1 === id);
@@ -651,7 +737,6 @@
       const fps = retoData.fps || 15.0;
       const targetFrame = Math.round(curTime * fps);
 
-      // Buscar el frame más cercano
       let currentFrameData = null;
       let minDiff = 1e9;
       for (const f of retoData.frames) {
@@ -668,7 +753,6 @@
       const cw = canvas.width;
       const ch = canvas.height;
 
-      // Reto 1: Demografía y vestimenta
       if (currentReto === 1 && currentFrameData.personas) {
         currentFrameData.personas.forEach(p => {
           const [x, y, w, h] = p.bbox;
@@ -677,7 +761,6 @@
           ctx.lineWidth = 2.5;
           ctx.strokeRect(x, y, w, h);
 
-          // Divisoria torso/piernas
           ctx.strokeStyle = "rgba(255,255,255,0.4)";
           ctx.lineWidth = 1;
           ctx.beginPath();
@@ -685,7 +768,6 @@
           ctx.lineTo(x + w, y + h * 0.54);
           ctx.stroke();
 
-          // Etiqueta
           ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
           ctx.fillRect(x, Math.max(0, y - 54), 250, 50);
           ctx.fillStyle = "#ffffff";
@@ -698,10 +780,7 @@
           ctx.fillStyle = "#93c5fd";
           ctx.fillText(`Inf: ${p.prenda_inferior.tipo} (${p.prenda_inferior.color})`, x + 6, Math.max(42, y - 7));
         });
-      }
-
-      // Reto 2: Conteo de entradas y salidas
-      else if (currentReto === 2) {
+      } else if (currentReto === 2) {
         const yL1 = ch * 0.62;
         const yL2 = ch * 0.42;
 
@@ -739,10 +818,7 @@
         } else {
           alertBanner.style.display = 'none';
         }
-      }
-
-      // Reto 3: Merodeo
-      else if (currentReto === 3 && currentFrameData.personas) {
+      } else if (currentReto === 3 && currentFrameData.personas) {
         let hayAlerta = false;
         currentFrameData.personas.forEach(p => {
           const [x, y, w, h] = p.bbox;
@@ -755,7 +831,6 @@
           ctx.lineWidth = 2.5;
           ctx.strokeRect(x, y, w, h);
 
-          // Trayectoria
           if (p.puntos && p.puntos.length > 1) {
             ctx.strokeStyle = col;
             ctx.lineWidth = 2;
@@ -782,10 +857,7 @@
         } else {
           alertBanner.style.display = 'none';
         }
-      }
-
-      // Reto 4: Objeto abandonado
-      else if (currentReto === 4) {
+      } else if (currentReto === 4) {
         if (currentFrameData.personas) {
           currentFrameData.personas.forEach(p => {
             const [x, y, w, h] = p.bbox;
@@ -828,10 +900,7 @@
         } else {
           alertBanner.style.display = 'none';
         }
-      }
-
-      // Reto 5: Lectura de placas
-      else if (currentReto === 5 && currentFrameData.vehiculos) {
+      } else if (currentReto === 5 && currentFrameData.vehiculos) {
         currentFrameData.vehiculos.forEach(v => {
           const [x, y, w, h] = v.bbox_placa;
           const col = v.autorizado ? "#10b981" : "#f59e0b";
@@ -850,10 +919,7 @@
           const resTxt = v.autorizado ? `Residente: ${v.residente} • Torre ${v.torre} - Apto ${v.apartamento} (${v.parqueadero})` : "Vehículo Visitante / No registrado en edificio";
           ctx.fillText(resTxt, 25, 58);
         });
-      }
-
-      // Reto 6: Caídas y riesgo
-      else if (currentReto === 6 && currentFrameData.personas) {
+      } else if (currentReto === 6 && currentFrameData.personas) {
         let hayCaida = false;
         currentFrameData.personas.forEach(p => {
           const [x, y, w, h] = p.bbox;
@@ -881,10 +947,7 @@
         } else {
           alertBanner.style.display = 'none';
         }
-      }
-
-      // Reto 7: Casilleros
-      else if (currentReto === 7 && currentFrameData.casilleros) {
+      } else if (currentReto === 7 && currentFrameData.casilleros) {
         currentFrameData.casilleros.forEach(c => {
           const [x, y, w, h] = c.bbox;
           if (c.ocupado) {
@@ -1036,12 +1099,511 @@
       a.click();
     }
 
+    // =====================================================================
+    // MÓDULO WEBCAM EN VIVO CON COMPUTER VISION CLIENT-SIDE Y REGISTRO
+    // =====================================================================
+    const webcamVideo = document.getElementById('webcamVideo');
+    const webcamCanvas = document.getElementById('webcamCanvas');
+    const wctx = webcamCanvas.getContext('2d');
+    const webcamStatusBadge = document.getElementById('webcamStatusBadge');
+    const btnToggleWebcam = document.getElementById('btnToggleWebcam');
+    const webcamPlaceholder = document.getElementById('webcamPlaceholder');
+    const webcamAlertBanner = document.getElementById('webcamAlertBanner');
+    const webcamAlertMsg = document.getElementById('webcamAlertMsg');
+
+    let webcamStream = null;
+    let webcamAnimId = null;
+    let webcamMode = "demografia";
+    let bgFrameData = null;
+    let webcamLog = [];
+    let nextTrackId = 1;
+    let activeWebcamTrack = null;
+    let lastAutoCaptureTime = 0;
+    let lineCrossCount = { in: 0, out: 0 };
+    let loiteringPositions = [];
+    let audioCtx = null;
+
+    // Canvas interno en baja resolución para alto rendimiento (160x120)
+    const procCanvas = document.createElement('canvas');
+    procCanvas.width = 160;
+    procCanvas.height = 120;
+    const pctx = procCanvas.getContext('2d', { willReadFrequently: true });
+
+    function playBeep(freq = 600, duration = 0.15) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function mostrarWebcamLive() {
+      ocultarTodosLosPaneles();
+      document.getElementById('webcamPanel').style.display = 'grid';
+      videoElem.pause();
+
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.tab-btn.cam-tab').classList.add('active');
+
+      if (!webcamStream) {
+        toggleWebcam();
+      }
+    }
+
+    async function toggleWebcam() {
+      if (webcamStream) {
+        detenerWebcam();
+      } else {
+        await iniciarWebcam();
+      }
+    }
+
+    async function iniciarWebcam() {
+      try {
+        webcamStatusBadge.textContent = "Conectando cámara...";
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+          audio: false
+        });
+        webcamStream = stream;
+        webcamVideo.srcObject = stream;
+        await webcamVideo.play();
+
+        webcamCanvas.width = webcamVideo.videoWidth || 640;
+        webcamCanvas.height = webcamVideo.videoHeight || 480;
+        webcamPlaceholder.style.display = 'none';
+
+        webcamStatusBadge.textContent = "● Cámara en Vivo";
+        webcamStatusBadge.className = "pill pill-green";
+        btnToggleWebcam.textContent = "⏹ Detener Cámara";
+        btnToggleWebcam.className = "btn-ctrl danger";
+
+        // Capturar fondo automáticamente al iniciar tras medio segundo
+        setTimeout(() => { calibrarFondoWebcam(); }, 600);
+        loopWebcamProcessing();
+      } catch (err) {
+        alert("No se pudo acceder a la cámara web: " + (err.message || err));
+        webcamStatusBadge.textContent = "Error de Cámara";
+        webcamStatusBadge.className = "pill pill-red";
+      }
+    }
+
+    function detenerWebcam() {
+      if (webcamStream) {
+        webcamStream.getTracks().forEach(t => t.stop());
+        webcamStream = null;
+      }
+      if (webcamAnimId) cancelAnimationFrame(webcamAnimId);
+      webcamVideo.srcObject = null;
+      webcamPlaceholder.style.display = 'block';
+      webcamStatusBadge.textContent = "● Cámara Inactiva";
+      webcamStatusBadge.className = "pill pill-red";
+      btnToggleWebcam.textContent = "▶ Activar Cámara Web";
+      btnToggleWebcam.className = "btn-ctrl primary";
+      wctx.clearRect(0, 0, webcamCanvas.width, webcamCanvas.height);
+      webcamAlertBanner.style.display = 'none';
+    }
+
+    function calibrarFondoWebcam() {
+      if (!webcamVideo.videoWidth) return;
+      pctx.drawImage(webcamVideo, 0, 0, procCanvas.width, procCanvas.height);
+      bgFrameData = pctx.getImageData(0, 0, procCanvas.width, procCanvas.height).data;
+      loiteringPositions = [];
+      const notif = document.createElement('div');
+      notif.className = 'pill pill-green';
+      notif.style.position = 'absolute';
+      notif.style.bottom = '16px';
+      notif.style.left = '16px';
+      notif.textContent = '✓ Fondo Calibrado Exitosamente';
+      document.getElementById('webcamViewport').appendChild(notif);
+      setTimeout(() => notif.remove(), 2000);
+    }
+
+    function cambiarModoWebcam(val) {
+      webcamMode = val;
+      webcamAlertBanner.style.display = 'none';
+      loiteringPositions = [];
+    }
+
+    function loopWebcamProcessing() {
+      if (!webcamStream) return;
+      procesarFrameWebcam();
+      webcamAnimId = requestAnimationFrame(loopWebcamProcessing);
+    }
+
+    function procesarFrameWebcam() {
+      const vw = webcamCanvas.width;
+      const vh = webcamCanvas.height;
+      wctx.clearRect(0, 0, vw, vh);
+
+      if (!webcamVideo.videoWidth) return;
+
+      pctx.drawImage(webcamVideo, 0, 0, procCanvas.width, procCanvas.height);
+      const currFrame = pctx.getImageData(0, 0, procCanvas.width, procCanvas.height);
+      const currData = currFrame.data;
+      const pw = procCanvas.width;
+      const ph = procCanvas.height;
+
+      if (!bgFrameData || bgFrameData.length !== currData.length) {
+        bgFrameData = new Uint8ClampedArray(currData);
+        return;
+      }
+
+      // Diferencia de fondo y umbralización para detectar silueta
+      let minX = pw, maxX = 0, minY = ph, maxY = 0, countFg = 0;
+      for (let y = 0; y < ph; y++) {
+        for (let x = 0; x < pw; x++) {
+          const idx = (y * pw + x) * 4;
+          const dr = Math.abs(currData[idx] - bgFrameData[idx]);
+          const dg = Math.abs(currData[idx + 1] - bgFrameData[idx + 1]);
+          const db = Math.abs(currData[idx + 2] - bgFrameData[idx + 2]);
+          if ((dr + dg + db) > 42) {
+            countFg++;
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+          }
+        }
+      }
+
+      // Si la escena tiene poco movimiento, actualizar suavemente el fondo
+      if (countFg < (pw * ph * 0.02)) {
+        for (let i = 0; i < currData.length; i += 4) {
+          bgFrameData[i] = bgFrameData[i] * 0.94 + currData[i] * 0.06;
+          bgFrameData[i + 1] = bgFrameData[i + 1] * 0.94 + currData[i + 1] * 0.06;
+          bgFrameData[i + 2] = bgFrameData[i + 2] * 0.94 + currData[i + 2] * 0.06;
+        }
+      }
+
+      const scaleX = vw / pw;
+      const scaleY = vh / ph;
+      let hayPersona = false;
+      let personaActual = null;
+
+      if (countFg > 280 && (maxX - minX) > 14 && (maxY - minY) > 22) {
+        hayPersona = true;
+        const bx = Math.max(0, Math.round(minX * scaleX));
+        const by = Math.max(0, Math.round(minY * scaleY));
+        const bw = Math.min(vw - bx, Math.round((maxX - minX) * scaleX));
+        const bh = Math.min(vh - by, Math.round((maxY - minY) * scaleY));
+
+        // Analizar colores de vestimenta en el recorte
+        const cx = bx + bw / 2;
+        const cy = by + bh / 2;
+
+        const colSup = extraerColorCamara(bx, by + bh * 0.22, bw, bh * 0.32);
+        const colInf = extraerColorCamara(bx, by + bh * 0.58, bw, bh * 0.35);
+
+        const nomSup = clasificarNombreColor(colSup);
+        const nomInf = clasificarNombreColor(colInf);
+        const tipoInf = (colInf.r > 175 && colInf.g > 175 && colInf.b > 175) ? "falda" : (nomInf.includes("azul") ? "jean" : "pantalon");
+        const tipoSup = nomSup === "negro" ? "buso" : (nomSup === "blanco" ? "camisa" : "camiseta");
+        const sexo = tipoInf === "falda" ? "Femenino" : (nomSup === "rosa" ? "Femenino" : "Masculino");
+        const ratioWH = bw / Math.max(1, bh);
+        const edad = ratioWH > 0.65 ? "Adulto (30-54)" : "Joven (15-29)";
+
+        if (!activeWebcamTrack) {
+          activeWebcamTrack = {
+            id: nextTrackId++,
+            firstSeen: Date.now(),
+            lastY: cy,
+            history: []
+          };
+        }
+        activeWebcamTrack.history.push({ cx, cy, time: Date.now() });
+        if (activeWebcamTrack.history.length > 30) activeWebcamTrack.history.shift();
+
+        personaActual = {
+          id: activeWebcamTrack.id,
+          bbox: [bx, by, bw, bh],
+          cx, cy,
+          ratioWH,
+          sexo,
+          edad,
+          prenda_superior: { tipo: tipoSup, color: nomSup, hex: colSup.hex },
+          prenda_inferior: { tipo: tipoInf, color: nomInf, hex: colInf.hex }
+        };
+
+        // RENDERIZADO SEGÚN EL MODO ELEGIDO
+        if (webcamMode === "demografia") {
+          const colBox = sexo === "Masculino" ? "#38bdf8" : "#f472b6";
+          wctx.strokeStyle = colBox;
+          wctx.lineWidth = 3;
+          wctx.strokeRect(bx, by, bw, bh);
+
+          // Divisoria
+          wctx.strokeStyle = "rgba(255,255,255,0.4)";
+          wctx.lineWidth = 1.5;
+          wctx.beginPath();
+          wctx.moveTo(bx, by + bh * 0.54);
+          wctx.lineTo(bx + bw, by + bh * 0.54);
+          wctx.stroke();
+
+          wctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+          wctx.fillRect(bx, Math.max(0, by - 62), Math.min(270, bw + 60), 56);
+          wctx.fillStyle = "#ffffff";
+          wctx.font = "bold 13px Inter, sans-serif";
+          wctx.fillText(`ID #${personaActual.id} | ${sexo} | ${edad}`, bx + 8, Math.max(16, by - 42));
+
+          wctx.font = "11px Inter, sans-serif";
+          wctx.fillStyle = "#86efac";
+          wctx.fillText(`Sup: ${tipoSup} (${nomSup})`, bx + 8, Math.max(30, by - 24));
+          wctx.fillStyle = "#93c5fd";
+          wctx.fillText(`Inf: ${tipoInf} (${nomInf})`, bx + 8, Math.max(46, by - 8));
+          webcamAlertBanner.style.display = 'none';
+        }
+        else if (webcamMode === "conteo") {
+          const lineY = vh * 0.55;
+          wctx.strokeStyle = "#10b981";
+          wctx.lineWidth = 3;
+          wctx.beginPath();
+          wctx.moveTo(0, lineY); wctx.lineTo(vw, lineY);
+          wctx.stroke();
+          wctx.fillStyle = "#10b981";
+          wctx.font = "bold 12px JetBrains Mono, monospace";
+          wctx.fillText(`LÍNEA VIRTUAL DE CONTEO [IN: ${lineCrossCount.in} | OUT: ${lineCrossCount.out}]`, 16, lineY - 8);
+
+          wctx.strokeStyle = "#38bdf8";
+          wctx.lineWidth = 2.5;
+          wctx.strokeRect(bx, by, bw, bh);
+
+          // Detectar cruce de línea
+          if (activeWebcamTrack.lastY < lineY && cy >= lineY) {
+            lineCrossCount.in++;
+            registrarEventoEnBitacora("Cruce de Entrada", personaActual, "Cruzó línea de acceso hacia adentro");
+            playBeep(880, 0.12);
+          } else if (activeWebcamTrack.lastY > lineY && cy <= lineY) {
+            lineCrossCount.out++;
+            registrarEventoEnBitacora("Cruce de Salida", personaActual, "Cruzó línea de acceso hacia afuera");
+            playBeep(440, 0.12);
+          }
+          activeWebcamTrack.lastY = cy;
+          document.getElementById('webcamKpiInact').textContent = `${lineCrossCount.in} / ${lineCrossCount.out}`;
+        }
+        else if (webcamMode === "merodeo") {
+          wctx.strokeStyle = "#f59e0b";
+          wctx.lineWidth = 2.5;
+          wctx.strokeRect(bx, by, bw, bh);
+
+          loiteringPositions.push({ x: cx, y: cy, t: Date.now() });
+          if (loiteringPositions.length > 50) loiteringPositions.shift();
+
+          // Dibujar rastro
+          if (loiteringPositions.length > 1) {
+            wctx.strokeStyle = "#38bdf8";
+            wctx.lineWidth = 2;
+            wctx.beginPath();
+            loiteringPositions.forEach((pt, i) => {
+              if (i === 0) wctx.moveTo(pt.x, pt.y);
+              else wctx.lineTo(pt.x, pt.y);
+            });
+            wctx.stroke();
+          }
+
+          const tiempoEstancia = (Date.now() - activeWebcamTrack.firstSeen) / 1000;
+          if (tiempoEstancia > 6.0 && loiteringPositions.length > 15) {
+            webcamAlertBanner.style.display = 'flex';
+            webcamAlertMsg.textContent = `🚨 ALERTA MERODEO: Persona #${personaActual.id} deambula por más de ${Math.round(tiempoEstancia)}s`;
+            if (Date.now() - lastAutoCaptureTime > 4000) {
+              registrarEventoEnBitacora("Alerta Merodeo", personaActual, `Deambulación anómala por ${Math.round(tiempoEstancia)}s`);
+              playBeep(900, 0.25);
+            }
+          }
+        }
+        else if (webcamMode === "caidas") {
+          wctx.strokeStyle = ratioWH > 1.25 ? "#ef4444" : "#10b981";
+          wctx.lineWidth = 3;
+          wctx.strokeRect(bx, by, bw, bh);
+
+          if (ratioWH > 1.25 && by > (vh * 0.35)) {
+            webcamAlertBanner.style.display = 'flex';
+            webcamAlertMsg.textContent = `🚨 ALERTA CRÍTICA: Caída detectada en el suelo (w/h=${ratioWH.toFixed(2)})`;
+            if (Date.now() - lastAutoCaptureTime > 4000) {
+              registrarEventoEnBitacora("Alerta Caída", personaActual, "Persona en posición horizontal en suelo");
+              playBeep(350, 0.35);
+            }
+          } else {
+            webcamAlertBanner.style.display = 'none';
+          }
+        }
+
+        // Auto-captura periódica si la casilla está marcada
+        const autoCheck = document.getElementById('autoCaptureCheck').checked;
+        if (autoCheck && Date.now() - lastAutoCaptureTime > 6000) {
+          registrarEventoEnBitacora("Detección de Persona", personaActual, "Registro automático de paso frente a cámara");
+        }
+      } else {
+        activeWebcamTrack = null;
+        webcamAlertBanner.style.display = 'none';
+      }
+    }
+
+    function extraerColorCamara(x, y, w, h) {
+      const snapCanvas = document.createElement('canvas');
+      snapCanvas.width = 30;
+      snapCanvas.height = 30;
+      const sctx = snapCanvas.getContext('2d');
+      sctx.drawImage(webcamVideo, x, y, Math.max(10, w), Math.max(10, h), 0, 0, 30, 30);
+      const data = sctx.getImageData(0, 0, 30, 30).data;
+      let r = 0, g = 0, b = 0, cnt = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i]; g += data[i+1]; b += data[i+2]; cnt++;
+      }
+      r = Math.round(r / Math.max(1, cnt));
+      g = Math.round(g / Math.max(1, cnt));
+      b = Math.round(b / Math.max(1, cnt));
+      return { r, g, b, hex: `#${((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1).toUpperCase()}` };
+    }
+
+    function clasificarNombreColor(c) {
+      const maxVal = Math.max(c.r, c.g, c.b);
+      const minVal = Math.min(c.r, c.g, c.b);
+      if (maxVal < 62) return "negro";
+      if (maxVal > 185 && (maxVal - minVal) < 28) return "blanco";
+      if ((maxVal - minVal) < 24) return "gris";
+      if (c.r > c.g + 32 && c.r > c.b + 32) return "rojo";
+      if (c.b > c.r + 20 && c.b > c.g + 18) return c.b < 115 ? "azul oscuro" : "azul";
+      if (c.g > c.r + 20 && c.g > c.b + 20) return "verde";
+      if (c.r > 155 && c.g > 135 && c.b < 100) return "amarillo";
+      if (c.r > 160 && c.b > 130 && c.g < 120) return "morado";
+      if (c.r > 180 && c.g > 130 && c.b > 130) return "rosado";
+      return "beige";
+    }
+
+    function capturarMiniaturaWebcam(bbox) {
+      try {
+        const crop = document.createElement('canvas');
+        crop.width = 60;
+        crop.height = 60;
+        const cctx = crop.getContext('2d');
+        if (bbox) {
+          cctx.drawImage(webcamVideo, bbox[0], bbox[1], bbox[2], bbox[3], 0, 0, 60, 60);
+        } else {
+          cctx.drawImage(webcamVideo, 0, 0, crop.width, crop.height);
+        }
+        return crop.toDataURL('image/jpeg', 0.82);
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function capturarRegistroManual() {
+      if (!webcamStream) {
+        alert("Primero activa la cámara web.");
+        return;
+      }
+      const itemDummy = {
+        id: nextTrackId++,
+        bbox: [0, 0, webcamCanvas.width, webcamCanvas.height],
+        sexo: "Masculino",
+        edad: "Adulto (30-54)",
+        prenda_superior: { tipo: "camisa", color: "azul", hex: "#38bdf8" },
+        prenda_inferior: { tipo: "pantalon", color: "negro", hex: "#1e293b" }
+      };
+      registrarEventoEnBitacora("Captura Manual", itemDummy, "Instantánea registrada por operador");
+      playBeep(700, 0.1);
+    }
+
+    function registrarEventoEnBitacora(tipoEvento, persona, detalle) {
+      lastAutoCaptureTime = Date.now();
+      const thumb = capturarMiniaturaWebcam(persona.bbox);
+      const timestamp = new Date().toLocaleTimeString();
+
+      const registro = {
+        id: webcamLog.length + 1,
+        timestamp,
+        tipoEvento,
+        personaId: persona.id,
+        sexo: persona.sexo,
+        edad: persona.edad,
+        prenda_superior: persona.prenda_superior,
+        prenda_inferior: persona.prenda_inferior,
+        detalle,
+        thumbnail: thumb
+      };
+
+      webcamLog.unshift(registro);
+      if (webcamLog.length > 50) webcamLog.pop();
+      renderizarBitacora();
+    }
+
+    function renderizarBitacora() {
+      const cont = document.getElementById('webcamLogContainer');
+      document.getElementById('totalCapturasLabel').textContent = webcamLog.length;
+      document.getElementById('webcamKpiPersonas').textContent = webcamLog.length;
+
+      const alertasCount = webcamLog.filter(x => x.tipoEvento.includes('Alerta')).length;
+      document.getElementById('webcamKpiAlertas').textContent = alertasCount;
+
+      cont.innerHTML = webcamLog.map(r => `
+        <div class="feed-item">
+          <img class="feed-thumb" src="${r.thumbnail}" alt="Captura">
+          <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <b>${r.tipoEvento}</b>
+              <small style="color:var(--muted);font-family:'JetBrains Mono',monospace;">${r.timestamp}</small>
+            </div>
+            <div style="font-size:0.8rem;margin-top:2px;">
+              Persona #${r.personaId} • ${r.sexo} (${r.edad})<br/>
+              <span class="swatch" style="background:${r.prenda_superior.hex}"></span>Sup: <b>${r.prenda_superior.tipo}</b> (${r.prenda_superior.color}) |
+              <span class="swatch" style="background:${r.prenda_inferior.hex}"></span>Inf: <b>${r.prenda_inferior.tipo}</b> (${r.prenda_inferior.color})
+            </div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">${r.detalle}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function limpiarBitacora() {
+      if (confirm("¿Deseas vaciar la bitácora de capturas?")) {
+        webcamLog = [];
+        lineCrossCount = { in: 0, out: 0 };
+        document.getElementById('webcamKpiInact').textContent = "0 / 0";
+        renderizarBitacora();
+      }
+    }
+
+    function descargarBitacoraJSON() {
+      if (webcamLog.length === 0) {
+        alert("No hay registros en la bitácora para exportar.");
+        return;
+      }
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(webcamLog, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = `bitacora_cctv_webcam_${Date.now()}.json`;
+      a.click();
+    }
+
+    function descargarBitacoraCSV() {
+      if (webcamLog.length === 0) {
+        alert("No hay registros en la bitácora para exportar.");
+        return;
+      }
+      let csv = "ID,Timestamp,Evento,PersonaID,Sexo,Edad,PrendaSup,ColorSup,PrendaInf,ColorInf,Detalle\n";
+      webcamLog.forEach(r => {
+        csv += `${r.id},"${r.timestamp}","${r.tipoEvento}",${r.personaId},"${r.sexo}","${r.edad}","${r.prenda_superior.tipo}","${r.prenda_superior.color}","${r.prenda_inferior.tipo}","${r.prenda_inferior.color}","${r.detalle}"\n`;
+      });
+      const dataStr = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = `bitacora_cctv_webcam_${Date.now()}.csv`;
+      a.click();
+    }
+
     // Funciones del panel de foto propia
     function mostrarSubirFoto() {
-      document.getElementById('cctvView').style.display = 'none';
-      document.getElementById('residentesPanel').style.display = 'none';
+      ocultarTodosLosPaneles();
       document.getElementById('customPhotoPanel').style.display = 'flex';
       videoElem.pause();
+      if (webcamStream) detenerWebcam();
     }
 
     function analizarFotoLocal(evt) {
@@ -1058,13 +1620,11 @@
           const pctx = cvs.getContext('2d');
           pctx.drawImage(img, 0, 0);
 
-          // Algoritmo cliente de estimación demográfica y vestimenta
           const imgData = pctx.getImageData(0, 0, img.width, img.height);
           const data = imgData.data;
           const w = img.width;
           const h = img.height;
 
-          // Extraer colores promedio de torso (20% a 54%) y piernas (54% a 85%)
           function extraerColorRegion(y1, y2) {
             let rTot = 0, gTot = 0, bTot = 0, count = 0;
             for (let y = Math.floor(h * y1); y < Math.floor(h * y2); y += 3) {
@@ -1082,19 +1642,6 @@
             return { r, g, b, hex: `#${((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1).toUpperCase()}` };
           }
 
-          function clasificarNombreColor(c) {
-            const maxVal = Math.max(c.r, c.g, c.b);
-            const minVal = Math.min(c.r, c.g, c.b);
-            if (maxVal < 60) return "negro";
-            if (maxVal > 190 && (maxVal - minVal) < 25) return "blanco";
-            if ((maxVal - minVal) < 25) return "gris";
-            if (c.r > c.g + 30 && c.r > c.b + 30) return "rojo";
-            if (c.b > c.r + 20 && c.b > c.g + 20) return c.b < 110 ? "azul oscuro" : "azul";
-            if (c.g > c.r + 20 && c.g > c.b + 20) return "verde";
-            if (c.r > 160 && c.g > 140 && c.b < 100) return "amarillo";
-            return "azul";
-          }
-
           const colSup = extraerColorRegion(0.22, 0.52);
           const colInf = extraerColorRegion(0.55, 0.85);
           const nombreSup = clasificarNombreColor(colSup);
@@ -1104,7 +1651,6 @@
           const sexo = tipoInf === "falda" ? "Femenino" : "Masculino";
           const edad = (h / w > 2.2) ? "Joven (15-29)" : "Adulto (30-54)";
 
-          // Dibujar caja delimitadora en la foto
           const bx = Math.round(w * 0.15);
           const by = Math.round(h * 0.05);
           const bw = Math.round(w * 0.70);
@@ -1155,10 +1701,10 @@
 
     // Funciones del directorio de residentes
     function mostrarDirectorioResidentes() {
-      document.getElementById('cctvView').style.display = 'none';
-      document.getElementById('customPhotoPanel').style.display = 'none';
+      ocultarTodosLosPaneles();
       document.getElementById('residentesPanel').style.display = 'flex';
       videoElem.pause();
+      if (webcamStream) detenerWebcam();
       filtrarDirectorio("");
     }
 
@@ -1191,7 +1737,6 @@
       `).join('');
     }
 
-    // Iniciar con el Reto 1
     window.addEventListener('load', () => {
       cambiarReto(1);
     });
