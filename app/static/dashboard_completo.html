@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartBuilding Vision Suite — Los 7 Retos de Visión por Computador</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --panel: #111827;
+      --border: #1f2937;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --indigo: #6366f1;
+      --danger: #ef4444;
+      --success: #10b981;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px 26px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .title h1 {
+      font-size: 1.4rem;
+      background: linear-gradient(90deg, var(--accent), #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .title p { font-size: 0.85rem; color: var(--muted); margin-top: 3px; }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .tab-btn {
+      background: var(--panel);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+      border-radius: 9px;
+      font-size: 0.83rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      color: #fff;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .card h2 {
+      font-size: 1.02rem;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .video-frame {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: #030712;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .video-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .kpi {
+      background: #0b1120;
+      border: 1px solid var(--border);
+      padding: 11px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .kpi .v { font-size: 1.35rem; font-weight: 700; color: var(--accent); }
+    .kpi .l { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .results-box {
+      background: #0b1120;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      max-height: 410px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .item-row {
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .item-row:last-child { border-bottom: none; }
+    .pill {
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 600;
+    }
+    .pill-alert { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.4); }
+    .pill-ok { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.4); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <h1>SmartBuilding CCTV Analytics — Centro Integral (Retos 1 al 7)</h1>
+      <p>Conjunto Residencial San Carlos • Monitoreo inteligente en tiempo real conectado con directorio de residentes</p>
+    </div>
+    <span class="pill pill-ok">Rama: feature/retos-vision-completos</span>
+  </header>
+
+  <div class="tabs" id="tabsBar">
+    <button class="tab-btn active" onclick="seleccionarReto(1)">1. Demografía y Vestimenta</button>
+    <button class="tab-btn" onclick="seleccionarReto(2)">2. Conteo Entradas/Salidas</button>
+    <button class="tab-btn" onclick="seleccionarReto(3)">3. Merodeo</button>
+    <button class="tab-btn" onclick="seleccionarReto(4)">4. Objeto Abandonado</button>
+    <button class="tab-btn" onclick="seleccionarReto(5)">5. Lectura de Placas</button>
+    <button class="tab-btn" onclick="seleccionarReto(6)">6. Caídas y Riesgo</button>
+    <button class="tab-btn" onclick="seleccionarReto(7)">7. Casilleros Apto</button>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <h2>
+        <span id="camTitle">Cámara 1 — Demografía y Vestimenta</span>
+        <span id="camStatus" style="font-size:0.8rem;color:var(--success)">● Stream Activo</span>
+      </h2>
+      <div class="video-frame">
+        <img id="streamView" src="/vision/stream/1" alt="Stream de visión por computador" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Resultados Analíticos y Alertas</h2>
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="results-box" id="resultsBox">Analizando video del reto seleccionado...</div>
+    </div>
+  </div>
+
+  <script>
+    const retosMeta = {
+      1: { titulo: "Reto 1: Demografía y Vestimenta", endpoint: "/vision/reto1/demografia-vestimenta" },
+      2: { titulo: "Reto 2: Conteo de Entradas y Salidas (Hora Pico)", endpoint: "/vision/reto2/conteo-entradas-salidas" },
+      3: { titulo: "Reto 3: Detección de Merodeo Anómalo", endpoint: "/vision/reto3/merodeo" },
+      4: { titulo: "Reto 4: Detección de Objeto Abandonado (ABODA)", endpoint: "/vision/reto4/objeto-abandonado" },
+      5: { titulo: "Reto 5: Lectura de Placas (Día y Noche)", endpoint: "/vision/reto5/lectura-placas" },
+      6: { titulo: "Reto 6: Caídas y Comportamientos de Riesgo", endpoint: "/vision/reto6/caidas-riesgo" },
+      7: { titulo: "Reto 7: Correspondencia en Casillero", endpoint: "/vision/reto7/correspondencia-casillero" }
+    };
+
+    async function seleccionarReto(id) {
+      document.querySelectorAll('.tab-btn').forEach((b, idx) => {
+        b.classList.toggle('active', idx + 1 === id);
+      });
+      document.getElementById('camTitle').textContent = retosMeta[id].titulo;
+      document.getElementById('streamView').src = `/vision/stream/${id}?t=${Date.now()}`;
+      document.getElementById('resultsBox').innerHTML = 'Procesando video...';
+
+      const res = await fetch(retosMeta[id].endpoint, { method: 'POST' });
+      const data = await res.json();
+      renderizarResultado(id, data);
+    }
+
+    function renderizarResultado(id, d) {
+      const kpi = document.getElementById('kpiGrid');
+      const box = document.getElementById('resultsBox');
+
+      if (id === 1) {
+        kpi.innerHTML = `
+          <div class="kpi"><div class="v">${d.total_personas_detectadas}</div><div class="l">Personas</div></div>
+          <div class="kpi"><div class="v">${d.resumen_demografico.por_sexo_aparente['Femenino']||0}F / ${d.resumen_demografico.por_sexo_aparente['Masculino']||0}M</div><div class="l">Sexo Aparente</div></div>
+          <div class="kpi"><div class="v">${d.frames_analizados}</div><div class="l">Frames</div></div>
+        `;
+        box.innerHTML = d.personas.map(p => `
+          <div class="item-row">
+            <div><b>ID #${p.person_id}</b> — ${p.sexo_aparente} (${p.rango_edad})<br/>
+            <small>Sup: ${p.prenda_superior.tipo} (${p.prenda_superior.color}) | Inf: ${p.prenda_inferior.tipo} (${p.prenda_inferior.color})</small></div>
+            <span class="pill pill-ok">${Math.round(p.confianza*100)}%</span>
+          </div>
+        `).join('');
+      } else if (id === 2) {
+        kpi.innerHTML = `
+          <div class="kpi"><div class="v">${d.total_entradas}</div><div class="l">Entradas</div></div>
+          <div class="kpi"><div class="v">${d.total_salidas}</div><div class="l">Salidas</div></div>
+          <div class="kpi"><div class="v">${d.hubo_hora_pico ? 'SÍ ('+d.max_personas_simultaneas+')' : 'NO'}</div><div class="l">Hora Pico</div></div>
+        `;
+        box.innerHTML = d.eventos_cruce.map(e => `
+          <div class="item-row">
+            <div>Persona <b>#${e.person_id}</b> cruzó <code>${e.linea}</code></div>
+            <span class="pill ${e.sentido==='entrada'?'pill-ok':'pill-alert'}">${e.sentido.toUpperCase()} (Frame ${e.frame})</span>
+          </div>
+        `).join('');
+      } else if (id === 3) {
+        kpi.innerHTML = `
+          <div class="kpi"><div class="v">${d.total_alertas_merodeo}</div><div class="l">Alertas Merodeo</div></div>
+          <div class="kpi"><div class="v">${d.conteo_estados_observados.conversando}</div><div class="l">Frames Conversando</div></div>
+          <div class="kpi"><div class="v">${d.conteo_estados_observados.paso_normal}</div><div class="l">Paso Normal</div></div>
+        `;
+        box.innerHTML = d.alertas.map(a => `
+          <div class="item-row">
+            <div><b>${a.mensaje}</b><br/><small>Distancia: ${a.distancia_recorrida}px | Eficiencia: ${a.eficiencia_trayectoria}</small></div>
+            <span class="pill pill-alert">ALERTA</span>
+          </div>
+        `).join('');
+      } else if (id === 4) {
+        kpi.innerHTML = `
+          <div class="kpi"><div class="v">${d.total_alertas_abandono}</div><div class="l">Objetos Abandonados</div></div>
+          <div class="kpi"><div class="v">ABODA</div><div class="l">Dataset Real</div></div>
+          <div class="kpi"><div class="v">Activo</div><div class="l">Monitoreo</div></div>
+        `;
+        box.innerHTML = d.alertas.map(a => `
+          <div class="item-row">
+            <div><b>${a.mensaje}</b><br/><small>Ubicación: [${a.ubicacion}] | Distancia dueño: ${a.distancia_propietario_px}px</small></div>
+            <span class="pill pill-alert">${a.tipo_objeto.toUpperCase()}</span>
+          </div>
+        `).join('');
+      } else if (id === 5) {
+        kpi.innerHTML = `
+          <div class="kpi"><div class="v">${d.total_vehiculos_leidos}</div><div class="l">Vehículos Únicos</div></div>
+          <div class="kpi"><div class="v">${d.lecturas_unicas.filter(x=>x.autorizado).length}</div><div class="l">Residentes</div></div>
+          <div class="kpi"><div class="v">Día/Noche</div><div class="l">Modo CLAHE</div></div>
+        `;
+        box.innerHTML = d.lecturas_unicas.map(v => `
+          <div class="item-row">
+            <div><b>Placa ${v.placa}</b> (${v.tipo_vehiculo.toUpperCase()} - ${v.condicion_luz.toUpperCase()})<br/>
+            <small>${v.autorizado ? 'Residente: '+v.residente+' • Apto '+v.apartamento+' ('+v.parqueadero+')' : 'Visitante no registrado'}</small></div>
+            <span class="pill ${v.autorizado?'pill-ok':'pill-alert'}">${v.autorizado?'AUTORIZADO':'VISITANTE'}</span>
+          </div>
+        `).join('');
+      } else if (id === 6) {
+        kpi.innerHTML = `
+          <div class="kpi"><div class="v">${d.total_alertas_caida}</div><div class="l">Caídas Confirmadas</div></div>
+          <div class="kpi"><div class="v">${d.conteo_posturas_observadas.agachado}</div><div class="l">Frames Agachado (Ignorado)</div></div>
+          <div class="kpi"><div class="v">${d.conteo_posturas_observadas.sentado}</div><div class="l">Frames Sentado (Ignorado)</div></div>
+        `;
+        box.innerHTML = d.alertas.map(a => `
+          <div class="item-row">
+            <div><b>${a.mensaje}</b><br/><small>Relación w/h: ${a.ratio_ancho_alto} | Frames en suelo: ${a.frames_en_suelo}</small></div>
+            <span class="pill pill-alert">EMERGENCIA</span>
+          </div>
+        `).join('');
+      } else if (id === 7) {
+        kpi.innerHTML = `
+          <div class="kpi"><div class="v">${d.total_casilleros_ocupados}</div><div class="l">Casilleros con Correo</div></div>
+          <div class="kpi"><div class="v">${d.estado_todos_los_casilleros.length}</div><div class="l">Total Casilleros</div></div>
+          <div class="kpi"><div class="v">San Carlos</div><div class="l">Directorio</div></div>
+        `;
+        box.innerHTML = d.correspondencia_detectada.map(c => `
+          <div class="item-row">
+            <div><b>Casillero ${c.casillero} (Apto ${c.apartamento})</b> — ${c.tipo_correspondencia.toUpperCase()}<br/>
+            <small>Residentes notificados: ${c.residentes_notificados.join(', ')}</small></div>
+            <span class="pill pill-ok">NOTIFICADO</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    seleccionarReto(1);
+  </script>
+</body>
+</html>
