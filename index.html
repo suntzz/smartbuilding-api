@@ -1306,8 +1306,18 @@
         const tipoInf = (colInf.r > 175 && colInf.g > 175 && colInf.b > 175) ? "falda" : (nomInf.includes("azul") ? "jean" : "pantalon");
         const tipoSup = nomSup === "negro" ? "buso" : (nomSup === "blanco" ? "camisa" : "camiseta");
         const sexo = tipoInf === "falda" ? "Femenino" : (nomSup === "rosa" ? "Femenino" : "Masculino");
-        const ratioWH = bw / Math.max(1, bh);
-        const edad = ratioWH > 0.65 ? "Adulto (30-54)" : "Joven (15-29)";
+        
+        // Estimación demográfica refinada para plano medio / webcam
+        const colCabello = extraerColorCamara(bx + bw * 0.35, by + bh * 0.02, bw * 0.30, bh * 0.12);
+        const tieneCanas = colCabello.r > 170 && colCabello.g > 170 && colCabello.b > 170 && Math.abs(colCabello.r - colCabello.b) < 20;
+        let edad = "Joven (18-25)";
+        if (tieneCanas) {
+          edad = "Adulto Mayor (55+)";
+        } else if (tipoSup === "camisa" && nomSup === "blanco") {
+          edad = "Adulto Joven (26-35)";
+        } else {
+          edad = "Joven (18-25)";
+        }
 
         if (!activeWebcamTrack) {
           activeWebcamTrack = {
@@ -1503,7 +1513,7 @@
         id: nextTrackId++,
         bbox: [0, 0, webcamCanvas.width, webcamCanvas.height],
         sexo: "Masculino",
-        edad: "Adulto (30-54)",
+        edad: "Joven (18-25)",
         prenda_superior: { tipo: "camisa", color: "azul", hex: "#38bdf8" },
         prenda_inferior: { tipo: "pantalon", color: "negro", hex: "#1e293b" }
       };
@@ -1649,7 +1659,10 @@
           const tipoInf = (colInf.r > 180 && colInf.g > 180 && colInf.b > 180) ? "falda" : (nombreInf.includes("azul") ? "jean" : "pantalon");
           const tipoSup = nombreSup === "negro" ? "buso" : "camiseta";
           const sexo = tipoInf === "falda" ? "Femenino" : "Masculino";
-          const edad = (h / w > 2.2) ? "Joven (15-29)" : "Adulto (30-54)";
+          let edad = "Joven (18-25)";
+          if (tipoSup === "camisa" && nombreSup === "blanco") {
+            edad = "Adulto Joven (26-35)";
+          }
 
           const bx = Math.round(w * 0.15);
           const by = Math.round(h * 0.05);
