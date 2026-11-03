@@ -587,6 +587,40 @@
       gap: 14px;
       min-width: 0;
     }
+    .card { border-radius: 14px; background: linear-gradient(180deg, rgba(20, 20, 20, 0.92), rgba(13, 13, 13, 0.92)); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 24px 60px -30px rgba(0, 0, 0, 0.8); }
+    .card::before, .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .card::before { background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 0%), rgba(201, 164, 92, 0.06), transparent 55%); }
+    .card::after {
+      inset: -1px;
+      padding: 1px;
+      background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%), rgba(201, 164, 92, 0.7), transparent 45%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+    .card:hover::before, .card:hover::after { opacity: 1; }
+    .card-header[data-kicker]::before {
+      content: attr(data-kicker);
+      flex-basis: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: -4px;
+    }
+    .card-header h2 { font-size: 1.02rem; letter-spacing: -0.01em; }
     .kpi-card::before {
       content: "";
       position: absolute;
@@ -651,8 +685,35 @@
     }
     video#mainVideo, video#webcamVideo { width: 100%; height: 100%; object-fit: contain; display: block; }
     canvas#overlayCanvas, canvas#webcamCanvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; }
-    .scanlines { display: none; }
-    .hud-corner { display: none; }
+    .video-viewport { border-radius: 10px; box-shadow: 0 0 0 1px rgba(201, 164, 92, 0.08), 0 20px 50px -25px rgba(0, 0, 0, 0.9); }
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(201, 164, 92, 0.07) 48%, rgba(201, 164, 92, 0.16) 50%, transparent 52%);
+      background-size: 100% 220%;
+      animation: barrido 6s linear infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes barrido { from { background-position: 0 120%; } to { background-position: 0 -120%; } }
+    .hud-corner {
+      position: absolute;
+      z-index: 6;
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--accent);
+      opacity: 0.85;
+      pointer-events: none;
+      animation: fijarMira 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .hud-corner.tl { top: 10px; left: 10px; border-right: 0; border-bottom: 0; border-top-left-radius: 6px; --dx: -10px; --dy: -10px; }
+    .hud-corner.tr { top: 10px; right: 10px; border-left: 0; border-bottom: 0; border-top-right-radius: 6px; --dx: 10px; --dy: -10px; }
+    .hud-corner.bl { bottom: 10px; left: 10px; border-right: 0; border-top: 0; border-bottom-left-radius: 6px; --dx: -10px; --dy: 10px; }
+    .hud-corner.br { bottom: 10px; right: 10px; border-left: 0; border-top: 0; border-bottom-right-radius: 6px; --dx: 10px; --dy: 10px; }
+    @keyframes fijarMira { from { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.4); } to { opacity: 0.85; transform: none; } }
+    .hud-tl-tag { bottom: 14px; left: 40px; }
+    .hud-br-tag { bottom: 14px; right: 40px; }
     .hud-crosshair { display: none; }
     .hud-tl-tag, .hud-br-tag {
       position: absolute;
@@ -670,8 +731,7 @@
       pointer-events: none;
       white-space: nowrap;
     }
-    .hud-tl-tag { top: 10px; left: 10px; }
-    .hud-br-tag { bottom: 10px; right: 10px; color: #bdbdbd; }
+    .hud-br-tag { color: #bdbdbd; }
     .alert-banner {
       position: absolute;
       top: 42px;
@@ -692,7 +752,20 @@
     }
 
     /* ---------- Botones ---------- */
-    .video-controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .video-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(10, 10, 10, 0.7);
+    }
+    .video-controls .btn-ctrl:not(.primary):not(.success):not(.danger) { background: transparent; border-color: transparent; color: var(--text-muted); }
+    .video-controls .btn-ctrl:not(.primary):not(.success):not(.danger):hover { background: var(--panel-elevated); border-color: var(--border); color: var(--text); }
+    .btn-ctrl { border-radius: 8px; transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+    .btn-ctrl:active { transform: scale(0.96); }
     .btn-ctrl {
       display: inline-flex;
       align-items: center;
@@ -721,17 +794,17 @@
 
     .time-slider {
       flex: 1;
-      min-width: 120px;
+      min-width: 70px;
       height: 4px;
       appearance: none;
       -webkit-appearance: none;
       border-radius: 2px;
-      background: #2a2a2a;
+      background: linear-gradient(90deg, var(--accent) var(--p, 0%), #2a2a2a var(--p, 0%));
       cursor: pointer;
     }
-    .time-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--text); }
+    .time-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 4px rgba(201, 164, 92, 0.25); }
     .time-slider::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--text); }
-    .time-lbl { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-muted); min-width: 92px; text-align: center; font-variant-numeric: tabular-nums; }
+    .time-lbl { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); min-width: 84px; text-align: center; font-variant-numeric: tabular-nums; }
 
     .ia-estado { font-size: 0.78rem; color: var(--text-dim); font-family: var(--font-mono); }
     .ia-estado[data-tipo="ok"] { color: #9fd9bd; }
@@ -749,38 +822,147 @@
       padding: 12px;
       overflow: hidden;
     }
-    .kpi-card .num { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .kpi-card .desc { font-size: 0.74rem; color: var(--text-dim); margin-top: 4px; }
+    .kpi-card { border-radius: 10px; padding: 14px; background: linear-gradient(180deg, #131313, #0d0d0d); }
+    .kpi-card::after { content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 1px; background: linear-gradient(90deg, transparent, rgba(201, 164, 92, 0.6), transparent); }
+    .kpi-card .num { display: inline-block; font-family: var(--font-mono); font-size: clamp(1.05rem, 1.6vw, 1.4rem); font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .kpi-card .num.tick { animation: tick 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+    @keyframes tick { from { opacity: 0; transform: translateY(8px); filter: blur(3px); color: var(--accent); } to { opacity: 1; transform: none; filter: none; } }
+    .kpi-card .desc { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-top: 6px; }
 
     /* ---------- Registro ---------- */
     .feed-container {
       display: flex;
       flex-direction: column;
+      gap: 8px;
       max-height: 560px;
       overflow-y: auto;
-      border: 1px solid var(--border);
-      border-radius: 6px;
+      padding: 10px 4px 26px;
       scrollbar-width: thin;
       scrollbar-color: #333 transparent;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 calc(100% - 30px), transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 calc(100% - 30px), transparent 100%);
     }
     .feed-container::-webkit-scrollbar { width: 6px; }
     .feed-container::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
     .feed-item, .person-item {
+      position: relative;
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: 12px;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
       align-items: center;
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(22, 22, 22, 0.9), rgba(14, 14, 14, 0.9));
       font-size: 0.84rem;
-      animation: itemIn 0.35s ease-out both;
-      transition: background 0.15s;
+      animation: itemIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+      transition: border-color 0.2s, background 0.2s, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .feed-item { display: flex; flex-wrap: wrap; }
-    .feed-item:last-child, .person-item:last-child { border-bottom: 0; }
-    .feed-item:hover, .person-item:hover { background: var(--panel-elevated); }
-    .person-item.active-tracking { box-shadow: inset 2px 0 0 var(--success); }
-    @keyframes itemIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    .feed-item:hover, .person-item:hover { border-color: var(--border-hover); transform: translateX(2px); }
+    @keyframes itemIn { from { opacity: 0; transform: translateY(14px) scale(0.97); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+
+    /* Persona en cuadro: borde con un haz que recorre el contorno (Star Border) */
+    .person-item.active-tracking { border-color: rgba(63, 178, 127, 0.28); background: linear-gradient(180deg, rgba(20, 30, 25, 0.92), rgba(13, 17, 15, 0.92)); }
+    .person-item.active-tracking::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      pointer-events: none;
+      background: conic-gradient(from var(--ang, 0deg), transparent 0 70%, rgba(63, 178, 127, 0.95) 85%, transparent 100%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: girar 3.2s linear infinite;
+    }
+
+    .item-datos { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; min-width: 0; border-radius: 6px; }
+    .item-datos.actualizado .pi-main { animation: refrescar 0.9s ease-out; }
+    @keyframes refrescar { from { color: var(--accent); } to { color: inherit; } }
+
+    .pi-avatar, .pi-foto {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      padding: 2px;
+      background: conic-gradient(var(--sup, #555) 0 50%, var(--inf, #333) 50% 100%);
+      box-shadow: 0 0 0 1px var(--border-hover);
+    }
+    .pi-avatar span {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #0e0e0e;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text);
+    }
+    .pi-foto { background: linear-gradient(135deg, var(--accent), #3a3122); }
+    .pi-foto img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #000; }
+    .pi-foto span {
+      position: absolute;
+      right: -6px;
+      bottom: -4px;
+      padding: 1px 5px;
+      border-radius: 6px;
+      background: #0e0e0e;
+      border: 1px solid var(--border-hover);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+    }
+    .pi-main { min-width: 0; }
+    .pi-top { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; }
+    .pi-sexo { font-size: 0.94rem; font-weight: 600; }
+    .pi-edad { font-family: var(--font-mono); font-size: 0.74rem; color: var(--accent); }
+    .pi-estado {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: auto;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-hover);
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .pi-estado.vivo { color: #9fd9bd; border-color: rgba(63, 178, 127, 0.4); background: rgba(63, 178, 127, 0.08); }
+    .garments { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip-prenda {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px 3px 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      font-size: 0.74rem;
+      color: var(--text-dim);
+    }
+    .chip-prenda i { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.22); }
+    .chip-prenda b { color: var(--text); font-weight: 500; }
+    .pi-conf { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; min-width: 70px; font-family: var(--font-mono); }
+    .pi-conf > span { font-size: 1.05rem; color: var(--text); font-variant-numeric: tabular-nums; }
+    .pi-conf > span small { font-size: 0.66rem; color: var(--text-dim); margin-left: 1px; }
+    .pi-conf i { position: relative; width: 70px; height: 3px; border-radius: 2px; background: #262626; overflow: hidden; }
+    .pi-conf i::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--v); background: linear-gradient(90deg, #8a6f3c, var(--accent)); border-radius: inherit; transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+    .pi-conf small { font-size: 0.66rem; color: var(--text-dim); white-space: nowrap; }
+
+    .feed-vacio { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 40px 18px; text-align: center; border: 1px dashed var(--border-hover); border-radius: 10px; }
+    .feed-vacio b { font-weight: 600; }
+    .feed-vacio span { font-size: 0.78rem; color: var(--text-dim); max-width: 340px; line-height: 1.55; }
+
     .pid {
       font-family: var(--font-mono);
       font-size: 0.72rem;
@@ -790,7 +972,6 @@
       padding: 4px 6px;
       white-space: nowrap;
     }
-    .garments { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; }
     .swatch-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--text-dim); }
     .swatch-tag b { color: var(--text-muted); font-weight: 500; }
     .dot, .swatch {
@@ -860,8 +1041,8 @@
       .card { padding: 14px; }
       .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .kpi-row .kpi-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
-      .person-item { grid-template-columns: minmax(0, 1fr); }
-      .person-item > :last-child { text-align: left !important; }
+      .item-datos { grid-template-columns: minmax(0, 1fr); }
+      .pi-conf { flex-direction: row; align-items: center; justify-content: flex-start; }
       .hud-br-tag { display: none; }
       .module-trigger kbd, .module-pos { display: none; }
       .module-trigger { flex: 1; }
@@ -985,7 +1166,7 @@
     <!-- VISTA PRINCIPAL DE RETOS EN VIDEO -->
     <div class="layout-grid" id="cctvView">
       <div class="card">
-        <div class="card-header">
+        <div class="card-header" data-kicker="Visor · Cámara 01">
           <h2 id="camTitle">Cámara 1: Recepción y Lobby</h2>
           <span class="pill pill-green" id="streamBadge"><span class="radar-dot"></span> Seguimiento activo</span>
         </div>
@@ -1020,7 +1201,7 @@
       </div>
 
       <div class="card">
-        <div class="card-header">
+        <div class="card-header" data-kicker="Analítica · Demografía y vestimenta">
           <h2>Personas detectadas</h2>
           <span id="metaRetoLabel" style="font-size:0.8rem;color:var(--muted)">Reto #1</span>
         </div>
@@ -1037,10 +1218,8 @@
     <!-- VISTA WEBCAM EN VIVO CON REGISTRO DE EVENTOS -->
     <div class="layout-grid" id="webcamPanel" style="display:none;">
       <div class="card">
-        <div class="card-header">
-          <h2>
-            <span>Detección en Vivo con Cámara Web Propia</span>
-          </h2>
+        <div class="card-header" data-kicker="Visor · Cámara web">
+          <h2>Detección en vivo</h2>
           <span class="pill pill-red" id="webcamStatusBadge"><span class="radar-dot red"></span> Cámara Inactiva</span>
         </div>
 
@@ -1072,7 +1251,7 @@
 
           <label style="font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:auto;">
             Modo:
-            <select id="webcamModeSelect" style="background:#0f172a;border:1px solid var(--border);color:#fff;padding:5px 8px;border-radius:6px;font-size:0.8rem;" onchange="cambiarModoWebcam(this.value)">
+            <select id="webcamModeSelect" style="font-size:0.8rem;" onchange="cambiarModoWebcam(this.value)">
               <option value="demografia">1. Demografía & Vestimenta</option>
             </select>
           </label>
@@ -1082,7 +1261,7 @@
       </div>
 
       <div class="card">
-        <div class="card-header">
+        <div class="card-header" data-kicker="Bitácora · Se actualiza en tiempo real">
           <h2>Personas registradas</h2>
           <span style="font-size:0.78rem;color:var(--muted);"><span id="totalCapturasLabel">0</span> eventos</span>
         </div>
@@ -1112,9 +1291,9 @@
         </div>
 
         <div class="feed-container" id="webcamLogContainer">
-          <div style="color:var(--muted);text-align:center;padding:24px;">
-            Aún no hay eventos registrados.<br/>
-            Activa la cámara y muévete frente a ella para registrar tu sexo aparente, rango de edad y vestimenta.
+          <div class="feed-vacio">
+            <b>Aún no hay personas registradas</b>
+            <span>Activa la cámara y ponte frente a ella: se registrará tu sexo aparente, rango de edad y vestimenta, y se irá actualizando mientras sigas en cuadro.</span>
           </div>
         </div>
       </div>
@@ -1122,12 +1301,12 @@
 
     <!-- Panel de carga de imagen propia -->
     <div class="card" id="customPhotoPanel" style="display:none;margin-top:10px;">
-      <div class="card-header">
-        <h2>Analizador Client-Side de Demografía y Vestimenta</h2>
-        <span class="pill pill-blue">Procesamiento Canvas en vivo</span>
+      <div class="card-header" data-kicker="Análisis · Foto">
+        <h2>Analizar una foto</h2>
+        <span class="pill pill-blue">Procesado en tu navegador</span>
       </div>
       <p style="color:var(--muted);font-size:0.88rem;">
-        Sube cualquier foto desde tu computador. El algoritmo extraerá la silueta, tonos de piel en YCrCb/HSV, proporciones anatómicas y colores de prendas superior e inferior sin necesidad de backend externo.
+        Sube una foto desde tu computador. El modelo de IA detecta a la persona, segmenta su ropa y estima sexo aparente, rango de edad, tipo y color de las prendas superior e inferior. La imagen no sale de tu equipo.
       </p>
 
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
@@ -1146,9 +1325,9 @@
 
     <!-- Panel de directorio de residentes -->
     <div class="card" id="residentesPanel" style="display:none;margin-top:10px;">
-      <div class="card-header">
+      <div class="card-header" data-kicker="Directorio">
         <h2>Directorio Residencial — San Carlos</h2>
-        <input type="text" id="filtroResidente" placeholder="Buscar por nombre, apto, placa..." style="background:#1e293b;border:1px solid var(--border);color:#fff;padding:6px 12px;border-radius:8px;font-size:0.84rem;" oninput="filtrarDirectorio(this.value)">
+        <input type="text" id="filtroResidente" placeholder="Buscar por nombre, apto, placa..." style="padding:0 12px;font-size:0.84rem;" oninput="filtrarDirectorio(this.value)">
       </div>
       <div class="feed-container" id="residentesListContainer" style="max-height:500px;"></div>
     </div>
@@ -1183,7 +1362,7 @@
 
     const retosMeta = {
       1: {
-        titulo: "Cámara 1: Recepción y Lobby (Demografía y Vestimenta)",
+        titulo: "Recepción y Lobby",
         video: "data/videos/reto1_demografia_vestimenta.mp4"
       },
       2: {
@@ -1296,6 +1475,7 @@
     videoElem.addEventListener('timeupdate', () => {
       if (videoElem.duration) {
         timeSlider.value = (videoElem.currentTime / videoElem.duration) * 100;
+        timeSlider.style.setProperty('--p', timeSlider.value + '%');
         timeLabel.textContent = `${formatTime(videoElem.currentTime)} / ${formatTime(videoElem.duration)}`;
       }
       dibujarOverlay();
@@ -1356,72 +1536,110 @@
       const masc = personasVisibles.filter(p => p.sexo_aparente === "Masculino").length;
       const totalFrames = summary.total_frames_video || 205;
 
-      if (kpiContainer) {
-        kpiContainer.innerHTML = `
-          <div class="kpi-card">
-            <div class="num">${total}</div>
-            <div class="desc">Personas Detectadas</div>
-          </div>
-          <div class="kpi-card">
-            <div class="num">${fem}F / ${masc}M</div>
-            <div class="desc">Femenino / Masculino</div>
-          </div>
-          <div class="kpi-card">
-            <div class="num">${Math.min(totalFrames, targetFrame)} / ${totalFrames}</div>
-            <div class="desc">Frames Procesados</div>
-          </div>
-        `;
-      }
+      if (!document.getElementById("kpiTotal")) actualizarKPIS(1);
+      ponerValor(document.getElementById("kpiTotal"), total);
+      ponerValor(document.getElementById("kpiSexo"), `${fem}F / ${masc}M`);
+      document.getElementById("kpiFrames").textContent = `${Math.min(totalFrames, targetFrame)} / ${totalFrames}`;
 
       const metaLabel = document.getElementById("metaRetoLabel");
       if (metaLabel) {
         metaLabel.textContent = `${total} de ${allPersons.length} detectadas`;
       }
 
-      // Renderizar la lista progresiva
       if (personasVisibles.length === 0) {
         feed.innerHTML = `
-          <div style="color:var(--text-muted);text-align:center;padding:36px 16px;font-size:0.85rem;">
-            <div style="font-weight:600;color:#fafafa;">Esperando detección en el corredor...</div>
-            <div style="font-size:0.76rem;color:var(--text-dim);margin-top:6px;max-width:320px;margin-inline:auto;">
-              Inicia la reproducción del video. Conforme las personas ingresen al cuadro de la cámara, aparecerán aquí una a una en tiempo real.
-            </div>
+          <div class="feed-vacio">
+            <b>Esperando detección en el corredor…</b>
+            <span>Inicia la reproducción del video. Conforme las personas ingresen al cuadro de la cámara, aparecerán aquí una a una en tiempo real.</span>
           </div>
         `;
         return;
       }
 
-      feed.innerHTML = personasVisibles.map(p => {
-        const enPantalla = (p.primer_frame <= targetFrame && targetFrame <= p.ultimo_frame);
-        return `
-          <div class="person-item ${enPantalla ? "active-tracking" : ""}">
-            <div class="pid">ID #${p.person_id}</div>
-            <div>
-              <div style="font-weight:600;font-size:0.92rem;display:flex;align-items:center;gap:8px;">
-                <span>${p.sexo_aparente}</span>
-                <span style="color:var(--accent);font-family:var(--font-mono);font-size:0.8rem;">${p.rango_edad}</span>
-                ${enPantalla 
-                  ? '<span class="badge-status badge-green"><span class="radar-dot"></span> EN PANTALLA</span>'
-                  : '<span class="badge-status badge-blue">REGISTRADO</span>'}
-              </div>
-              <div class="garments">
-                <span class="swatch-tag">
-                  <span class="dot" style="background:${p.prenda_superior.hex}"></span>
-                  Sup: <b>${p.prenda_superior.tipo}</b> (${p.prenda_superior.color})
-                </span>
-                <span class="swatch-tag">
-                  <span class="dot" style="background:${p.prenda_inferior.hex}"></span>
-                  Inf: <b>${p.prenda_inferior.tipo}</b> (${p.prenda_inferior.color})
-                </span>
-              </div>
-            </div>
-            <div style="text-align:right;font-size:0.76rem;color:var(--text-dim);font-family:var(--font-mono);">
-              <div style="color:var(--success);">Conf: ${Math.round(p.confianza * 100)}%</div>
-              <div>F${p.primer_frame}-F${p.ultimo_frame}</div>
-            </div>
+      // Cada persona se crea una sola vez; después solo cambia su estado
+      reconciliarLista(feed, personasVisibles, {
+        clave: p => p.person_id,
+        clase: p => "person-item" + (p.primer_frame <= targetFrame && targetFrame <= p.ultimo_frame ? " active-tracking" : ""),
+        fijo: p => avatarPersona(p.person_id, p.prenda_superior.hex, p.prenda_inferior.hex),
+        datos: p => {
+          const enPantalla = p.primer_frame <= targetFrame && targetFrame <= p.ultimo_frame;
+          return datosPersona({
+            sexo: p.sexo_aparente,
+            edad: p.rango_edad,
+            superior: p.prenda_superior,
+            inferior: p.prenda_inferior,
+            confianza: p.confianza,
+            estado: enPantalla ? ["vivo", "En pantalla"] : ["", "Registrado"],
+            pie: `F${p.primer_frame}–F${p.ultimo_frame}`
+          });
+        }
+      });
+    }
+
+    // Actualiza una lista sin reconstruirla: los elementos nuevos entran con animación
+    // y los existentes solo cambian su contenido, así el panel no parpadea.
+    function reconciliarLista(cont, items, { clave, clase, fijo, datos }) {
+      const previos = new Map();
+      [...cont.children].forEach(n => n.dataset.clave ? previos.set(n.dataset.clave, n) : n.remove());
+      let ancla = cont.firstElementChild;
+      items.forEach(it => {
+        const k = String(clave(it));
+        let nodo = previos.get(k);
+        if (nodo) previos.delete(k);
+        else {
+          nodo = document.createElement("div");
+          nodo.dataset.clave = k;
+          nodo.innerHTML = (fijo ? fijo(it) : "") + '<div class="item-datos"></div>';
+        }
+        const cls = clase(it);
+        if (nodo.className !== cls) nodo.className = cls;
+        const html = datos(it);
+        if (nodo._datos !== html) {
+          const caja = nodo.querySelector(":scope > .item-datos");
+          caja.innerHTML = html;
+          if (nodo._datos !== undefined) {
+            caja.classList.remove("actualizado");
+            void caja.offsetWidth;
+            caja.classList.add("actualizado");
+          }
+          nodo._datos = html;
+        }
+        if (nodo !== ancla) cont.insertBefore(nodo, ancla);
+        else ancla = nodo.nextElementSibling;
+      });
+      previos.forEach(n => n.remove());
+    }
+
+    function ponerValor(el, valor) {
+      if (!el || el.textContent === String(valor)) return;
+      el.textContent = valor;
+      el.classList.remove("tick");
+      void el.offsetWidth;
+      el.classList.add("tick");
+    }
+
+    function avatarPersona(id, hexSup, hexInf) {
+      return `<div class="pi-avatar" style="--sup:${hexSup};--inf:${hexInf}"><span>#${id}</span></div>`;
+    }
+
+    function datosPersona({ sexo, edad, superior, inferior, confianza, estado, pie }) {
+      const conf = Math.round(confianza * 100);
+      const prenda = (nivel, pr) => `
+        <span class="chip-prenda"><i style="background:${pr.hex}"></i>${nivel} <b>${pr.tipo}</b>${pr.tipo === "no visible" ? "" : ` · ${pr.color}`}</span>`;
+      return `
+        <div class="pi-main">
+          <div class="pi-top">
+            <b class="pi-sexo">${sexo}</b>
+            <span class="pi-edad">${edad}</span>
+            <span class="pi-estado ${estado[0]}">${estado[0] ? '<span class="radar-dot"></span>' : ""}${estado[1]}</span>
           </div>
-        `;
-      }).join("");
+          <div class="garments">${prenda("Sup", superior)}${prenda("Inf", inferior)}</div>
+        </div>
+        <div class="pi-conf">
+          <span>${conf}<small>%</small></span>
+          <i style="--v:${conf}%"></i>
+          <small>${pie}</small>
+        </div>`;
     }
 
     function dibujarOverlay() {
@@ -1674,9 +1892,9 @@
 
       if (id === 1) {
         container.innerHTML = `
-          <div class="kpi-card"><div class="num">0</div><div class="desc">Personas Detectadas</div></div>
-          <div class="kpi-card"><div class="num">0F / 0M</div><div class="desc">Femenino / Masculino</div></div>
-          <div class="kpi-card"><div class="num">0 / ${data.total_frames_video || 205}</div><div class="desc">Frames Procesados</div></div>
+          <div class="kpi-card"><div class="num" id="kpiTotal">0</div><div class="desc">Personas</div></div>
+          <div class="kpi-card"><div class="num" id="kpiSexo">0F / 0M</div><div class="desc">Femenino / Masculino</div></div>
+          <div class="kpi-card"><div class="num" id="kpiFrames">0 / ${data.total_frames_video || 205}</div><div class="desc">Frames</div></div>
         `;
       } else if (id === 2) {
         container.innerHTML = `
@@ -1801,6 +2019,7 @@
     let webcamMode = "demografia";
     let bgFrameData = null;
     let webcamLog = [];
+    let contadorRegistros = 0;
     let nextTrackId = 1;
     let activeWebcamTrack = null;
     let lastAutoCaptureTime = 0;
@@ -2263,7 +2482,7 @@
       const timestamp = new Date().toLocaleTimeString();
 
       const registro = {
-        id: webcamLog.length + 1,
+        id: ++contadorRegistros,
         timestamp,
         tipoEvento,
         personaId: persona.id,
@@ -2271,6 +2490,8 @@
         edad: persona.edad,
         prenda_superior: persona.prenda_superior,
         prenda_inferior: persona.prenda_inferior,
+        confianza: persona.confianza,
+        vivo: false,
         detalle,
         thumbnail: thumb
       };
@@ -2278,6 +2499,7 @@
       webcamLog.unshift(registro);
       if (webcamLog.length > 50) webcamLog.pop();
       renderizarBitacora();
+      return registro;
     }
 
     function renderizarBitacora() {
@@ -2288,23 +2510,32 @@
       const alertasCount = webcamLog.filter(x => /manual/i.test(x.tipoEvento)).length;
       document.getElementById('webcamKpiAlertas').textContent = alertasCount;
 
-      cont.innerHTML = webcamLog.map(r => `
-        <div class="feed-item">
-          <img class="feed-thumb" src="${r.thumbnail}" alt="Captura">
-          <div style="flex:1;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <b>${r.tipoEvento}</b>
-              <small style="color:var(--muted);font-family:'JetBrains Mono',monospace;">${r.timestamp}</small>
-            </div>
-            <div style="font-size:0.8rem;margin-top:2px;">
-              Persona #${r.personaId} • ${r.sexo} (${r.edad})<br/>
-              <span class="swatch" style="background:${r.prenda_superior.hex}"></span>Sup: <b>${r.prenda_superior.tipo}</b> (${r.prenda_superior.color}) |
-              <span class="swatch" style="background:${r.prenda_inferior.hex}"></span>Inf: <b>${r.prenda_inferior.tipo}</b> (${r.prenda_inferior.color})
-            </div>
-            <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">${r.detalle}</div>
-          </div>
-        </div>
-      `).join('');
+      if (webcamLog.length === 0) {
+        cont.innerHTML = `
+          <div class="feed-vacio">
+            <b>Aún no hay personas registradas</b>
+            <span>Activa la cámara y ponte frente a ella: se registrará tu sexo aparente, rango de edad y vestimenta, y se irá actualizando mientras sigas en cuadro.</span>
+          </div>`;
+        return;
+      }
+
+      // Un registro aparece una vez y luego se actualiza en su lugar mientras la persona sigue en cuadro
+      reconciliarLista(cont, webcamLog, {
+        clave: r => r.id,
+        clase: r => "person-item registro" + (r.vivo ? " active-tracking" : ""),
+        fijo: r => r.thumbnail
+          ? `<div class="pi-foto"><img src="${r.thumbnail}" alt="Persona #${r.personaId}"><span>#${r.personaId}</span></div>`
+          : avatarPersona(r.personaId, r.prenda_superior.hex, r.prenda_inferior.hex),
+        datos: r => datosPersona({
+          sexo: r.sexo,
+          edad: r.edad,
+          superior: r.prenda_superior,
+          inferior: r.prenda_inferior,
+          confianza: r.confianza || 0,
+          estado: r.vivo ? ["vivo", "En cámara"] : ["", r.tipoEvento],
+          pie: r.timestamp
+        })
+      });
     }
 
     function limpiarBitacora() {
@@ -2560,13 +2791,15 @@
         requestAnimationFrame(tick);
       });
 
-      // Spotlight sutil en KPIs
+      // Spotlight en paneles y KPIs (Spotlight Card)
       document.addEventListener('pointermove', e => {
-        const card = e.target.closest && e.target.closest('.kpi-card');
-        if (!card) return;
-        const r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-        card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        if (!e.target.closest) return;
+        [e.target.closest('.kpi-card'), e.target.closest('.card')].forEach(card => {
+          if (!card) return;
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+          card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        });
       }, { passive: true });
 
       // FadeContent
@@ -2907,6 +3140,11 @@
     }
 
     function reiniciarPersonaIA() {
+      if (iaEstado.registro) {
+        iaEstado.registro.vivo = false;
+        iaEstado.registro = null;
+        renderizarBitacora();
+      }
       iaEstado.persona = null;
       iaEstado.obs = [];
       iaEstado.faltas = 0;
@@ -2936,8 +3174,24 @@
         sexo: r.sexo,
         edad: r.edad,
         prenda_superior: r.prenda_superior,
-        prenda_inferior: r.prenda_inferior
+        prenda_inferior: r.prenda_inferior,
+        confianza: r.confianza
       };
+    }
+
+    // El registro de la persona en cuadro sigue al resultado consolidado más reciente
+    function actualizarRegistroVivo() {
+      const reg = iaEstado.registro, r = iaEstado.resultado;
+      if (!reg || !r) return;
+      Object.assign(reg, {
+        sexo: r.sexo,
+        edad: r.edad,
+        prenda_superior: r.prenda_superior,
+        prenda_inferior: r.prenda_inferior,
+        confianza: r.confianza,
+        detalle: `Confianza ${Math.round(r.confianza * 100)} % · ${iaEstado.obs.length} análisis`
+      });
+      renderizarBitacora();
     }
 
     // Analiza la cámara de forma continua, separado del dibujo para no bloquear el video
@@ -2967,9 +3221,11 @@
           const auto = document.getElementById('autoCaptureCheck').checked;
           if (!iaEstado.registrado && iaEstado.obs.length >= 2 && auto) {
             iaEstado.registrado = true;
-            registrarEventoEnBitacora('Persona identificada', personaParaBitacora(), `Confianza ${Math.round(iaEstado.resultado.confianza * 100)} % · ${iaEstado.obs.length} análisis`);
+            iaEstado.registro = registrarEventoEnBitacora('Persona identificada', personaParaBitacora(), `Confianza ${Math.round(iaEstado.resultado.confianza * 100)} % · ${iaEstado.obs.length} análisis`);
+            iaEstado.registro.vivo = true;
             playBeep(880, 0.08);
           }
+          actualizarRegistroVivo();
         } else if (++iaEstado.faltas >= 2) {
           reiniciarPersonaIA();
         }
