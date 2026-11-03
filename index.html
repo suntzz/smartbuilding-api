@@ -3444,10 +3444,8 @@
     window.addEventListener('hashchange', () => mostrarVista(vistaDesdeHash()));
     window.addEventListener('load', () => setTimeout(() => { window.__paginaLista = true; }, 0));
     // Al abrir la página se ve el logo sobre la cortina y luego se retira
-    transicion = transicion.then(() => new Promise(r => {
-      const listo = () => setTimeout(r, 650);
-      document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', listo, { once: true }) : listo();
-    })).then(retirarCortina);
+    // No espera a DOMContentLoaded: los módulos (el modelo de IA) lo retrasan varios segundos
+    transicion = transicion.then(() => esperar(650)).then(retirarCortina);
     if (vistaDesdeHash() === 'app') aplicarVista('app');
   </script>
 </body>
