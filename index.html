@@ -802,6 +802,16 @@
     </div>
   </header>
 
+  <div class="subnav-banner">
+    <div class="subnav-left">
+      <span class="badge-scope">CENTRO DE CONTROL CCTV</span>
+      <span>Conjunto Residencial San Carlos • Inferencia y telemetría de videovigilancia</span>
+    </div>
+    <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent);">
+      OpenCV Analytics // Detección Progresiva en Vivo
+    </div>
+  </div>
+
   <div class="tabs-wrapper">
     <div class="tabs-bar" id="tabsBar">
       <button class="tab-btn active" onclick="cambiarReto(1)">
@@ -845,6 +855,24 @@
           <h2 id="camTitle">Cámara 1: Recepción y Lobby</h2>
           <span class="pill pill-green" id="streamBadge"><span class="radar-dot"></span> Tracking Activo</span>
         </div>
+
+        <div class="controls-cam-bar" style="display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+        <label style="font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:8px;font-family:var(--font-mono);width:100%;">
+          <span>CANAL CCTV:</span>
+          <select id="cameraChannelSelect" style="flex:1;background:#1e293b;border:1px solid var(--border);color:#fff;padding:8px 12px;border-radius:8px;font-size:0.84rem;font-family:var(--font-sans);" onchange="seleccionarCanalCCTV(this.value)">
+            <option value="1">📹 Cámara 01: Recepción y Lobby (Reto 1: Demografía y Vestimenta)</option>
+            <option value="2">📹 Cámara 02: Acceso y Torniquetes (Reto 2: Conteo Entradas/Salidas)</option>
+            <option value="3">📹 Cámara 03: Pasillo Común y Áreas Sociales (Reto 3: Detección de Merodeo)</option>
+            <option value="4">📹 Cámara 04: Pasillo ABODA (Reto 4: Objeto Abandonado)</option>
+            <option value="5">📹 Cámara 05: Portería Vehicular (Reto 5: Lectura de Placas Día y Noche)</option>
+            <option value="6">📹 Cámara 06: Sala Interior (Reto 6: Caídas y Comportamientos de Riesgo)</option>
+            <option value="7">📹 Cámara 07: Casilleros de Correspondencia por Apartamento (Reto 7)</option>
+            <option value="webcam">🔴 Sensor Local: Mi Cámara Web en Vivo (Detección Real-Time)</option>
+            <option value="foto">📸 Analizador de Foto Local (Cargar Imagen Propia)</option>
+            <option value="residentes">📋 Directorio Residencial Conjunto San Carlos</option>
+          </select>
+        </label>
+      </div>
 
         <div class="video-viewport" id="viewport">
           <div class="hud-corner tl"></div>
@@ -1071,7 +1099,22 @@
       document.getElementById('residentesPanel').style.display = 'none';
     }
 
+    
+    function seleccionarCanalCCTV(val) {
+      if (val === "webcam") {
+        mostrarWebcamLive();
+      } else if (val === "foto") {
+        mostrarSubirFoto();
+      } else if (val === "residentes") {
+        mostrarDirectorioResidentes();
+      } else {
+        cambiarReto(parseInt(val));
+      }
+    }
+
     function cambiarReto(id) {
+      const selCh = document.getElementById("cameraChannelSelect"); if (selCh) selCh.value = String(id);
+      resetearSeguimientoProgresivo();
       currentReto = id;
       ocultarTodosLosPaneles();
       document.getElementById('cctvView').style.display = 'grid';
@@ -1104,6 +1147,7 @@
     }
 
     function reiniciarVideo() {
+      resetearSeguimientoProgresivo();
       videoElem.currentTime = 0;
       videoElem.play();
       btnPlayPause.textContent = "⏸ Pausa";
@@ -1146,6 +1190,121 @@
       canvas.height = videoElem.videoHeight || 360;
     });
 
+
+    // =====================================================================
+    // DETECCIÓN PROGRESIVA EN TIEMPO REAL (RETO 1 Y TIMELINE DE VIDEO)
+    // =====================================================================
+    let seenPersonIds = new Set();
+    let lastProcessedFrame = -1;
+
+    function resetearSeguimientoProgresivo() {
+      seenPersonIds.clear();
+      lastProcessedFrame = -1;
+    }
+
+    function actualizarFeedProgresivoReto1(targetFrame) {
+      if (!window.RETOS_DATA || !window.RETOS_DATA.retos || !window.RETOS_DATA.retos[1]) return;
+      const data1 = window.RETOS_DATA.retos[1];
+      const summary = data1.summary;
+      if (!summary || !summary.personas) return;
+
+      const feed = document.getElementById("feedContainer");
+      const kpiContainer = document.getElementById("kpiContainer");
+      const allPersons = summary.personas;
+
+      // Si rebobinamos hacia atrás el video
+      if (targetFrame < lastProcessedFrame - 5) {
+        seenPersonIds.clear();
+      }
+      lastProcessedFrame = targetFrame;
+
+      // Filtrar personas que ya ingresaron a la escena
+      const personasVisibles = allPersons.filter(p => p.primer_frame <= targetFrame);
+
+      // Detectar si alguna persona acaba de ingresar en este frame exacto
+      personasVisibles.forEach(p => {
+        if (!seenPersonIds.has(p.person_id)) {
+          seenPersonIds.add(p.person_id);
+          playBeep(920, 0.08);
+          mostrarToast(`👁️ Persona #${p.person_id} detectada: ${p.sexo_aparente}, ${p.rango_edad}`, "success");
+        }
+      });
+
+      // Actualizar KPIs progresivamente en tiempo real
+      const total = personasVisibles.length;
+      const fem = personasVisibles.filter(p => p.sexo_aparente === "Femenino").length;
+      const masc = personasVisibles.filter(p => p.sexo_aparente === "Masculino").length;
+      const totalFrames = summary.total_frames_video || 205;
+
+      if (kpiContainer) {
+        kpiContainer.innerHTML = `
+          <div class="kpi-card">
+            <div class="num">${total}</div>
+            <div class="desc">Personas Detectadas</div>
+          </div>
+          <div class="kpi-card">
+            <div class="num">${fem}F / ${masc}M</div>
+            <div class="desc">Femenino / Masculino</div>
+          </div>
+          <div class="kpi-card">
+            <div class="num">${Math.min(totalFrames, targetFrame)} / ${totalFrames}</div>
+            <div class="desc">Frames Procesados</div>
+          </div>
+        `;
+      }
+
+      const metaLabel = document.getElementById("metaRetoLabel");
+      if (metaLabel) {
+        metaLabel.textContent = `${total} de ${allPersons.length} detectadas`;
+      }
+
+      // Renderizar la lista progresiva
+      if (personasVisibles.length === 0) {
+        feed.innerHTML = `
+          <div style="color:var(--text-muted);text-align:center;padding:36px 16px;font-size:0.85rem;">
+            <div style="font-size:2rem;margin-bottom:8px;">⏳</div>
+            <div style="font-weight:600;color:#f8fafc;">Esperando detección en el corredor...</div>
+            <div style="font-size:0.76rem;color:var(--text-dim);margin-top:6px;max-width:320px;margin-inline:auto;">
+              Inicia la reproducción del video. Conforme las personas ingresen al cuadro de la cámara, aparecerán aquí una a una en tiempo real.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      feed.innerHTML = personasVisibles.map(p => {
+        const enPantalla = (p.primer_frame <= targetFrame && targetFrame <= p.ultimo_frame);
+        return `
+          <div class="person-item ${enPantalla ? "active-tracking" : ""}">
+            <div class="pid">ID #${p.person_id}</div>
+            <div>
+              <div style="font-weight:600;font-size:0.92rem;display:flex;align-items:center;gap:8px;">
+                <span>${p.sexo_aparente === "Femenino" ? "👩" : "👨"} ${p.sexo_aparente}</span>
+                <span style="color:var(--accent);font-family:var(--font-mono);font-size:0.8rem;">${p.rango_edad}</span>
+                ${enPantalla 
+                  ? "<span class="badge-status badge-green"><span class="radar-dot"></span> EN PANTALLA</span>" 
+                  : "<span class="badge-status badge-blue">REGISTRADO</span>"}
+              </div>
+              <div class="garments">
+                <span class="swatch-tag">
+                  <span class="dot" style="background:${p.prenda_superior.hex}"></span>
+                  Sup: <b>${p.prenda_superior.tipo}</b> (${p.prenda_superior.color})
+                </span>
+                <span class="swatch-tag">
+                  <span class="dot" style="background:${p.prenda_inferior.hex}"></span>
+                  Inf: <b>${p.prenda_inferior.tipo}</b> (${p.prenda_inferior.color})
+                </span>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:0.76rem;color:var(--text-dim);font-family:var(--font-mono);">
+              <div style="color:var(--success);">Conf: ${Math.round(p.confianza * 100)}%</div>
+              <div>F${p.primer_frame}-F${p.ultimo_frame}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
     function dibujarOverlay() {
       if (!window.RETOS_DATA || !window.RETOS_DATA.retos[currentReto]) return;
       const retoData = window.RETOS_DATA.retos[currentReto];
@@ -1169,6 +1328,9 @@
       const cw = canvas.width;
       const ch = canvas.height;
 
+      if (currentReto === 1) {
+        actualizarFeedProgresivoReto1(targetFrame);
+      }
       if (currentReto === 1 && currentFrameData.personas) {
         currentFrameData.personas.forEach(p => {
           const [x, y, w, h] = p.bbox;
@@ -1392,12 +1554,10 @@
       if (!data) return;
 
       if (id === 1) {
-        const fem = data.resumen_demografico.por_sexo_aparente["Femenino"] || 0;
-        const masc = data.resumen_demografico.por_sexo_aparente["Masculino"] || 0;
         container.innerHTML = `
-          <div class="kpi-card"><div class="num">${data.total_personas_detectadas}</div><div class="desc">Personas</div></div>
-          <div class="kpi-card"><div class="num">${fem}F / ${masc}M</div><div class="desc">Sexo Aparente</div></div>
-          <div class="kpi-card"><div class="num">${data.frames_analizados}</div><div class="desc">Frames Analizados</div></div>
+          <div class="kpi-card"><div class="num">0</div><div class="desc">Personas Detectadas</div></div>
+          <div class="kpi-card"><div class="num">0F / 0M</div><div class="desc">Femenino / Masculino</div></div>
+          <div class="kpi-card"><div class="num">0 / ${data.total_frames_video || 205}</div><div class="desc">Frames Procesados</div></div>
         `;
       } else if (id === 2) {
         container.innerHTML = `
@@ -1445,18 +1605,8 @@
       if (!data) return;
 
       if (id === 1) {
-        feed.innerHTML = data.personas.map(p => `
-          <div class="feed-item">
-            <div>
-              <b>ID #${p.person_id}</b> — ${p.sexo_aparente} (${p.rango_edad})<br/>
-              <small>
-                <span class="swatch" style="background:${p.prenda_superior.hex}"></span>Sup: <b>${p.prenda_superior.tipo}</b> (${p.prenda_superior.color}) |
-                <span class="swatch" style="background:${p.prenda_inferior.hex}"></span>Inf: <b>${p.prenda_inferior.tipo}</b> (${p.prenda_inferior.color})
-              </small>
-            </div>
-            <span class="badge-status badge-blue">Conf ${Math.round(p.confianza*100)}%</span>
-          </div>
-        `).join('');
+        resetearSeguimientoProgresivo();
+        actualizarFeedProgresivoReto1(0);
       } else if (id === 2) {
         feed.innerHTML = data.eventos_cruce.map(e => `
           <div class="feed-item">

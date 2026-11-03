@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.datos import cargar_residentes
 from app.vision.demografia_vestimenta import DetectorDemografiaVestimenta
@@ -20,6 +21,11 @@ app = FastAPI(
     ),
     version="1.1.0",
 )
+
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+if VIDEOS_DIR.exists():
+    app.mount("/data/videos", StaticFiles(directory=VIDEOS_DIR), name="videos")
 
 residentes = cargar_residentes()
 historial_analisis_demografia: list[dict] = []

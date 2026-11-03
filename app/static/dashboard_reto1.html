@@ -436,6 +436,29 @@
       border-color: #f43f5e;
     }
 
+
+    .time-slider {
+      flex: 1;
+      min-width: 90px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      height: 4px;
+    }
+    .time-lbl {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      min-width: 76px;
+      text-align: right;
+      letter-spacing: 0.02em;
+    }
+    .person-item.active-tracking {
+      border-color: rgba(56, 189, 248, 0.55);
+      background: rgba(56, 189, 248, 0.08);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.16);
+      transform: translateX(3px);
+    }
+
     /* Bento KPI Data Tiles */
     .kpi-row {
       display: grid;
@@ -649,6 +672,7 @@
       letter-spacing: 0.01em;
     }
   </style>
+  <script src="/static/retos_data.js"></script>
 </head>
 <body>
   <header>
@@ -702,17 +726,23 @@
           <div class="scanlines"></div>
           <div class="hud-tl-tag"><span class="radar-dot"></span> CAM-01 // RETO 1 FEED</div>
           <div class="hud-br-tag">SAN CARLOS • 30 FPS</div>
-          <img id="streamImg" src="/vision/demografia-vestimenta/stream?video=reto1_demografia_vestimenta.mp4" alt="Stream analítico de videovigilancia" />
+          <video id="mainVideo" playsinline preload="auto" muted src="/data/videos/reto1_demografia_vestimenta.mp4"></video>
+          <canvas id="overlayCanvas"></canvas>
+          <img id="streamImg" src="/vision/demografia-vestimenta/stream?video=reto1_demografia_vestimenta.mp4" alt="Stream analítico" style="display:none;" />
         </div>
 
         <div class="video-controls">
-          <select id="videoSelect" title="Selecciona la cámara o video a transmitir">
-            <option value="reto1_demografia_vestimenta.mp4">Cámara 1: Lobby Recepción (Cuerpo completo)</option>
-            <option value="reto1_corredor_frontal.mp4">Cámara 2: Pasillo Frontal (Rostros y torso)</option>
+          <select id="videoSelect" title="Selecciona la cámara o video a transmitir" onchange="cambiarVideo(this.value)">
+            <option value="reto1_demografia_vestimenta.mp4">📹 Cámara 1: Lobby Recepción (Cuerpo completo)</option>
+            <option value="reto1_corredor_frontal.mp4">📹 Cámara 2: Pasillo Frontal (Rostros y torso)</option>
           </select>
-          <button class="btn-ctrl primary" onclick="ejecutarAnalisis()">⚡ Analizar Completo</button>
-          <button class="btn-ctrl" onclick="toggleFullscreen()" title="Pantalla completa (F)">⛶ Fullscreen</button>
+          <button class="btn-ctrl primary" id="btnPlayPause" onclick="togglePlay()">▶ Reproducir</button>
+          <button class="btn-ctrl" onclick="reiniciarVideo()">↺ Reiniciar</button>
+          <input type="range" class="time-slider" id="timeSlider" min="0" max="100" value="0" step="0.1" oninput="seekVideo(this.value)">
+          <span class="time-lbl" id="timeLabel">00:00 / 00:00</span>
+          <button class="btn-ctrl" onclick="toggleModoStream()" id="btnModoStream" title="Alternar entre video interactivo y stream MJPEG">📡 MJPEG</button>
           <button class="btn-ctrl" onclick="toggleAudio()" id="btnAudioToggle" title="Activar/Silenciar audio (M)">🔊 Audio</button>
+          <button class="btn-ctrl" onclick="toggleFullscreen()" title="Pantalla completa (F)">⛶ Fullscreen</button>
           <button class="btn-ctrl" onclick="descargarReporteJSON()">📥 JSON</button>
         </div>
       </div>
@@ -772,17 +802,238 @@
     </div>
   </div>
 
+  
   <script>
-    const sel = document.getElementById('videoSelect');
-    const img = document.getElementById('streamImg');
+    const videoElem = document.getElementById("mainVideo");
+    const canvas = document.getElementById("overlayCanvas");
+    const ctx = canvas.getContext("2d");
+    const img = document.getElementById("streamImg");
+    const sel = document.getElementById("videoSelect");
+    const timeSlider = document.getElementById("timeSlider");
+    const timeLabel = document.getElementById("timeLabel");
+    const btnPlayPause = document.getElementById("btnPlayPause");
+
     let audioActivo = true;
+    let modoMJPEG = false;
+    let seenPersonIds = new Set();
+    let lastProcessedFrame = -1;
     let ultimoReporte = null;
+
+    function formatTime(s) {
+      if (isNaN(s)) return "00:00";
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    }
+
+    function togglePlay() {
+      if (modoMJPEG) {
+        toggleModoStream();
+      }
+      if (videoElem.paused) {
+        videoElem.play();
+        btnPlayPause.textContent = "⏸ Pausa";
+      } else {
+        videoElem.pause();
+        btnPlayPause.textContent = "▶ Reproducir";
+      }
+    }
+
+    function reiniciarVideo() {
+      if (modoMJPEG) toggleModoStream();
+      videoElem.currentTime = 0;
+      seenPersonIds.clear();
+      lastProcessedFrame = -1;
+      videoElem.play();
+      btnPlayPause.textContent = "⏸ Pausa";
+      actualizarFeedProgresivo(0);
+    }
+
+    function seekVideo(val) {
+      if (videoElem.duration) {
+        videoElem.currentTime = (val / 100) * videoElem.duration;
+      }
+    }
+
+    videoElem.addEventListener("timeupdate", () => {
+      if (videoElem.duration) {
+        timeSlider.value = (videoElem.currentTime / videoElem.duration) * 100;
+        timeLabel.textContent = `${formatTime(videoElem.currentTime)} / ${formatTime(videoElem.duration)}`;
+      }
+      dibujarOverlay();
+    });
+
+    videoElem.addEventListener("ended", () => {
+      btnPlayPause.textContent = "▶ Reproducir";
+    });
+
+    videoElem.addEventListener("loadedmetadata", () => {
+      canvas.width = videoElem.videoWidth || 768;
+      canvas.height = videoElem.videoHeight || 432;
+    });
+
+    function toggleModoStream() {
+      modoMJPEG = !modoMJPEG;
+      const btn = document.getElementById("btnModoStream");
+      const statusText = document.getElementById("statusText");
+      if (modoMJPEG) {
+        videoElem.pause();
+        videoElem.style.display = "none";
+        canvas.style.display = "none";
+        img.style.display = "block";
+        img.src = `/vision/demografia-vestimenta/stream?video=${encodeURIComponent(sel.value)}&t=${Date.now()}`;
+        btn.textContent = "🎬 Modo MP4";
+        btn.className = "btn-ctrl primary";
+        statusText.textContent = "MJPEG Live";
+        mostrarToast("Cambiado a stream MJPEG directo de OpenCV", "warning");
+      } else {
+        img.style.display = "none";
+        videoElem.style.display = "block";
+        canvas.style.display = "block";
+        btn.textContent = "📡 MJPEG";
+        btn.className = "btn-ctrl";
+        statusText.textContent = "Stream Activo";
+        reiniciarVideo();
+        mostrarToast("Cambiado a video analítico interactivo con detección progresiva", "success");
+      }
+    }
+
+    function cambiarVideo(val) {
+      videoElem.src = `/data/videos/${val}`;
+      videoElem.load();
+      img.src = `/vision/demografia-vestimenta/stream?video=${encodeURIComponent(val)}&t=${Date.now()}`;
+      reiniciarVideo();
+      mostrarToast(`Cargada ${sel.options[sel.selectedIndex].text}`, "info");
+    }
+
+    function dibujarOverlay() {
+      if (modoMJPEG) return;
+      const fps = 12.0;
+      const targetFrame = Math.round(videoElem.currentTime * fps);
+
+      actualizarFeedProgresivo(targetFrame);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!window.RETOS_DATA || !window.RETOS_DATA.retos || !window.RETOS_DATA.retos[1]) return;
+      const frames = window.RETOS_DATA.retos[1].frames;
+      
+      let minDiff = 1e9;
+      let currentFrameData = null;
+      for (const f of frames) {
+        const diff = Math.abs(f.frame - targetFrame);
+        if (diff < minDiff) {
+          minDiff = diff;
+          currentFrameData = f;
+        }
+      }
+
+      if (currentFrameData && currentFrameData.personas) {
+        currentFrameData.personas.forEach(p => {
+          const [x, y, w, h] = p.bbox;
+          const colBox = p.sexo_aparente === "Masculino" ? "#38bdf8" : "#f472b6";
+          ctx.strokeStyle = colBox;
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(x, y, w, h);
+
+          ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
+          ctx.fillRect(x, Math.max(0, y - 50), 240, 46);
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 12px Plus Jakarta Sans, sans-serif";
+          ctx.fillText(`ID #${p.person_id} | ${p.sexo_aparente} | ${p.rango_edad}`, x + 6, Math.max(14, y - 32));
+
+          ctx.font = "11px JetBrains Mono, monospace";
+          ctx.fillStyle = "#86efac";
+          ctx.fillText(`Sup: ${p.prenda_superior.tipo} (${p.prenda_superior.color})`, x + 6, Math.max(28, y - 18));
+          ctx.fillStyle = "#93c5fd";
+          ctx.fillText(`Inf: ${p.prenda_inferior.tipo} (${p.prenda_inferior.color})`, x + 6, Math.max(42, y - 5));
+        });
+      }
+    }
+
+    function actualizarFeedProgresivo(targetFrame) {
+      if (!window.RETOS_DATA || !window.RETOS_DATA.retos || !window.RETOS_DATA.retos[1]) return;
+      const summary = window.RETOS_DATA.retos[1].summary;
+      if (!summary || !summary.personas) return;
+
+      const feed = document.getElementById("personList");
+      const allPersons = summary.personas;
+
+      if (targetFrame < lastProcessedFrame - 5) {
+        seenPersonIds.clear();
+      }
+      lastProcessedFrame = targetFrame;
+
+      const personasVisibles = allPersons.filter(p => p.primer_frame <= targetFrame);
+
+      personasVisibles.forEach(p => {
+        if (!seenPersonIds.has(p.person_id)) {
+          seenPersonIds.add(p.person_id);
+          playBeep(920, 0.08);
+          mostrarToast(`👁️ Persona #${p.person_id} ingresó al corredor (${p.sexo_aparente}, ${p.rango_edad})`, "success");
+        }
+      });
+
+      const total = personasVisibles.length;
+      const fem = personasVisibles.filter(p => p.sexo_aparente === "Femenino").length;
+      const masc = personasVisibles.filter(p => p.sexo_aparente === "Masculino").length;
+      const totalFrames = summary.total_frames_video || 205;
+
+      document.getElementById("totalPersonas").textContent = total;
+      document.getElementById("totalPersonasMini").textContent = total;
+      document.getElementById("distSexo").textContent = `${fem}F / ${masc}M`;
+      document.getElementById("framesAnalizados").textContent = `${Math.min(totalFrames, targetFrame)} / ${totalFrames}`;
+
+      if (personasVisibles.length === 0) {
+        feed.innerHTML = `
+          <div style="color:var(--text-muted);text-align:center;padding:36px 16px;font-size:0.85rem;">
+            <div style="font-size:2rem;margin-bottom:8px;">⏳</div>
+            <div style="font-weight:600;color:#f8fafc;">Esperando detección en el corredor...</div>
+            <div style="font-size:0.76rem;color:var(--text-dim);margin-top:6px;max-width:320px;margin-inline:auto;">
+              Inicia la reproducción del video. Conforme las personas ingresen al cuadro de la cámara, aparecerán aquí una a una en tiempo real.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      feed.innerHTML = personasVisibles.map(p => {
+        const enPantalla = (p.primer_frame <= targetFrame && targetFrame <= p.ultimo_frame);
+        return `
+          <div class="person-item ${enPantalla ? "active-tracking" : ""}">
+            <div class="pid">ID #${p.person_id}</div>
+            <div>
+              <div style="font-weight:600;font-size:0.92rem;display:flex;align-items:center;gap:8px;">
+                <span>${p.sexo_aparente === "Femenino" ? "👩" : "👨"} ${p.sexo_aparente}</span>
+                <span style="color:var(--accent);font-family:var(--font-mono);font-size:0.8rem;">${p.rango_edad}</span>
+                ${enPantalla 
+                  ? "<span class="badge-status badge-green"><span class="radar-dot"></span> EN PANTALLA</span>" 
+                  : "<span class="badge-status badge-blue">REGISTRADO</span>"}
+              </div>
+              <div class="garments">
+                <span class="swatch-tag">
+                  <span class="dot" style="background:${p.prenda_superior.hex}"></span>
+                  Sup: <b>${p.prenda_superior.tipo}</b> (${p.prenda_superior.color})
+                </span>
+                <span class="swatch-tag">
+                  <span class="dot" style="background:${p.prenda_inferior.hex}"></span>
+                  Inf: <b>${p.prenda_inferior.tipo}</b> (${p.prenda_inferior.color})
+                </span>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:0.76rem;color:var(--text-dim);font-family:var(--font-mono);">
+              <div style="color:var(--success);">Conf: ${Math.round(p.confianza * 100)}%</div>
+              <div>F${p.primer_frame}-F${p.ultimo_frame}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
 
     // Reloj digital en vivo
     function tickClock() {
       const d = new Date();
-      const p = n => String(n).padStart(2, '0');
-      const el = document.getElementById('clockDigits');
+      const p = n => String(n).padStart(2, "0");
+      const el = document.getElementById("clockDigits");
       if (el) el.textContent = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} COT`;
     }
     setInterval(tickClock, 1000);
@@ -805,12 +1056,12 @@
 
     function toggleAudio() {
       audioActivo = !audioActivo;
-      const btn = document.getElementById('btnAudioToggle');
+      const btn = document.getElementById("btnAudioToggle");
       if (btn) {
-        btn.textContent = audioActivo ? '🔊 Audio' : '🔇 Silencio';
-        btn.className = audioActivo ? 'btn-ctrl' : 'btn-ctrl danger';
+        btn.textContent = audioActivo ? "🔊 Audio" : "🔇 Silencio";
+        btn.className = audioActivo ? "btn-ctrl" : "btn-ctrl danger";
       }
-      mostrarToast(audioActivo ? 'Audio activado' : 'Audio silenciado', audioActivo ? 'success' : 'warning');
+      mostrarToast(audioActivo ? "Audio activado" : "Audio silenciado", audioActivo ? "success" : "warning");
     }
 
     function toggleFullscreen() {
@@ -825,15 +1076,15 @@
     }
 
     function abrirModalAtajos() {
-      document.getElementById('shortcutsModal').style.display = 'flex';
+      document.getElementById("shortcutsModal").style.display = "flex";
     }
     function cerrarModalAtajos(e) {
-      if (!e || e.target.id === 'shortcutsModal' || e.type === 'click') {
-        document.getElementById('shortcutsModal').style.display = 'none';
+      if (!e || e.target.id === "shortcutsModal" || e.type === "click") {
+        document.getElementById("shortcutsModal").style.display = "none";
       }
     }
 
-    function playBeep(freq = 880, dur = 0.12) {
+    function playBeep(freq = 880, dur = 0.1) {
       if (!audioActivo) return;
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -849,104 +1100,40 @@
       } catch (e) {}
     }
 
-    sel.addEventListener('change', () => {
-      img.src = `/vision/demografia-vestimenta/stream?video=${encodeURIComponent(sel.value)}&t=${Date.now()}`;
-      mostrarToast(`Cambiando a ${sel.options[sel.selectedIndex].text}`, 'info');
-      ejecutarAnalisis();
-    });
-
-    async function ejecutarAnalisis() {
-      const video = sel.value;
-      const statusText = document.getElementById('statusText');
-      statusText.textContent = 'Analizando...';
-      try {
-        const res = await fetch(`/vision/demografia-vestimenta/analizar-video?video=${encodeURIComponent(video)}`, { method: 'POST' });
-        const data = await res.json();
-        ultimoReporte = data;
-
-        document.getElementById('totalPersonas').textContent = data.total_personas_detectadas;
-        document.getElementById('totalPersonasMini').textContent = data.total_personas_detectadas;
-        const fem = data.resumen_demografico.por_sexo_aparente['Femenino'] || 0;
-        const masc = data.resumen_demografico.por_sexo_aparente['Masculino'] || 0;
-        document.getElementById('distSexo').textContent = `${fem}F / ${masc}M`;
-        document.getElementById('framesAnalizados').textContent = data.frames_analizados;
-
-        const container = document.getElementById('personList');
-        if (!data.personas || data.personas.length === 0) {
-          container.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:24px;">No se detectaron personas en este clip.</div>';
-          return;
-        }
-
-        container.innerHTML = data.personas.map(p => `
-          <div class="person-item">
-            <div class="pid">ID #${p.person_id}</div>
-            <div>
-              <div style="font-weight:600;font-size:0.92rem;display:flex;align-items:center;gap:8px;">
-                <span>${p.sexo_aparente === 'Femenino' ? '👩' : '👨'} ${p.sexo_aparente}</span>
-                <span style="color:var(--accent);font-family:var(--font-mono);font-size:0.8rem;">${p.rango_edad}</span>
-              </div>
-              <div class="garments">
-                <span class="swatch-tag">
-                  <span class="dot" style="background:${p.prenda_superior.hex}"></span>
-                  Sup: <b>${p.prenda_superior.tipo}</b> (${p.prenda_superior.color})
-                </span>
-                <span class="swatch-tag">
-                  <span class="dot" style="background:${p.prenda_inferior.hex}"></span>
-                  Inf: <b>${p.prenda_inferior.tipo}</b> (${p.prenda_inferior.color})
-                </span>
-              </div>
-            </div>
-            <div style="text-align:right;font-size:0.76rem;color:var(--text-dim);font-family:var(--font-mono);">
-              <div style="color:var(--success);">Conf: ${Math.round(p.confianza * 100)}%</div>
-              <div>Frames: ${p.primer_frame}-${p.ultimo_frame}</div>
-            </div>
-          </div>
-        `).join('');
-
-        statusText.textContent = 'Stream Activo';
-        playBeep(920, 0.1);
-        mostrarToast(`Análisis completado: ${data.total_personas_detectadas} personas detectadas`, 'success');
-      } catch (e) {
-        statusText.textContent = 'Error Stream';
-        mostrarToast('Error al conectar con la API de visión', 'danger');
-      }
-    }
-
     function descargarReporteJSON() {
-      if (!ultimoReporte) return mostrarToast('Aún no hay análisis generado', 'warning');
-      const blob = new Blob([JSON.stringify(ultimoReporte, null, 2)], { type: 'application/json' });
+      if (!window.RETOS_DATA || !window.RETOS_DATA.retos[1]) return;
+      const data = window.RETOS_DATA.retos[1].summary;
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `reporte_reto1_${sel.value}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      mostrarToast('Descargando reporte JSON...', 'success');
+      mostrarToast("Descargando reporte JSON...", "success");
     }
 
     // Atajos de teclado
-    window.addEventListener('keydown', (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-      if (e.code === 'Space') {
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+      if (e.code === "Space") {
         e.preventDefault();
-        ejecutarAnalisis();
-      } else if (e.code === 'KeyR') {
-        img.src = `/vision/demografia-vestimenta/stream?video=${encodeURIComponent(sel.value)}&t=${Date.now()}`;
-        mostrarToast('Stream recargado', 'success');
-      } else if (e.code === 'KeyF') {
+        togglePlay();
+      } else if (e.code === "KeyR") {
+        reiniciarVideo();
+      } else if (e.code === "KeyF") {
         toggleFullscreen();
-      } else if (e.code === 'KeyM') {
+      } else if (e.code === "KeyM") {
         toggleAudio();
-      } else if (e.code === 'KeyJ') {
+      } else if (e.code === "KeyJ") {
         descargarReporteJSON();
-      } else if (e.key === '?' || e.key === 'h' || e.key === 'H') {
+      } else if (e.key === "?" || e.key === "h" || e.key === "H") {
         abrirModalAtajos();
-      } else if (e.key === 'Escape') {
-        document.getElementById('shortcutsModal').style.display = 'none';
+      } else if (e.key === "Escape") {
+        document.getElementById("shortcutsModal").style.display = "none";
       }
     });
 
-    ejecutarAnalisis();
+    // Iniciar con feed vacío esperando reproducción
+    actualizarFeedProgresivo(0);
   </script>
-</body>
-</html>
