@@ -806,9 +806,74 @@
     .time-slider::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--text); }
     .time-lbl { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); min-width: 84px; text-align: center; font-variant-numeric: tabular-nums; }
 
-    .ia-estado { font-size: 0.78rem; color: var(--text-dim); font-family: var(--font-mono); }
-    .ia-estado[data-tipo="ok"] { color: #9fd9bd; }
-    .ia-estado[data-tipo="error"] { color: #f1a7a9; }
+    .ia-estado {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(10, 10, 10, 0.6);
+      font-size: 0.74rem;
+      line-height: 1.5;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      overflow: hidden;
+    }
+    .ia-punto { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--text-dim); }
+    .ia-barra { position: absolute; left: 0; bottom: 0; height: 2px; width: var(--p, 0%); background: linear-gradient(90deg, #8a6f3c, var(--accent)); transition: width 0.3s; }
+    .ia-estado[data-tipo="cargando"] { color: var(--text-muted); }
+    .ia-estado[data-tipo="cargando"] .ia-punto { background: var(--accent); animation: latidoOro 1.4s infinite; }
+    .ia-estado[data-tipo="ok"] { color: #9fd9bd; border-color: rgba(63, 178, 127, 0.25); }
+    .ia-estado[data-tipo="ok"] .ia-punto { background: var(--success); box-shadow: 0 0 10px rgba(63, 178, 127, 0.7); }
+    .ia-estado[data-tipo="ok"] .ia-barra, .ia-estado[data-tipo="error"] .ia-barra { display: none; }
+    .ia-estado[data-tipo="error"] { color: #f1a7a9; border-color: rgba(229, 72, 77, 0.3); }
+    .ia-estado[data-tipo="error"] .ia-punto { background: var(--danger); }
+    @keyframes latidoOro { 0% { box-shadow: 0 0 0 0 rgba(201, 164, 92, 0.6); } 70%, 100% { box-shadow: 0 0 0 7px rgba(201, 164, 92, 0); } }
+
+    #webcamViewport { transition: aspect-ratio 0.4s; }
+    #webcamViewport video, #webcamViewport canvas { object-fit: contain; }
+    .webcam-espera {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 24px;
+      text-align: center;
+      background: radial-gradient(circle at 50% 42%, rgba(201, 164, 92, 0.09), transparent 55%), #070707;
+    }
+    .webcam-espera b { font-size: 1rem; font-weight: 600; margin-top: 10px; }
+    .webcam-espera span { font-size: 0.8rem; color: var(--text-dim); max-width: 340px; line-height: 1.55; }
+    .webcam-lente {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 164, 92, 0.45);
+      background: radial-gradient(circle, #1a1712, #0d0d0d 70%);
+      color: var(--accent);
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s;
+    }
+    .webcam-lente svg { width: 30px; height: 30px; }
+    .webcam-lente::before, .webcam-lente::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 164, 92, 0.5);
+      animation: onda 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+    .webcam-lente::after { animation-delay: 1.3s; }
+    .webcam-lente:hover { transform: scale(1.06); border-color: var(--accent); }
+    @keyframes onda { from { transform: scale(1); opacity: 0.8; } to { transform: scale(1.9); opacity: 0; } }
     .motor-ia { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); margin-top: -4px; }
     .motor-ia span { color: var(--accent); margin-right: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
 
@@ -1238,13 +1303,20 @@
           </div>
           <video id="webcamVideo" playsinline autoplay muted style="transform: scaleX(-1);"></video>
           <canvas id="webcamCanvas" style="transform: scaleX(-1);"></canvas>
-          <div id="webcamPlaceholder" style="position:absolute;color:var(--muted);text-align:center;padding:20px;">
-            <div style="font-weight:600;font-size:1rem;color:#f8fafc;">Presiona "Activar Cámara Web" para iniciar</div>
-            <div style="font-size:0.8rem;margin-top:4px;">Tu navegador te solicitará permiso para acceder a la cámara</div>
+          <div id="webcamPlaceholder" class="webcam-espera">
+            <button class="webcam-lente" type="button" onclick="toggleWebcam()" aria-label="Activar cámara web">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg>
+            </button>
+            <b>Activa tu cámara para empezar</b>
+            <span>El modelo detecta tu sexo aparente, rango de edad y vestimenta. Las imágenes no salen de tu equipo.</span>
           </div>
         </div>
 
-        <p class="ia-estado" id="iaEstado">El modelo de IA se descarga al activar la cámara (~135 MB, solo la primera vez). Todo se procesa en tu navegador.</p>
+        <div class="ia-estado" id="iaEstado">
+          <span class="ia-punto"></span>
+          <span class="ia-texto">El modelo de IA se descarga al activar la cámara (~135 MB, solo la primera vez). Todo se procesa en tu navegador.</span>
+          <i class="ia-barra"></i>
+        </div>
 
         <div class="video-controls">
           <button class="btn-ctrl primary" id="btnToggleWebcam" onclick="toggleWebcam()">▶ Activar Cámara Web</button>
@@ -2127,6 +2199,7 @@
 
         webcamCanvas.width = webcamVideo.videoWidth || 640;
         webcamCanvas.height = webcamVideo.videoHeight || 480;
+        document.getElementById('webcamViewport').style.aspectRatio = `${webcamCanvas.width} / ${webcamCanvas.height}`;
         webcamPlaceholder.style.display = 'none';
 
         webcamStatusBadge.innerHTML = '<span class="radar-dot"></span> Cámara en Vivo';
@@ -2153,7 +2226,8 @@
       }
       if (webcamAnimId) cancelAnimationFrame(webcamAnimId);
       webcamVideo.srcObject = null;
-      webcamPlaceholder.style.display = 'block';
+      document.getElementById('webcamViewport').style.aspectRatio = '';
+      webcamPlaceholder.style.display = '';
       webcamStatusBadge.innerHTML = '<span class="radar-dot red"></span> Cámara Inactiva';
       webcamStatusBadge.className = "pill pill-red";
       const webcamHudDot = document.getElementById('webcamHudDot');
@@ -3109,10 +3183,11 @@
     const iaCanvas = document.createElement('canvas');
     const procesarFrameWebcamClasico = window.procesarFrameWebcam;
 
-    function mostrarEstadoIA(texto, tipo) {
+    function mostrarEstadoIA(texto, tipo, progreso) {
       const el = document.getElementById('iaEstado');
-      el.textContent = texto;
-      el.dataset.tipo = tipo || '';
+      el.querySelector('.ia-texto').textContent = texto;
+      el.dataset.tipo = tipo || (progreso === undefined ? '' : 'cargando');
+      el.style.setProperty('--p', Math.round((progreso || 0) * 100) + '%');
     }
 
     function motorDisponible() {
@@ -3126,7 +3201,7 @@
         const motor = await motorDisponible();
         mostrarEstadoIA('Preparando el modelo de IA…');
         iaEstado.dispositivo = await motor.cargar((p, total) => {
-          mostrarEstadoIA(`Descargando el modelo de IA: ${Math.round(p * 100)} % de ${Math.round(total / 1e6)} MB (solo la primera vez)`);
+          mostrarEstadoIA(`Descargando el modelo de IA: ${Math.round(p * 100)} % de ${Math.round(total / 1e6)} MB (solo la primera vez)`, '', p);
         });
         iaEstado.listo = true;
         mostrarEstadoIA(`Modelo YOLOS + SegFormer + CLIP listo · ${iaEstado.dispositivo === 'webgpu' ? 'GPU (WebGPU)' : 'CPU (WebAssembly)'}`, 'ok');
@@ -3251,29 +3326,97 @@
       const bx = vw - x - w;
       const r = iaEstado.resultado;
       const analizando = iaEstado.obs.length < 2;
-      wctx.strokeStyle = r.sexo === 'Masculino' ? '#e8e8e8' : '#c9a45c';
-      wctx.lineWidth = 3;
-      wctx.setLineDash(analizando ? [8, 6] : []);
-      wctx.strokeRect(bx, y, w, h);
-      wctx.setLineDash([]);
+      const color = r.sexo === 'Masculino' ? '#e8e8e8' : '#c9a45c';
+      dibujarMira(bx, y, w, h, color, analizando);
 
       const lineas = [
-        [`#${iaEstado.persona.id} · ${r.sexo} · ${r.edad}`, '#ffffff', 'bold 14px "IBM Plex Sans", sans-serif'],
-        [`Superior: ${r.prenda_superior.tipo} ${r.prenda_superior.color}`, '#9fd9bd', '13px "IBM Plex Sans", sans-serif'],
-        [`Inferior: ${r.prenda_inferior.tipo}${r.prenda_inferior.tipo === 'no visible' ? '' : ' ' + r.prenda_inferior.color}`, '#d4d4d4', '13px "IBM Plex Sans", sans-serif'],
-        [analizando ? 'Analizando…' : `Confianza ${Math.round(r.confianza * 100)} %`, '#c9a45c', '12px "IBM Plex Mono", monospace']
+        [`Superior  ${r.prenda_superior.tipo} · ${r.prenda_superior.color}`, r.prenda_superior.hex],
+        [`Inferior  ${r.prenda_inferior.tipo}${r.prenda_inferior.tipo === 'no visible' ? '' : ' · ' + r.prenda_inferior.color}`, r.prenda_inferior.hex]
       ];
-      const ancho = 300, alto = 18 * lineas.length + 12;
-      const tx = Math.min(Math.max(0, bx), vw - ancho);
-      const ty = y > alto + 4 ? y - alto - 4 : Math.min(vh - alto, y + 4);
-      wctx.fillStyle = 'rgba(10, 10, 10, 0.86)';
-      wctx.fillRect(tx, ty, ancho, alto);
-      lineas.forEach(([texto, color, fuente], i) => {
-        wctx.font = fuente;
-        wctx.fillStyle = color;
-        wctx.fillText(texto, tx + 10, ty + 22 + i * 18);
+      const ancho = Math.min(280, vw - 16), alto = 104;
+      const tx = Math.min(Math.max(8, bx + 10), vw - ancho - 8);
+      const ty = y > alto + 12 ? y - alto - 8 : Math.min(vh - alto - 8, y + 10);
+      wctx.save();
+      wctx.fillStyle = 'rgba(10, 10, 10, 0.82)';
+      wctx.strokeStyle = 'rgba(201, 164, 92, 0.45)';
+      wctx.lineWidth = 1;
+      rectRedondo(tx, ty, ancho, alto, 10);
+      wctx.fill();
+      wctx.stroke();
+
+      wctx.fillStyle = color;
+      wctx.beginPath();
+      wctx.arc(tx + 16, ty + 20, 4, 0, Math.PI * 2);
+      wctx.fill();
+      wctx.font = '600 14px "IBM Plex Sans", sans-serif';
+      wctx.fillStyle = '#ffffff';
+      wctx.fillText(`${r.sexo}`, tx + 28, ty + 25);
+      const anchoSexo = wctx.measureText(r.sexo).width;
+      wctx.font = '12px "IBM Plex Mono", monospace';
+      wctx.fillStyle = '#c9a45c';
+      wctx.fillText(r.edad, tx + 36 + anchoSexo, ty + 25);
+      wctx.fillStyle = '#6e6e6e';
+      wctx.textAlign = 'right';
+      wctx.fillText(`#${iaEstado.persona.id}`, tx + ancho - 12, ty + 25);
+      wctx.textAlign = 'left';
+
+      lineas.forEach(([texto, hex], i) => {
+        const ly = ty + 48 + i * 19;
+        wctx.fillStyle = hex;
+        wctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        rectRedondo(tx + 12, ly - 9, 10, 10, 5);
+        wctx.fill();
+        wctx.stroke();
+        wctx.font = '12px "IBM Plex Sans", sans-serif';
+        wctx.fillStyle = '#d4d4d4';
+        wctx.fillText(texto, tx + 30, ly);
       });
+
+      // Barra de confianza
+      const by = ty + alto - 16, bw = ancho - 76;
+      wctx.fillStyle = '#262626';
+      rectRedondo(tx + 12, by, bw, 3, 2);
+      wctx.fill();
+      wctx.fillStyle = '#c9a45c';
+      rectRedondo(tx + 12, by, bw * (analizando ? (Date.now() / 900 % 1) : r.confianza), 3, 2);
+      wctx.fill();
+      wctx.font = '11px "IBM Plex Mono", monospace';
+      wctx.fillStyle = '#a1a1a1';
+      wctx.textAlign = 'right';
+      wctx.fillText(analizando ? 'analizando' : `${Math.round(r.confianza * 100)} %`, tx + ancho - 12, by + 4);
+      wctx.restore();
     };
+
+    function rectRedondo(x, y, w, h, r) {
+      wctx.beginPath();
+      if (wctx.roundRect) wctx.roundRect(x, y, Math.max(0, w), h, r);
+      else wctx.rect(x, y, Math.max(0, w), h);
+    }
+
+    // Esquinas de mira alrededor de la persona; mientras analiza, laten
+    function dibujarMira(x, y, w, h, color, analizando) {
+      const l = Math.max(14, Math.min(w, h) * 0.16);
+      wctx.save();
+      wctx.strokeStyle = color;
+      wctx.lineWidth = 3;
+      wctx.lineCap = 'round';
+      wctx.globalAlpha = analizando ? 0.55 + 0.45 * Math.sin(Date.now() / 160) : 1;
+      wctx.shadowColor = color;
+      wctx.shadowBlur = 8;
+      const esquinas = [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]];
+      wctx.beginPath();
+      esquinas.forEach(([cx, cy, sx, sy]) => {
+        wctx.moveTo(cx, cy + sy * l);
+        wctx.lineTo(cx, cy);
+        wctx.lineTo(cx + sx * l, cy);
+      });
+      wctx.stroke();
+      wctx.shadowBlur = 0;
+      wctx.globalAlpha = 0.12;
+      wctx.lineWidth = 1;
+      wctx.strokeRect(x, y, w, h);
+      wctx.restore();
+    }
 
     const iniciarWebcamOriginal = window.iniciarWebcam;
     window.iniciarWebcam = async function () {
