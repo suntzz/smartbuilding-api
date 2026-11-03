@@ -1411,7 +1411,7 @@
   </footer>
   </div>
 
-  <div class="cortina" id="cortina" aria-hidden="true"><span style="--i:0"></span><span style="--i:1"></span><span style="--i:2"></span><span style="--i:3"></span><span style="--i:4"></span><span style="--i:5"></span></div>
+  <div class="cortina cubrir" id="cortina" aria-hidden="true"><span style="--i:0"></span><span style="--i:1"></span><span style="--i:2"></span><span style="--i:3"></span><span style="--i:4"></span><span style="--i:5"></span></div>
   <div class="cortina-logo" aria-hidden="true"><svg viewBox="0 0 256 256"><path fill="#EDEDED" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle cx="128" cy="104" r="18" fill="#C9A45C"/></svg></div>
 
   <script src="app/static/retos_data.js"></script>
@@ -2920,9 +2920,19 @@
       .forEach(([nombre, clave]) => {
         const original = window[nombre];
         window[nombre] = function (...args) {
-          const r = original.apply(this, args);
-          marcarModulo(clave(...args));
+          const key = String(clave(...args));
+          const abrir = () => {
+            const r = original.apply(this, args);
+            marcarModulo(key);
+            return r;
+          };
           cerrarMenuModulos();
+          // Cambiar de módulo dentro de las cámaras también pasa por la cortina
+          if (vistaActual === 'app' && window.__paginaLista && key !== moduloActual) {
+            conCortina(() => { abrir(); animarEntradaApp(); });
+            return;
+          }
+          const r = abrir();
           // La carga inicial también llama a cambiarReto(1): solo se navega por acción del usuario
           if (vistaActual !== 'app' && window.__paginaLista) irA('camaras');
           else if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3518,16 +3528,7 @@
       window.scrollTo(0, 0);
 
       if (vista === 'app') {
-        // Lo que ya se ve entra escalonado; lo que está más abajo aparece al hacer scroll
-        app.querySelectorAll('main .card').forEach(c => {
-          c.classList.remove('reveal', 'in');
-          if (c.offsetParent && c.getBoundingClientRect().top > window.innerHeight * 0.92) observarAparicion(c);
-        });
-        app.querySelectorAll('.video-controls').forEach(fila => [...fila.children].forEach((b, j) => b.style.setProperty('--j', j)));
-        app.classList.remove('entrando');
-        void app.offsetWidth;
-        app.classList.add('entrando');
-        setTimeout(() => app.classList.remove('entrando'), 1800);
+        animarEntradaApp();
       } else {
         if (webcamStream) detenerWebcam();
         videoElem.pause();
@@ -3536,27 +3537,58 @@
       }
     }
 
+    // Lo que ya se ve entra escalonado; lo que está más abajo aparece al hacer scroll
+    function animarEntradaApp() {
+      const app = document.getElementById('vistaApp');
+      window.scrollTo(0, 0);
+      app.querySelectorAll('main .card').forEach(c => {
+        c.classList.remove('reveal', 'in');
+        if (c.offsetParent && c.getBoundingClientRect().top > window.innerHeight * 0.92) observarAparicion(c);
+      });
+      app.querySelectorAll('.video-controls').forEach(fila => [...fila.children].forEach((b, j) => b.style.setProperty('--j', j)));
+      app.classList.remove('entrando');
+      void app.offsetWidth;
+      app.classList.add('entrando');
+      clearTimeout(animarEntradaApp.t);
+      animarEntradaApp.t = setTimeout(() => app.classList.remove('entrando'), 1800);
+    }
+
+    // Cubre la pantalla con la cortina, ejecuta el cambio y la retira
     let transicion = Promise.resolve();
-    function mostrarVista(vista) {
+    function conCortina(cambio) {
       transicion = transicion.then(async () => {
-        if (vista === vistaActual) return;
         const cortina = document.getElementById('cortina');
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { aplicarVista(vista); return; }
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { cambio(); return; }
         cortina.classList.remove('descubrir');
         cortina.classList.add('cubrir');
         await esperar(720);
-        aplicarVista(vista);
+        cambio();
         await esperar(180);
-        cortina.classList.add('descubrir');
-        cortina.classList.remove('cubrir');
-        await esperar(760);
-        cortina.classList.remove('descubrir');
+        await retirarCortina();
       });
       return transicion;
     }
 
+    async function retirarCortina() {
+      const cortina = document.getElementById('cortina');
+      cortina.classList.add('descubrir');
+      cortina.classList.remove('cubrir');
+      await esperar(760);
+      cortina.classList.remove('descubrir');
+    }
+
+    function mostrarVista(vista) {
+      if (vista === vistaActual) return transicion;
+      return conCortina(() => aplicarVista(vista));
+    }
+
     window.addEventListener('hashchange', () => mostrarVista(vistaDesdeHash()));
     window.addEventListener('load', () => setTimeout(() => { window.__paginaLista = true; }, 0));
+    // Al abrir la página se ve el logo sobre la cortina y luego se retira
+    transicion = transicion.then(() => new Promise(r => {
+      const listo = () => setTimeout(r, 650);
+      document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', listo, { once: true }) : listo();
+    })).then(retirarCortina);
     if (vistaDesdeHash() === 'app') aplicarVista('app');
   </script>
 </body>
