@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">SmartBuilding — Campo de visión</title>
+  <path fill="#C9A45C" d="M128 24 L216 112 H40 Z"/>
+  <path fill="#141414" fill-rule="evenodd" d="M40 128 H216 V232 H40 Z M112 168 H144 V232 H112 Z"/>
+</svg>

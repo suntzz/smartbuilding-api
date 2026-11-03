@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">SmartBuilding — Torre vigía</title>
+  <path fill="#141414" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/>
+  <circle cx="128" cy="104" r="18" fill="#C9A45C"/>
+</svg>

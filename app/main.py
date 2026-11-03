@@ -100,6 +100,11 @@ def analizar_video_demografia(
     ),
     cada_n_frames: int = Query(default=2, ge=1, le=15),
     min_frames_persona: int = Query(default=3, ge=1, le=30),
+    motor: str = Query(
+        default="clasico",
+        pattern="^(clasico|ia)$",
+        description="'clasico' (OpenCV + reglas) o 'ia' (YOLO11 + SegFormer + CLIP)",
+    ),
 ):
     ruta_video = VIDEOS_DIR / Path(video).name
     if not ruta_video.exists():
@@ -107,12 +112,22 @@ def analizar_video_demografia(
             status_code=404, detail=f"Video no encontrado: {video}"
         )
 
-    detector = DetectorDemografiaVestimenta()
-    resultado = detector.analizar_video(
-        ruta_video,
-        cada_n_frames=cada_n_frames,
-        min_frames_persona=min_frames_persona,
-    )
+    if motor == "ia":
+        try:
+            from app.vision.demografia_ia import AnalizadorDemografiaIA
+
+            analizador = AnalizadorDemografiaIA(frames_entre_analisis=cada_n_frames)
+        except (ImportError, FileNotFoundError) as err:
+            raise HTTPException(status_code=503, detail=f"Motor IA no disponible: {err}")
+        resultado = analizador.analizar_video(ruta_video, min_observaciones=min_frames_persona)
+        resultado.pop("frames")
+    else:
+        detector = DetectorDemografiaVestimenta()
+        resultado = detector.analizar_video(
+            ruta_video,
+            cada_n_frames=cada_n_frames,
+            min_frames_persona=min_frames_persona,
+        )
     historial_analisis_demografia.append(resultado)
     return resultado
 

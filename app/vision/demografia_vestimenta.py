@@ -32,8 +32,8 @@ COLORES_VALIDOS = {
     "beige",
 }
 
-TIPOS_PRENDA_SUPERIOR = {"camiseta", "camisa", "chaqueta", "buso", "blusa"}
-TIPOS_PRENDA_INFERIOR = {"pantalon", "jean", "pantaloneta", "falda"}
+TIPOS_PRENDA_SUPERIOR = {"camiseta", "camisa", "chaqueta", "buso", "blusa", "vestido"}
+TIPOS_PRENDA_INFERIOR = {"pantalon", "jean", "pantaloneta", "falda", "vestido"}
 RANGOS_EDAD = {
     "Infantil (0-14)",
     "Joven (15-29)",

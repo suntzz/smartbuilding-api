@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title">
+  <title id="title">SmartBuilding — Ventana que mira</title>
+  <path fill="#141414" fill-rule="evenodd" d="M48 24 H208 V232 H48 Z M80 64 H120 V112 H80 Z M80 144 H120 V192 H80 Z M136 144 H176 V192 H136 Z"/>
+  <circle cx="156" cy="88" r="22" fill="#C9A45C"/>
+</svg>

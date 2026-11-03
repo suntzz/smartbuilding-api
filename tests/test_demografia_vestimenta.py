@@ -189,3 +189,34 @@ def test_endpoint_analizar_imagen_subida():
     p = body["personas"][0]
     assert p["sexo_aparente"] in SEXOS_APARENTES
     assert p["rango_edad"] in RANGOS_EDAD
+
+
+def test_analizador_ia_video_frontal():
+    """El motor IA identifica a las 7 personas del corredor con atributos válidos."""
+    pytest.importorskip("ultralytics")
+    pytest.importorskip("open_clip")
+    from app.vision.demografia_ia import AnalizadorDemografiaIA
+
+    try:
+        analizador = AnalizadorDemografiaIA(frames_entre_analisis=3)
+    except FileNotFoundError:
+        pytest.skip("Modelos no descargados: python scripts/descargar_modelos.py")
+
+    reporte = analizador.analizar_video("data/videos/reto1_corredor_frontal.mp4", min_observaciones=3)
+    assert reporte["total_personas_detectadas"] == 7
+    assert reporte["resumen_demografico"]["por_sexo_aparente"] == {"Masculino": 3, "Femenino": 4}
+    for persona in reporte["personas"]:
+        assert persona["prenda_superior"]["color"] in COLORES_VALIDOS
+        assert persona["prenda_inferior"]["tipo"] in TIPOS_PRENDA_INFERIOR
+        assert 0.0 <= persona["confianza"] <= 1.0
+    assert any(f["personas"] for f in reporte["frames"])
+
+
+def test_nombrar_color_paleta():
+    pytest.importorskip("ultralytics")
+    from app.vision.demografia_ia import nombrar_color
+
+    assert nombrar_color((20, 20, 20)) == "negro"
+    assert nombrar_color((245, 245, 245)) == "blanco"
+    assert nombrar_color((40, 80, 190)) == "azul"
+    assert nombrar_color((200, 30, 40)) == "rojo"

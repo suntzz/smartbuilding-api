@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SmartBuilding · Monitoreo CCTV</title>
+  <title>SmartBuilding</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0a0a0a">
   <meta name="description" content="Dashboard de videovigilancia inteligente: 7 retos de visión por computador para el Conjunto Residencial San Carlos." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,6 +40,7 @@
       --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: var(--font-sans);
       font-size: 15px;
@@ -68,7 +73,7 @@
       top: 0;
       z-index: 100;
       height: 56px;
-      padding: 0 max(16px, calc((100% - 1440px) / 2));
+      padding: 0 max(16px, calc((100% - 1200px) / 2));
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -78,7 +83,7 @@
       -webkit-backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
     }
-    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; color: var(--text); text-decoration: none; }
     .brand-icon { width: 26px; height: 26px; flex-shrink: 0; color: var(--text); }
     .brand-icon svg { width: 100%; height: 100%; display: block; }
     .brand h1 {
@@ -138,50 +143,209 @@
     .pill-cta { cursor: pointer; background: var(--text); color: #0a0a0a; border-color: var(--text); font-weight: 600; }
     .pill-cta:hover { background: #d4d4d4; border-color: #d4d4d4; }
 
-    /* ---------- Encabezado de página ---------- */
+    /* ---------- Portada centrada ---------- */
     .hero {
-      width: min(1440px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 56px 0 32px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-      gap: 40px;
-      align-items: end;
+      position: relative;
+      min-height: calc(100svh - 56px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 64px 16px 96px;
+      overflow: hidden;
+      isolation: isolate;
     }
+    /* Radar: barrido con rastro fosforescente y contactos en movimiento */
+    #radarCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 35%, transparent 72%);
+      mask-image: radial-gradient(circle at 50% 50%, #000 35%, transparent 72%);
+    }
+    /* Light Rays: haz cálido que cae desde arriba */
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      width: min(900px, 140vw);
+      height: 90%;
+      transform: translateX(-50%);
+      z-index: -2;
+      pointer-events: none;
+      background:
+        conic-gradient(from 180deg at 50% 0%, transparent 160deg, rgba(201, 164, 92, 0.16) 175deg, rgba(255, 236, 200, 0.10) 180deg, rgba(201, 164, 92, 0.16) 185deg, transparent 200deg);
+      filter: blur(18px);
+      animation: rayos 9s ease-in-out infinite alternate;
+    }
+    @keyframes rayos { from { opacity: 0.65; transform: translateX(-50%) rotate(-2deg); } to { opacity: 1; transform: translateX(-50%) rotate(2deg); } }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 160px;
+      z-index: -1;
+      pointer-events: none;
+      background: linear-gradient(to bottom, transparent, var(--bg));
+    }
+
+    .hero-mark {
+      width: 76px;
+      height: 76px;
+      margin-bottom: 28px;
+      filter: drop-shadow(0 0 28px rgba(201, 164, 92, 0.35));
+      animation: aparecer 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .hero-mark svg { width: 100%; height: 100%; display: block; }
+    .hero-mark .lente { transform-origin: 128px 104px; animation: enfocar 4s ease-in-out infinite; }
+    @keyframes enfocar { 0%, 70%, 100% { transform: scale(1); } 80% { transform: scale(0.7); } 90% { transform: scale(1.12); } }
+
+    /* Star Border en la etiqueta superior */
     .hero-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 14px;
-      display: block;
-    }
-    .hero h2 {
-      font-size: clamp(1.9rem, 3.6vw, 2.9rem);
-      line-height: 1.08;
-      letter-spacing: -0.025em;
-      font-weight: 600;
-      max-width: 18ch;
-    }
-    .hero-lead {
-      margin-top: 16px;
-      max-width: 60ch;
-      font-size: 1rem;
-      line-height: 1.6;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
       color: var(--text-muted);
+      background: rgba(17, 17, 17, 0.7);
+      margin-bottom: 26px;
+      isolation: isolate;
+      animation: aparecer 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
     }
-    .hero-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
-    .hero-actions .pill { height: 38px; padding: 0 16px; font-size: 0.85rem; }
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      border-top: 1px solid var(--border);
-      border-left: 1px solid var(--border);
+    .hero-eyebrow::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: conic-gradient(from var(--ang, 0deg), transparent 0 72%, rgba(201, 164, 92, 0.9) 86%, transparent 100%), var(--border-hover);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: girar 5s linear infinite;
+      z-index: -1;
     }
-    .hero-stat { background: rgba(10, 10, 10, 0.6); padding: 18px 20px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .hero-stat .n { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-    .hero-stat .l { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+    @property --ang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+    @keyframes girar { to { --ang: 360deg; } }
+    .hero-eyebrow b { color: var(--accent); font-weight: 500; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; }
+
+    .hero h2 {
+      font-size: clamp(3rem, 10vw, 7.2rem);
+      line-height: 1.08;
+      letter-spacing: -0.055em;
+      font-weight: 600;
+      background: linear-gradient(180deg, #ffffff 30%, #9a9a9a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    /* Blur Text: cada letra aparece desde el desenfoque */
+    .blur-char {
+      display: inline-block;
+      opacity: 0;
+      filter: blur(12px);
+      transform: translateY(-0.25em);
+      animation: desenfocar 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(0.25s + var(--i) * 45ms);
+      padding-bottom: 0.14em;
+      margin-bottom: -0.14em;
+      background: inherit;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    @keyframes desenfocar { to { opacity: 1; filter: blur(0); transform: none; } }
+    @keyframes aparecer { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+
+    .hero-lead {
+      margin-top: 22px;
+      max-width: 52ch;
+      font-size: clamp(1rem, 1.6vw, 1.12rem);
+      line-height: 1.65;
+      color: var(--text-muted);
+      animation: aparecer 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 38px;
+      animation: aparecer 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.1s both;
+    }
+    .hero-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 50px;
+      padding: 0 26px;
+      border-radius: 999px;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      border: 1px solid var(--border-hover);
+      background: rgba(17, 17, 17, 0.75);
+      color: var(--text);
+      backdrop-filter: blur(8px);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.3s;
+    }
+    .hero-btn:hover { border-color: #555; background: rgba(28, 28, 28, 0.85); }
+    .hero-btn.principal {
+      background: linear-gradient(180deg, #f2f2f2, #cfcfcf);
+      color: #0a0a0a;
+      border-color: transparent;
+      box-shadow: 0 10px 40px -10px rgba(201, 164, 92, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    .hero-btn.principal:hover { box-shadow: 0 14px 50px -8px rgba(201, 164, 92, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.8); }
+    /* Brillo que cruza el botón principal */
+    .hero-btn.principal::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.7) 50%, transparent 65%);
+      transform: translateX(-120%);
+      animation: brillo 3.6s ease-in-out 2s infinite;
+    }
+    @keyframes brillo { 0%, 60% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+    .hero-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .hero-btn .punto { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.6); animation: latido 1.8s infinite; }
+    @keyframes latido { 70% { box-shadow: 0 0 0 8px rgba(229, 72, 77, 0); } 100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0); } }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 34px;
+      border: 1.5px solid var(--border-hover);
+      border-radius: 12px;
+      animation: aparecer 0.9s ease 1.6s both;
+    }
+    .hero-scroll::after {
+      content: "";
+      position: absolute;
+      top: 7px;
+      left: 50%;
+      width: 3px;
+      height: 7px;
+      margin-left: -1.5px;
+      border-radius: 2px;
+      background: var(--accent);
+      animation: rueda 1.8s ease-in-out infinite;
+    }
+    @keyframes rueda { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(10px); } }
 
     /* ---------- Fondo interactivo (Dot Grid) ---------- */
     #dotGrid {
@@ -210,7 +374,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 10px max(16px, calc((100% - 1440px) / 2));
+      padding: 10px max(16px, calc((100% - 1200px) / 2));
       background: rgba(10, 10, 10, 0.88);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -355,7 +519,8 @@
 
     /* ---------- Layout ---------- */
     main {
-      width: min(1440px, calc(100% - 32px));
+      scroll-margin-top: 132px;
+      width: min(1200px, calc(100% - 32px));
       margin: 24px auto 48px;
       flex: 1;
     }
@@ -367,7 +532,6 @@
     }
     @media (max-width: 1120px) {
       .layout-grid { grid-template-columns: minmax(0, 1fr); }
-      .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; }
     }
 
     /* ---------- Paneles ---------- */
@@ -530,6 +694,9 @@
     .time-slider::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--text); }
     .time-lbl { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-muted); min-width: 92px; text-align: center; font-variant-numeric: tabular-nums; }
 
+    .motor-ia { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); margin-top: -4px; }
+    .motor-ia span { color: var(--accent); margin-right: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+
     /* ---------- KPIs ---------- */
     .kpi-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .kpi-card {
@@ -629,7 +796,7 @@
 
     footer {
       border-top: 1px solid var(--border);
-      padding: 20px max(16px, calc((100% - 1440px) / 2));
+      padding: 20px max(16px, calc((100% - 1200px) / 2));
       display: flex;
       justify-content: space-between;
       gap: 12px;
@@ -648,8 +815,9 @@
 
     /* ---------- Responsive ---------- */
     @media (max-width: 760px) {
-      .header-clock, .header-links .pill-green, .header-links .pill-gh, .brand h1 .soc-tag { display: none; }
-      .hero { padding: 36px 0 24px; }
+      .header-clock, .header-links .pill-green, .header-links .pill-gh, .brand h1 { font-size: 0.95rem; }
+      .hero { padding: 48px 16px 88px; min-height: calc(100svh - 56px); }
+      .hero-btn { height: 46px; padding: 0 20px; }
       .card { padding: 14px; }
       .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .kpi-row .kpi-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
@@ -699,12 +867,12 @@
 <body>
   <canvas id="dotGrid" aria-hidden="true"></canvas>
   <header>
-    <div class="brand">
-      <div class="brand-icon" aria-hidden="true">
-        <svg viewBox="0 0 26 26" fill="none"><rect x="1" y="1" width="24" height="24" rx="3" stroke="currentColor" stroke-width="2"/><path d="M7 19V9h12v10" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="14" r="2.5" fill="#c9a45c"/></svg>
-      </div>
-      <h1>SmartBuilding <span class="soc-tag">Monitoreo CCTV</span></h1>
-    </div>
+    <a class="brand" href="#" aria-label="SmartBuilding, inicio">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 256 256"><path fill="currentColor" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle cx="128" cy="104" r="18" fill="#C9A45C"/></svg>
+      </span>
+      <h1>SmartBuilding</h1>
+    </a>
     <div class="header-links">
       <div class="header-clock" id="liveSocClock">
         <span class="radar-dot"></span>
@@ -716,23 +884,26 @@
   </header>
 
   <section class="hero">
-    <div>
-      <span class="hero-eyebrow">Conjunto Residencial San Carlos</span>
-      <h2 class="decrypt" data-decrypt>Centro de monitoreo con visión por computador</h2>
-      <p class="hero-lead">
-        Análisis de las cámaras del conjunto con OpenCV: demografía y vestimenta, flujo de entradas y salidas, merodeo, objetos abandonados, placas vehiculares, caídas y correspondencia.
-      </p>
-      <div class="hero-actions">
-        <a class="pill pill-cta magnet" href="#app" onclick="cambiarReto(1)">Ver cámaras</a>
-        <button class="pill pill-gh magnet" onclick="mostrarWebcamLive();document.getElementById('app').scrollIntoView()">Probar con mi cámara</button>
-      </div>
+    <canvas id="radarCanvas" aria-hidden="true"></canvas>
+    <div class="hero-mark" aria-hidden="true">
+      <svg viewBox="0 0 256 256"><path fill="#EDEDED" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle class="lente" cx="128" cy="104" r="18" fill="#C9A45C"/></svg>
     </div>
-    <div class="hero-stats">
-      <div class="hero-stat glare"><div class="n" data-count="7">0</div><div class="l">Cámaras analizadas</div></div>
-      <div class="hero-stat glare"><div class="n" data-count="7">0</div><div class="l">Módulos de detección</div></div>
-      <div class="hero-stat glare"><div class="n" id="statResidentes" data-count="0">0</div><div class="l">Residentes registrados</div></div>
-      <div class="hero-stat glare"><div class="n" id="statPersonas" data-count="0">0</div><div class="l">Personas identificadas (Cámara 01)</div></div>
+    <span class="hero-eyebrow"><b>RETO 1</b> Demografía y vestimenta</span>
+    <h2 data-blur>SmartBuilding</h2>
+    <p class="hero-lead">
+      Cada persona que pasa frente a la cámara: sexo aparente, rango de edad, tipo y color de la prenda superior e inferior.
+    </p>
+    <div class="hero-actions">
+      <a class="hero-btn principal magnet" href="#camaras" onclick="cambiarReto(1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+        Ver cámaras
+      </a>
+      <button class="hero-btn magnet" onclick="mostrarWebcamLive();document.getElementById('camaras').scrollIntoView({behavior:'smooth'})">
+        <span class="punto" aria-hidden="true"></span>
+        Probar mi cámara
+      </button>
     </div>
+    <a class="hero-scroll" href="#camaras" aria-label="Ir a las cámaras"></a>
   </section>
 
   <div class="module-bar" id="app">
@@ -746,7 +917,7 @@
     </button>
     <div class="module-step">
       <button class="btn-ctrl" onclick="moverModulo(-1)" aria-label="Módulo anterior">‹</button>
-      <span class="module-pos" id="modulePos">1 / 10</span>
+      <span class="module-pos" id="modulePos">1 / 4</span>
       <button class="btn-ctrl" onclick="moverModulo(1)" aria-label="Módulo siguiente">›</button>
     </div>
   </div>
@@ -760,14 +931,8 @@
     </div>
     <input type="text" id="moduleSearch" placeholder="Buscar módulo…" autocomplete="off" oninput="filtrarModulos(this.value)">
     <div class="animated-list" id="tabsBar">
-      <div class="list-group">Cámaras del conjunto</div>
+      <div class="list-group">Cámaras · Reto 1</div>
       <button class="tab-btn active" data-key="1" onclick="cambiarReto(1)"><span class="tab-idx">01</span><span class="tab-body"><b>Demografía y vestimenta</b><small>Recepción y lobby</small></span></button>
-      <button class="tab-btn" data-key="2" onclick="cambiarReto(2)"><span class="tab-idx">02</span><span class="tab-body"><b>Conteo de entradas y salidas</b><small>Acceso y torniquetes</small></span></button>
-      <button class="tab-btn" data-key="3" onclick="cambiarReto(3)"><span class="tab-idx">03</span><span class="tab-body"><b>Detección de merodeo</b><small>Pasillo y áreas sociales</small></span></button>
-      <button class="tab-btn" data-key="4" onclick="cambiarReto(4)"><span class="tab-idx">04</span><span class="tab-body"><b>Objeto abandonado</b><small>Pasillo de acceso</small></span></button>
-      <button class="tab-btn" data-key="5" onclick="cambiarReto(5)"><span class="tab-idx">05</span><span class="tab-body"><b>Lectura de placas</b><small>Portería vehicular</small></span></button>
-      <button class="tab-btn" data-key="6" onclick="cambiarReto(6)"><span class="tab-idx">06</span><span class="tab-body"><b>Caídas y riesgo</b><small>Sala interior</small></span></button>
-      <button class="tab-btn" data-key="7" onclick="cambiarReto(7)"><span class="tab-idx">07</span><span class="tab-body"><b>Casilleros de correspondencia</b><small>Zona de casilleros</small></span></button>
       <div class="list-group">Herramientas</div>
       <button class="tab-btn cam-tab" data-key="webcam" onclick="mostrarWebcamLive()"><span class="tab-idx">CAM</span><span class="tab-body"><b>Mi cámara en vivo</b><small>Detección con tu cámara web</small></span></button>
       <button class="tab-btn" data-key="foto" onclick="mostrarSubirFoto()"><span class="tab-idx">IMG</span><span class="tab-body"><b>Analizar una foto</b><small>Sube una imagen propia</small></span></button>
@@ -776,7 +941,7 @@
     <p class="drawer-foot">↑ ↓ para moverte · Enter para abrir · Esc para cerrar</p>
   </aside>
 
-  <main>
+  <main id="camaras">
     <!-- VISTA PRINCIPAL DE RETOS EN VIDEO -->
     <div class="layout-grid" id="cctvView">
       <div class="card">
@@ -816,10 +981,11 @@
 
       <div class="card">
         <div class="card-header">
-          <h2>Métricas y Registro en Tiempo Real</h2>
+          <h2>Personas detectadas</h2>
           <span id="metaRetoLabel" style="font-size:0.8rem;color:var(--muted)">Reto #1</span>
         </div>
 
+        <p class="motor-ia"><span>Modelo</span> YOLO11 + ByteTrack · SegFormer (ropa) · CLIP</p>
         <div class="kpi-row" id="kpiContainer"></div>
 
         <div class="feed-container" id="feedContainer">
@@ -867,9 +1033,6 @@
             Modo:
             <select id="webcamModeSelect" style="background:#0f172a;border:1px solid var(--border);color:#fff;padding:5px 8px;border-radius:6px;font-size:0.8rem;" onchange="cambiarModoWebcam(this.value)">
               <option value="demografia">1. Demografía & Vestimenta</option>
-              <option value="conteo">2. Cruce de Línea (Entrada/Salida)</option>
-              <option value="merodeo">3. Detección de Merodeo</option>
-              <option value="caidas">6. Detección de Caídas</option>
             </select>
           </label>
 
@@ -1640,7 +1803,7 @@
       if (k === 'f') return toggleFullscreen();
       if (k === 'm') return toggleAudioGlobal();
       if (k === 'c') return mostrarWebcamLive();
-      if (k >= '1' && k <= '7') return cambiarReto(Number(k));
+      if (k === '1') return cambiarReto(1);
     });
 
     // Canvas interno en baja resolución para alto rendimiento (160x120)
@@ -2299,12 +2462,6 @@
         <div class="kbd-item"><span>Ver este Menú</span> <kbd>?</kbd></div>
         <div class="kbd-item"><span>Lista de módulos</span> <kbd>L</kbd></div>
         <div class="kbd-item"><span>Reto 1: Demografía</span> <kbd>1</kbd></div>
-        <div class="kbd-item"><span>Reto 2: Conteo Flujo</span> <kbd>2</kbd></div>
-        <div class="kbd-item"><span>Reto 3: Merodeo</span> <kbd>3</kbd></div>
-        <div class="kbd-item"><span>Reto 4: Objeto Abandonado</span> <kbd>4</kbd></div>
-        <div class="kbd-item"><span>Reto 5: Lectura Placas</span> <kbd>5</kbd></div>
-        <div class="kbd-item"><span>Reto 6: Caídas y Riesgo</span> <kbd>6</kbd></div>
-        <div class="kbd-item"><span>Reto 7: Casilleros</span> <kbd>7</kbd></div>
       </div>
       <p style="font-size:0.75rem;color:var(--text-dim);margin-top:14px;text-align:center;">
         Los atajos no se activan mientras escribes en un campo de texto.
@@ -2337,10 +2494,12 @@
 
       // CountUp
       const data = window.RETOS_DATA || {};
-      if (data.residentes) document.getElementById('statResidentes').dataset.count = data.residentes.length;
+      const statRes = document.getElementById('statResidentes');
+      if (data.residentes && statRes) statRes.dataset.count = data.residentes.length;
       const r1 = data.retos && data.retos[1];
       const personas = r1 && (r1.personas || (r1.summary && r1.summary.personas) || r1.persons);
-      if (Array.isArray(personas)) document.getElementById('statPersonas').dataset.count = personas.length;
+      const statPer = document.getElementById('statPersonas');
+      if (Array.isArray(personas) && statPer) statPer.dataset.count = personas.length;
       document.querySelectorAll('[data-count]').forEach(el => {
         const target = Number(el.dataset.count) || 0;
         if (reduce) { el.textContent = target; return; }
@@ -2366,7 +2525,7 @@
       const io = new IntersectionObserver(entries => {
         entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
       }, { threshold: 0.05 });
-      document.querySelectorAll('.hero > *, main > .layout-grid > .card').forEach(el => {
+      document.querySelectorAll('main > .layout-grid > .card').forEach(el => {
         el.classList.add('reveal');
         io.observe(el);
       });
@@ -2376,12 +2535,6 @@
   <script>
     const MODULOS = {
       '1': ['Cámara 01', 'Demografía y vestimenta'],
-      '2': ['Cámara 02', 'Conteo de entradas y salidas'],
-      '3': ['Cámara 03', 'Detección de merodeo'],
-      '4': ['Cámara 04', 'Objeto abandonado'],
-      '5': ['Cámara 05', 'Lectura de placas'],
-      '6': ['Cámara 06', 'Caídas y riesgo'],
-      '7': ['Cámara 07', 'Casilleros de correspondencia'],
       webcam: ['Herramienta', 'Mi cámara en vivo'],
       foto: ['Herramienta', 'Analizar una foto'],
       residentes: ['Herramienta', 'Directorio de residentes']
@@ -2419,7 +2572,7 @@
           marcarModulo(clave(...args));
           cerrarMenuModulos();
           const app = document.getElementById('app');
-          if (window.scrollY > app.offsetTop) window.scrollTo({ top: app.offsetTop, behavior: 'smooth' });
+          if (window.scrollY > app.offsetTop) document.getElementById('camaras').scrollIntoView({ behavior: 'smooth' });
           return r;
         };
       });
@@ -2591,6 +2744,82 @@
         if (activo && !reduce) requestAnimationFrame(dibujar);
       });
       requestAnimationFrame(dibujar);
+
+      // Blur Text: el nombre aparece letra por letra desde el desenfoque
+      document.querySelectorAll('[data-blur]').forEach(el => {
+        const texto = el.textContent.trim();
+        el.setAttribute('aria-label', texto);
+        el.textContent = '';
+        [...texto].forEach((ch, i) => {
+          const s = document.createElement('span');
+          s.className = 'blur-char';
+          s.setAttribute('aria-hidden', 'true');
+          s.style.setProperty('--i', i);
+          s.textContent = ch;
+          el.appendChild(s);
+        });
+      });
+
+      // Radar: barrido giratorio con rastro y contactos que se encienden al ser detectados
+      const radar = document.getElementById('radarCanvas');
+      if (radar) {
+        const rctx = radar.getContext('2d');
+        let rw = 0, rh = 0, rdpr = 1, visible = true;
+        const contactos = Array.from({ length: 9 }, () => ({
+          ang: Math.random() * Math.PI * 2,
+          dist: 0.25 + Math.random() * 0.7,
+          vel: (Math.random() - 0.5) * 0.0009,
+          brillo: 0
+        }));
+        const ajustar = () => {
+          rdpr = Math.min(window.devicePixelRatio || 1, 2);
+          rw = radar.clientWidth; rh = radar.clientHeight;
+          radar.width = rw * rdpr; radar.height = rh * rdpr;
+          rctx.setTransform(rdpr, 0, 0, rdpr, 0, 0);
+        };
+        new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(radar);
+        const PERIODO = 6000;
+        const dibujarRadar = t => {
+          requestAnimationFrame(dibujarRadar);
+          if (!visible) return;
+          const cx = rw / 2, cy = rh / 2, R = Math.max(rw, rh) * 0.48;
+          rctx.clearRect(0, 0, rw, rh);
+          // anillos y ejes
+          rctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+          rctx.lineWidth = 1;
+          for (let k = 1; k <= 5; k++) { rctx.beginPath(); rctx.arc(cx, cy, (R * k) / 5, 0, Math.PI * 2); rctx.stroke(); }
+          rctx.beginPath(); rctx.moveTo(cx - R, cy); rctx.lineTo(cx + R, cy); rctx.moveTo(cx, cy - R); rctx.lineTo(cx, cy + R); rctx.stroke();
+          // barrido con estela
+          const ang = reduce ? -Math.PI / 4 : ((t % PERIODO) / PERIODO) * Math.PI * 2 - Math.PI / 2;
+          const estela = rctx.createConicGradient ? rctx.createConicGradient(ang - 1.1, cx, cy) : null;
+          if (estela) {
+            estela.addColorStop(0, 'rgba(201, 164, 92, 0)');
+            estela.addColorStop(0.175, 'rgba(201, 164, 92, 0.22)');
+            estela.addColorStop(0.1751, 'rgba(201, 164, 92, 0)');
+            rctx.fillStyle = estela;
+            rctx.beginPath(); rctx.moveTo(cx, cy); rctx.arc(cx, cy, R, ang - 1.1, ang); rctx.closePath(); rctx.fill();
+          }
+          rctx.strokeStyle = 'rgba(232, 200, 140, 0.55)';
+          rctx.beginPath(); rctx.moveTo(cx, cy); rctx.lineTo(cx + Math.cos(ang) * R, cy + Math.sin(ang) * R); rctx.stroke();
+          // contactos
+          for (const c of contactos) {
+            c.ang += c.vel;
+            let d = ((ang - c.ang) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            if (d < 0.06) c.brillo = 1;
+            c.brillo *= 0.985;
+            const x = cx + Math.cos(c.ang) * c.dist * R, y = cy + Math.sin(c.ang) * c.dist * R;
+            if (c.brillo > 0.02) {
+              rctx.fillStyle = `rgba(232, 200, 140, ${c.brillo})`;
+              rctx.beginPath(); rctx.arc(x, y, 2.5, 0, Math.PI * 2); rctx.fill();
+              rctx.strokeStyle = `rgba(201, 164, 92, ${c.brillo * 0.5})`;
+              rctx.beginPath(); rctx.arc(x, y, 2.5 + (1 - c.brillo) * 14, 0, Math.PI * 2); rctx.stroke();
+            }
+          }
+        };
+        ajustar();
+        window.addEventListener('resize', ajustar);
+        requestAnimationFrame(dibujarRadar);
+      }
 
       marcarModulo('1');
     })();
