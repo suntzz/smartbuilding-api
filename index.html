@@ -239,6 +239,78 @@
       box-shadow: 0 2px 14px rgba(225, 29, 72, 0.35);
     }
 
+    /* HUD Reticles & Scanlines */
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0.18;
+    }
+    .hud-corner {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      pointer-events: none;
+      z-index: 6;
+      border-color: rgba(56, 189, 248, 0.7);
+    }
+    .hud-corner.tl { top: 9px; left: 9px; border-top: 2px solid; border-left: 2px solid; }
+    .hud-corner.tr { top: 9px; right: 9px; border-top: 2px solid; border-right: 2px solid; }
+    .hud-corner.bl { bottom: 9px; left: 9px; border-bottom: 2px solid; border-left: 2px solid; }
+    .hud-corner.br { bottom: 9px; right: 9px; border-bottom: 2px solid; border-right: 2px solid; }
+
+    .hud-crosshair {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 28px;
+      height: 28px;
+      pointer-events: none;
+      opacity: 0.14;
+      z-index: 5;
+    }
+    .hud-crosshair::before, .hud-crosshair::after {
+      content: "";
+      position: absolute;
+      background: var(--accent);
+    }
+    .hud-crosshair::before { top: 0; left: 13px; width: 2px; height: 28px; }
+    .hud-crosshair::after { top: 13px; left: 0; width: 28px; height: 2px; }
+
+    .header-clock {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      letter-spacing: 0.03em;
+    }
+
+    .tab-idx {
+      font-family: var(--font-mono);
+      font-size: 0.67rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+    .tab-btn.active .tab-idx {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
     /* Main Container & Grid */
     main {
       flex: 1;
@@ -599,6 +671,10 @@
       </div>
     </div>
     <div class="header-links">
+      <div class="header-clock" id="liveSocClock">
+        <span class="radar-dot"></span>
+        <span id="clockDigits">00:00:00 COT</span>
+      </div>
       <span class="pill pill-green"><span class="radar-dot"></span> GitHub Pages Online</span>
       <a class="pill pill-gh" href="https://github.com/suntzz/smartbuilding-api" target="_blank" rel="noopener">
         <span>Repositorio GitHub</span> ↗
@@ -609,34 +685,34 @@
   <div class="tabs-wrapper">
     <div class="tabs-bar" id="tabsBar">
       <button class="tab-btn active" onclick="cambiarReto(1)">
-        <span>1. Demografía y Vestimenta</span>
+        <span class="tab-idx">01</span> <span>Demografía & Vestimenta</span>
       </button>
       <button class="tab-btn" onclick="cambiarReto(2)">
-        <span>2. Conteo Entradas/Salidas</span>
+        <span class="tab-idx">02</span> <span>Conteo Entradas/Salidas</span>
       </button>
       <button class="tab-btn" onclick="cambiarReto(3)">
-        <span>3. Merodeo</span>
+        <span class="tab-idx">03</span> <span>Detección de Merodeo</span>
       </button>
       <button class="tab-btn" onclick="cambiarReto(4)">
-        <span>4. Objeto Abandonado</span>
+        <span class="tab-idx">04</span> <span>Objeto Abandonado</span>
       </button>
       <button class="tab-btn" onclick="cambiarReto(5)">
-        <span>5. Lectura de Placas</span>
+        <span class="tab-idx">05</span> <span>Lectura de Placas</span>
       </button>
       <button class="tab-btn" onclick="cambiarReto(6)">
-        <span>6. Caídas y Riesgo</span>
+        <span class="tab-idx">06</span> <span>Caídas & Riesgo</span>
       </button>
       <button class="tab-btn" onclick="cambiarReto(7)">
-        <span>7. Casilleros Apto</span>
+        <span class="tab-idx">07</span> <span>Casilleros Apto</span>
       </button>
       <button class="tab-btn cam-tab" onclick="mostrarWebcamLive()">
-        <span style="color:#ef4444;font-size:0.9rem;">●</span> <span>📹 Mi Cámara en Vivo & Registro</span>
+        <span class="radar-dot red"></span> <span>📹 Mi Cámara en Vivo</span>
       </button>
       <button class="tab-btn" onclick="mostrarSubirFoto()">
-        <span>📸 Probar con Foto</span>
+        <span class="tab-idx">IMG</span> <span>📸 Probar Foto</span>
       </button>
       <button class="tab-btn" onclick="mostrarDirectorioResidentes()">
-        <span>📋 Residentes San Carlos</span>
+        <span class="tab-idx">DIR</span> <span>📋 Residentes</span>
       </button>
     </div>
   </div>
@@ -651,6 +727,12 @@
         </div>
 
         <div class="video-viewport" id="viewport">
+          <div class="hud-corner tl"></div>
+          <div class="hud-corner tr"></div>
+          <div class="hud-corner bl"></div>
+          <div class="hud-corner br"></div>
+          <div class="hud-crosshair"></div>
+          <div class="scanlines"></div>
           <div class="hud-tl-tag"><span class="radar-dot"></span> CAM-01 // AI SOC FEED</div>
           <div class="hud-br-tag">SAN CARLOS • 30 FPS</div>
           <div class="alert-banner" id="alertBanner">
@@ -696,6 +778,12 @@
         </div>
 
         <div class="video-viewport" id="webcamViewport">
+          <div class="hud-corner tl"></div>
+          <div class="hud-corner tr"></div>
+          <div class="hud-corner bl"></div>
+          <div class="hud-corner br"></div>
+          <div class="hud-crosshair"></div>
+          <div class="scanlines"></div>
           <div class="hud-tl-tag"><span class="radar-dot red" id="webcamHudDot"></span> LOCAL SENSOR // WEBCAM</div>
           <div class="hud-br-tag">CLIENT-SIDE INFERENCE</div>
           <div class="alert-banner" id="webcamAlertBanner">
