@@ -1,5 +1,7 @@
 # SmartBuilding API — Reto 1: Demografía y Vestimenta 🏢🎥
 
+🌐 **Demo en vivo:** https://suntzz.github.io/smartbuilding-api/
+
 Backend para la administración de edificios residenciales (**Conjunto Residencial San Carlos**) desarrollado con **Python**, **FastAPI** y **OpenCV**, incorporando el **Reto 1 de Visión por Computador: Demografía y vestimenta**.
 
 > **Nota de ramas:**
