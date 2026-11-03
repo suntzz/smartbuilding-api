@@ -55,6 +55,8 @@ python scripts/generar_datos_reto1.py     # actualiza app/static/retos_data.js p
 
 En la API: `POST /vision/demografia-vestimenta/analizar-video?motor=ia`.
 
+**Cámara web y foto en el navegador** ([`app/static/motor_web.js`](app/static/motor_web.js)): el mismo enfoque corre en el navegador con [transformers.js](https://huggingface.co/docs/transformers.js): YOLOS-tiny detecta a la persona, SegFormer segmenta su ropa y CLIP clasifica los atributos. Los textos de CLIP se precalculan con `python scripts/generar_textos_clip_web.py`. La primera vez se descargan ~135 MB (quedan en caché) y nada sale del navegador. Si solo se ve el torso, la prenda inferior se reporta como "no visible".
+
 **Resultado en el video del corredor (no usado para ajustar nada):** el detector clásico encontraba 6 de 7 personas y acertaba el sexo en 3; el motor IA encuentra las 7 y acierta el sexo en las 7, además de reconocer vestidos. Limitación conocida: con poca luz, las prendas blancas o celestes pueden salir como gris o beige.
 
 ---

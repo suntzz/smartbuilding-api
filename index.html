@@ -694,6 +694,9 @@
     .time-slider::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--text); }
     .time-lbl { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-muted); min-width: 92px; text-align: center; font-variant-numeric: tabular-nums; }
 
+    .ia-estado { font-size: 0.78rem; color: var(--text-dim); font-family: var(--font-mono); }
+    .ia-estado[data-tipo="ok"] { color: #9fd9bd; }
+    .ia-estado[data-tipo="error"] { color: #f1a7a9; }
     .motor-ia { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); margin-top: -4px; }
     .motor-ia span { color: var(--accent); margin-right: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
 
@@ -1025,9 +1028,10 @@
           </div>
         </div>
 
+        <p class="ia-estado" id="iaEstado">El modelo de IA se descarga al activar la cámara (~135 MB, solo la primera vez). Todo se procesa en tu navegador.</p>
+
         <div class="video-controls">
           <button class="btn-ctrl primary" id="btnToggleWebcam" onclick="toggleWebcam()">▶ Activar Cámara Web</button>
-          <button class="btn-ctrl" onclick="calibrarFondoWebcam()">Calibrar Fondo</button>
 
           <label style="font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:auto;">
             Modo:
@@ -1042,22 +1046,22 @@
 
       <div class="card">
         <div class="card-header">
-          <h2>Bitácora / Registro de Cosas Detectadas</h2>
+          <h2>Personas registradas</h2>
           <span style="font-size:0.78rem;color:var(--muted);"><span id="totalCapturasLabel">0</span> eventos</span>
         </div>
 
         <div class="kpi-row">
           <div class="kpi-card">
             <div class="num" id="webcamKpiPersonas">0</div>
-            <div class="desc">Capturas Registradas</div>
+            <div class="desc">Registros</div>
           </div>
           <div class="kpi-card">
             <div class="num" id="webcamKpiAlertas">0</div>
-            <div class="desc">Alertas Emitidas</div>
+            <div class="desc">Capturas manuales</div>
           </div>
           <div class="kpi-card">
-            <div class="num" id="webcamKpiInact">0</div>
-            <div class="desc">Entradas / Salidas</div>
+            <div class="num" id="webcamKpiConfianza">—</div>
+            <div class="desc">Confianza actual</div>
           </div>
         </div>
 
@@ -1066,14 +1070,14 @@
           <button class="btn-ctrl" onclick="descargarBitacoraCSV()">Exportar CSV</button>
           <button class="btn-ctrl danger" onclick="limpiarBitacora()">Limpiar</button>
           <label style="font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:auto;">
-            <input type="checkbox" id="autoCaptureCheck" checked> Auto-capturar al detectar
+            <input type="checkbox" id="autoCaptureCheck" checked> Registrar automáticamente
           </label>
         </div>
 
         <div class="feed-container" id="webcamLogContainer">
           <div style="color:var(--muted);text-align:center;padding:24px;">
             Aún no hay eventos registrados.<br/>
-            Activa la cámara y muévete frente a ella para registrar tus datos demográficos, vestimenta o cruces.
+            Activa la cámara y muévete frente a ella para registrar tu sexo aparente, rango de edad y vestimenta.
           </div>
         </div>
       </div>
@@ -1119,6 +1123,8 @@
   </footer>
 
   <script src="app/static/retos_data.js"></script>
+  <script src="app/static/clip_textos.js"></script>
+  <script type="module" src="app/static/motor_web.js"></script>
   <script>
     const videoElem = document.getElementById('mainVideo');
     const canvas = document.getElementById('overlayCanvas');
@@ -1981,6 +1987,7 @@
         const by = Math.max(0, Math.round(minY * scaleY));
         const bw = Math.min(vw - bx, Math.round((maxX - minX) * scaleX));
         const bh = Math.min(vh - by, Math.round((maxY - minY) * scaleY));
+        const ratioWH = bw / Math.max(1, bh);
 
         // Analizar colores de vestimenta en el recorte
         const cx = bx + bw / 2;
@@ -2083,7 +2090,7 @@
             playBeep(440, 0.12);
           }
           activeWebcamTrack.lastY = cy;
-          document.getElementById('webcamKpiInact').textContent = `${lineCrossCount.in} / ${lineCrossCount.out}`;
+
         }
         else if (webcamMode === "merodeo") {
           wctx.strokeStyle = "#d9a13b";
@@ -2237,7 +2244,7 @@
       document.getElementById('totalCapturasLabel').textContent = webcamLog.length;
       document.getElementById('webcamKpiPersonas').textContent = webcamLog.length;
 
-      const alertasCount = webcamLog.filter(x => x.tipoEvento.includes('Alerta')).length;
+      const alertasCount = webcamLog.filter(x => /manual/i.test(x.tipoEvento)).length;
       document.getElementById('webcamKpiAlertas').textContent = alertasCount;
 
       cont.innerHTML = webcamLog.map(r => `
@@ -2263,7 +2270,7 @@
       if (confirm("¿Deseas vaciar la bitácora de capturas?")) {
         webcamLog = [];
         lineCrossCount = { in: 0, out: 0 };
-        document.getElementById('webcamKpiInact').textContent = "0 / 0";
+        document.getElementById('webcamKpiConfianza').textContent = "—";
         renderizarBitacora();
       }
     }
@@ -2823,6 +2830,233 @@
 
       marcarModulo('1');
     })();
+  </script>
+  <!-- Cámara web y foto con el motor IA en el navegador (app/static/motor_web.js) -->
+  <script>
+    const iaEstado = { listo: false, error: null, dispositivo: '', persona: null, obs: [], faltas: 0, registrado: false, resultado: null, bbox: null };
+    const iaCanvas = document.createElement('canvas');
+    const procesarFrameWebcamClasico = window.procesarFrameWebcam;
+
+    function mostrarEstadoIA(texto, tipo) {
+      const el = document.getElementById('iaEstado');
+      el.textContent = texto;
+      el.dataset.tipo = tipo || '';
+    }
+
+    function motorDisponible() {
+      if (window.MotorWeb) return Promise.resolve(window.MotorWeb);
+      return new Promise(res => window.addEventListener('motorweb-listo', () => res(window.MotorWeb), { once: true }));
+    }
+
+    async function prepararModeloIA() {
+      if (iaEstado.listo) return true;
+      try {
+        const motor = await motorDisponible();
+        mostrarEstadoIA('Preparando el modelo de IA…');
+        iaEstado.dispositivo = await motor.cargar((p, total) => {
+          mostrarEstadoIA(`Descargando el modelo de IA: ${Math.round(p * 100)} % de ${Math.round(total / 1e6)} MB (solo la primera vez)`);
+        });
+        iaEstado.listo = true;
+        mostrarEstadoIA(`Modelo YOLOS + SegFormer + CLIP listo · ${iaEstado.dispositivo === 'webgpu' ? 'GPU (WebGPU)' : 'CPU (WebAssembly)'}`, 'ok');
+        return true;
+      } catch (err) {
+        console.error(err);
+        iaEstado.error = err;
+        mostrarEstadoIA('No se pudo cargar el modelo de IA; se usa la detección básica por movimiento.', 'error');
+        return false;
+      }
+    }
+
+    function reiniciarPersonaIA() {
+      iaEstado.persona = null;
+      iaEstado.obs = [];
+      iaEstado.faltas = 0;
+      iaEstado.registrado = false;
+      iaEstado.resultado = null;
+      iaEstado.bbox = null;
+    }
+
+    function interseccionSobreUnion([ax, ay, aw, ah], [bx, by, bw, bh]) {
+      const iw = Math.max(0, Math.min(ax + aw, bx + bw) - Math.max(ax, bx));
+      const ih = Math.max(0, Math.min(ay + ah, by + bh) - Math.max(ay, by));
+      const inter = iw * ih;
+      return inter / (aw * ah + bw * bh - inter);
+    }
+
+    function esMismaPersona(a, b) {
+      const dx = (a[0] + a[2] / 2) - (b[0] + b[2] / 2);
+      const dy = (a[1] + a[3] / 2) - (b[1] + b[3] / 2);
+      return interseccionSobreUnion(a, b) >= 0.1 || Math.hypot(dx, dy) < 0.6 * Math.max(a[2], b[2]);
+    }
+
+    function personaParaBitacora() {
+      const r = iaEstado.resultado;
+      return {
+        id: iaEstado.persona.id,
+        bbox: iaEstado.bbox,
+        sexo: r.sexo,
+        edad: r.edad,
+        prenda_superior: r.prenda_superior,
+        prenda_inferior: r.prenda_inferior
+      };
+    }
+
+    // Analiza la cámara de forma continua, separado del dibujo para no bloquear el video
+    async function cicloIA() {
+      while (webcamStream && iaEstado.listo) {
+        const vw = webcamVideo.videoWidth, vh = webcamVideo.videoHeight;
+        if (!vw) { await new Promise(r => setTimeout(r, 200)); continue; }
+        const esc = Math.min(1, 480 / vw);
+        iaCanvas.width = Math.round(vw * esc);
+        iaCanvas.height = Math.round(vh * esc);
+        iaCanvas.getContext('2d', { willReadFrequently: true }).drawImage(webcamVideo, 0, 0, iaCanvas.width, iaCanvas.height);
+        let obs = null;
+        try { obs = await window.MotorWeb.analizar(iaCanvas); } catch (err) { console.warn(err); }
+        iaEstado.analisis = (iaEstado.analisis || 0) + 1;
+        if (!webcamStream) break;
+        if (obs) {
+          obs.bbox = obs.bbox.map(v => Math.round(v / esc));
+          iaEstado.faltas = 0;
+          // Si la caja salta a otra zona es otra persona: no se mezclan sus datos
+          if (iaEstado.bbox && !esMismaPersona(iaEstado.bbox, obs.bbox)) reiniciarPersonaIA();
+          if (!iaEstado.persona) iaEstado.persona = { id: nextTrackId++ };
+          iaEstado.obs.push(obs);
+          if (iaEstado.obs.length > 12) iaEstado.obs.shift();
+          iaEstado.resultado = window.MotorWeb.consolidar(iaEstado.obs);
+          document.getElementById('webcamKpiConfianza').textContent = Math.round(iaEstado.resultado.confianza * 100) + ' %';
+          iaEstado.bbox = obs.bbox;
+          const auto = document.getElementById('autoCaptureCheck').checked;
+          if (!iaEstado.registrado && iaEstado.obs.length >= 2 && auto) {
+            iaEstado.registrado = true;
+            registrarEventoEnBitacora('Persona identificada', personaParaBitacora(), `Confianza ${Math.round(iaEstado.resultado.confianza * 100)} % · ${iaEstado.obs.length} análisis`);
+            playBeep(880, 0.08);
+          }
+        } else if (++iaEstado.faltas >= 2) {
+          reiniciarPersonaIA();
+        }
+        await new Promise(r => setTimeout(r, 120));
+      }
+    }
+
+    window.procesarFrameWebcam = function () {
+      if (!iaEstado.listo) {
+        // Mientras se descarga el modelo no se dibuja nada; la detección básica
+        // por movimiento solo se usa si el modelo no pudo cargarse.
+        if (!iaEstado.error) { wctx.clearRect(0, 0, webcamCanvas.width, webcamCanvas.height); return; }
+        webcamCanvas.style.transform = 'scaleX(-1)';
+        return procesarFrameWebcamClasico();
+      }
+      webcamCanvas.style.transform = 'none';
+      const vw = webcamCanvas.width, vh = webcamCanvas.height;
+      wctx.clearRect(0, 0, vw, vh);
+      if (!iaEstado.bbox || !iaEstado.resultado) return;
+
+      // El video se ve en espejo; la caja se refleja para coincidir con la imagen
+      const [x, y, w, h] = iaEstado.bbox;
+      const bx = vw - x - w;
+      const r = iaEstado.resultado;
+      const analizando = iaEstado.obs.length < 2;
+      wctx.strokeStyle = r.sexo === 'Masculino' ? '#e8e8e8' : '#c9a45c';
+      wctx.lineWidth = 3;
+      wctx.setLineDash(analizando ? [8, 6] : []);
+      wctx.strokeRect(bx, y, w, h);
+      wctx.setLineDash([]);
+
+      const lineas = [
+        [`#${iaEstado.persona.id} · ${r.sexo} · ${r.edad}`, '#ffffff', 'bold 14px "IBM Plex Sans", sans-serif'],
+        [`Superior: ${r.prenda_superior.tipo} ${r.prenda_superior.color}`, '#9fd9bd', '13px "IBM Plex Sans", sans-serif'],
+        [`Inferior: ${r.prenda_inferior.tipo}${r.prenda_inferior.tipo === 'no visible' ? '' : ' ' + r.prenda_inferior.color}`, '#d4d4d4', '13px "IBM Plex Sans", sans-serif'],
+        [analizando ? 'Analizando…' : `Confianza ${Math.round(r.confianza * 100)} %`, '#c9a45c', '12px "IBM Plex Mono", monospace']
+      ];
+      const ancho = 300, alto = 18 * lineas.length + 12;
+      const tx = Math.min(Math.max(0, bx), vw - ancho);
+      const ty = y > alto + 4 ? y - alto - 4 : Math.min(vh - alto, y + 4);
+      wctx.fillStyle = 'rgba(10, 10, 10, 0.86)';
+      wctx.fillRect(tx, ty, ancho, alto);
+      lineas.forEach(([texto, color, fuente], i) => {
+        wctx.font = fuente;
+        wctx.fillStyle = color;
+        wctx.fillText(texto, tx + 10, ty + 22 + i * 18);
+      });
+    };
+
+    const iniciarWebcamOriginal = window.iniciarWebcam;
+    window.iniciarWebcam = async function () {
+      await iniciarWebcamOriginal();
+      if (!webcamStream) return;
+      reiniciarPersonaIA();
+      if (await prepararModeloIA()) cicloIA();
+    };
+
+    const detenerWebcamOriginal = window.detenerWebcam;
+    window.detenerWebcam = function () {
+      detenerWebcamOriginal();
+      reiniciarPersonaIA();
+    };
+
+    window.capturarRegistroManual = function () {
+      if (!webcamStream) { mostrarToast('Primero activa la cámara web.', 'warning'); return; }
+      if (!iaEstado.resultado) { mostrarToast('Aún no hay una persona identificada frente a la cámara.', 'warning'); return; }
+      registrarEventoEnBitacora('Captura manual', personaParaBitacora(), `Confianza ${Math.round(iaEstado.resultado.confianza * 100)} %`);
+      playBeep(700, 0.1);
+    };
+
+    // Analizar una foto con el mismo modelo
+    window.analizarFotoLocal = async function (evt) {
+      const file = evt.target.files[0];
+      if (!file) return;
+      const caja = document.getElementById('photoReportBox');
+      document.getElementById('photoResults').style.display = 'grid';
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await img.decode();
+      const cvs = document.getElementById('photoCanvas');
+      cvs.width = img.width;
+      cvs.height = img.height;
+      const ctx = cvs.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      caja.innerHTML = '<div class="feed-item">Preparando el modelo de IA…</div>';
+      const motor = await motorDisponible();
+      try {
+        await motor.cargar((p, total) => { caja.innerHTML = `<div class="feed-item">Descargando el modelo de IA: ${Math.round(p * 100)} % de ${Math.round(total / 1e6)} MB (solo la primera vez)</div>`; });
+      } catch (err) {
+        caja.innerHTML = '<div class="feed-item">No se pudo cargar el modelo de IA. Revisa tu conexión e inténtalo de nuevo.</div>';
+        return;
+      }
+      caja.innerHTML = '<div class="feed-item">Analizando la foto…</div>';
+      const esc = Math.min(1, 640 / Math.max(img.width, img.height));
+      const peq = document.createElement('canvas');
+      peq.width = Math.round(img.width * esc);
+      peq.height = Math.round(img.height * esc);
+      peq.getContext('2d').drawImage(img, 0, 0, peq.width, peq.height);
+      const obs = await motor.analizar(peq);
+      if (!obs) {
+        caja.innerHTML = '<div class="feed-item">No se encontró una persona en la foto. Prueba con una imagen donde se vea al menos el torso.</div>';
+        return;
+      }
+      const r = motor.consolidar([obs]);
+      const [x, y, w, h] = obs.bbox.map(v => Math.round(v / esc));
+      const grosor = Math.max(3, Math.round(img.width * 0.006));
+      ctx.lineWidth = grosor;
+      ctx.strokeStyle = r.sexo === 'Masculino' ? '#e8e8e8' : '#c9a45c';
+      ctx.strokeRect(x, y, w, h);
+
+      const inf = r.prenda_inferior;
+      const infTexto = inf.tipo === 'no visible' ? 'no visible en la foto' : `${inf.tipo} · ${inf.color} <span class="swatch" style="background:${inf.hex}"></span>${inf.hex}`;
+      caja.innerHTML = `
+        <div class="feed-item" style="display:block;">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px;">
+            <b>${r.sexo} · ${r.edad}</b>
+            <span class="badge-status badge-green">Confianza ${Math.round(r.confianza * 100)} %</span>
+          </div>
+          <div style="color:var(--text-muted);font-size:0.84rem;line-height:1.7;">
+            Superior: ${r.prenda_superior.tipo} · ${r.prenda_superior.color} <span class="swatch" style="background:${r.prenda_superior.hex}"></span>${r.prenda_superior.hex}<br>
+            Inferior: ${infTexto}
+          </div>
+        </div>
+        <pre style="background:var(--panel-inset);border:1px solid var(--border);padding:12px;border-radius:6px;font-family:var(--font-mono);font-size:0.74rem;color:#d4d4d4;overflow-x:auto;margin-top:8px;">${JSON.stringify({ sexo_aparente: r.sexo, rango_edad: r.edad, prenda_superior: r.prenda_superior, prenda_inferior: r.prenda_inferior, confianza: r.confianza }, null, 2)}</pre>`;
+    };
   </script>
 </body>
 </html>
