@@ -35,7 +35,8 @@ def angulo_tronco(kp):
 
 class DetectorCaidas:
     def __init__(self, segundos_caida: float = 1.0, segundos_confirmacion: float = 2.0,
-                 area_minima: int = 1500, cada_frames: int = 2):
+                 area_minima: int = 1500, frames_estables: int = 3, cada_frames: int = 2):
+        self.frames_estables = frames_estables
         self.segundos_caida = segundos_caida
         self.segundos_confirmacion = segundos_confirmacion
         self.area_minima = area_minima
@@ -61,6 +62,9 @@ class DetectorCaidas:
             mascara = (cv2.absdiff(f, fondo).max(axis=2) > 40).astype(np.uint8)
             mascara = cv2.morphologyEx(mascara, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
             mascara = cv2.morphologyEx(mascara, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+            # Une las partes del cuerpo que se separan cuando la ropa se parece al fondo
+            # (pantalón oscuro sobre una silla oscura); el núcleo es vertical para no unir a dos personas
+            mascara = cv2.morphologyEx(mascara, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 41)))
             n, _, stats, _ = cv2.connectedComponentsWithStats(mascara)
             por_frame.append([
                 {"bbox": [int(v) for v in stats[k][:4]], "kp": None}
@@ -84,11 +88,15 @@ class DetectorCaidas:
     def analizar_video(self, ruta) -> dict:
         info = info_video(ruta)
         fps = info["fps"]
-        por_frame = self._personas_yolo(ruta)
-        motor = "YOLO11-pose"
-        if sum(len(d) for d in por_frame) < 0.05 * max(1, len(por_frame)):
-            por_frame = self._personas_silueta(ruta)
-            motor = "sustracción de fondo (siluetas)"
+        # Con cámara fija las siluetas ven a la persona en todos los frames; YOLO-pose se usa
+        # cuando cubre la escena igual de bien (personas reales con luz que cambia)
+        por_yolo = self._personas_yolo(ruta)
+        por_silueta = self._personas_silueta(ruta)
+        cobertura = lambda lista: sum(1 for d in lista if d)
+        if cobertura(por_yolo) >= 0.8 * cobertura(por_silueta):
+            por_frame, motor = por_yolo, "YOLO11-pose"
+        else:
+            por_frame, motor = por_silueta, "sustracción de fondo (siluetas)"
 
         personas, alertas, frames = [], [], []
         conteo = {e: 0 for e in ESTADOS}
@@ -106,14 +114,21 @@ class DetectorCaidas:
                     p = max(candidatas, key=parecido)
                 else:
                     p = {"id": len(personas) + 1, "altura_de_pie": d["bbox"][3], "historial": [],
-                         "estado": "de_pie", "frame_suelo": None, "alertado": False, "primer_frame": i}
+                         "estado": "de_pie", "frame_suelo": None, "alertado": False, "primer_frame": i,
+                         "estable": "de_pie", "candidata": "de_pie", "racha": 0}
                     personas.append(p)
                 usadas.add(p["id"])
                 p["bbox"], p["ultimo_frame"] = d["bbox"], i
 
                 postura, ratio, angulo = self._postura(p, d["bbox"], d["kp"])
                 p["historial"].append((i, postura, d["bbox"][1]))
-                estado = postura
+                # La postura que se muestra cambia solo si se mantiene unos frames (al agacharse
+                # no pasa por "sentado"); la detección de caídas usa la postura cruda
+                p["racha"] = p["racha"] + 1 if postura == p["candidata"] else 1
+                p["candidata"] = postura
+                if p["racha"] >= self.frames_estables or postura == "acostado":
+                    p["estable"] = postura
+                estado = p["estable"]
                 if postura == "acostado":
                     if p["frame_suelo"] is None:
                         # ¿Venía erguido hace menos de 1 s? Entonces es una caída, no acostarse
@@ -139,6 +154,9 @@ class DetectorCaidas:
                 else:
                     p["frame_suelo"] = None
                 p["estado"] = estado
+                p.setdefault("mostradas", [])
+                if estado not in p["mostradas"]:
+                    p["mostradas"].append(estado)
                 conteo[estado] += 1
                 visibles.append({
                     "person_id": p["id"],
@@ -156,7 +174,7 @@ class DetectorCaidas:
 
         resumen_personas = []
         for p in personas:
-            vistas = [h[1] for h in p["historial"]]
+            vistas = p["mostradas"]
             resumen_personas.append({
                 "person_id": p["id"],
                 "primer_frame": p["primer_frame"],

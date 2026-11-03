@@ -76,6 +76,8 @@ python scripts/generar_datos_retos.py    # actualiza los datos de la página (o:
 pytest tests/test_retos.py -v
 ```
 
+El video del reto 6 se genera con `python scripts/generar_video_caidas.py`: tres personas con esqueleto articulado que se agachan, se sientan y se caen sobre la sala vacía (`data/videos/reto6_fondo.png`).
+
 Limitaciones: los videos de los retos 5, 6 y 7 son animaciones sintéticas; con cámaras reales hay que calibrar las líneas del conteo, la zona de merodeo y el tamaño de los casilleros, y conviene un detector de placas dedicado. La reidentificación por color puede fallar si cambia mucho la luz (en el reto 3 la misma persona aparece con dos IDs en sus dos vueltas, aunque se alerta en ambas).
 
 ---
