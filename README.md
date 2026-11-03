@@ -33,6 +33,32 @@ El repositorio incluye clips reales de cámaras de vigilancia en `data/videos/`:
 
 ---
 
+---
+
+## 🧠 Motor IA del Reto 1 (YOLO11 + SegFormer + CLIP)
+
+El módulo [`app/vision/demografia_ia.py`](app/vision/demografia_ia.py) reemplaza las reglas manuales por modelos preentrenados:
+
+| Paso | Modelo | Para qué |
+|---|---|---|
+| Detección y seguimiento | [YOLO11n](https://docs.ultralytics.com/models/yolo11/) + ByteTrack | Un ID estable por persona |
+| Segmentación de ropa | [SegFormer B2 clothes](https://huggingface.co/mattmdjaga/segformer_b2_clothes) (ONNX) | Color real de cada prenda; pantalón, falda o vestido; mangas y piernas descubiertas |
+| Atributos | [CLIP ViT-B/32](https://github.com/mlfoundations/open_clip) (zero-shot) | Sexo aparente, rango de edad, tipo de prenda |
+
+Las predicciones de todos los frames se promedian por persona; el color se nombra en espacio Lab tras un balance de blancos de la escena.
+
+```bash
+pip install -r requirements.txt
+python scripts/descargar_modelos.py       # ~700 MB en models/ (no se sube a git)
+python scripts/generar_datos_reto1.py     # actualiza app/static/retos_data.js para la página
+```
+
+En la API: `POST /vision/demografia-vestimenta/analizar-video?motor=ia`.
+
+**Resultado en el video del corredor (no usado para ajustar nada):** el detector clásico encontraba 6 de 7 personas y acertaba el sexo en 3; el motor IA encuentra las 7 y acierta el sexo en las 7, además de reconocer vestidos. Limitación conocida: con poca luz, las prendas blancas o celestes pueden salir como gris o beige.
+
+---
+
 ## 🚀 Instalación y Ejecución
 
 ```bash
