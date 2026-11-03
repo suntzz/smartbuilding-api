@@ -736,22 +736,32 @@
     .hud-br-tag { color: #bdbdbd; }
     .alert-banner {
       position: absolute;
-      top: 42px;
-      left: 10px;
-      right: 10px;
-      background: rgba(180, 35, 40, 0.92);
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: calc(100% - 80px);
+      background: rgba(28, 10, 11, 0.86);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(229, 72, 77, 0.55);
+      color: #fbd5d6;
+      padding: 7px 14px 7px 12px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 500;
       font-family: var(--font-mono);
       display: none;
       align-items: center;
-      justify-content: space-between;
       gap: 10px;
       z-index: 10;
+      box-shadow: 0 0 24px -6px rgba(229, 72, 77, 0.6);
+      animation: entrarBanner 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
+    .alert-banner::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--danger); flex-shrink: 0; animation: latido 1.4s infinite; }
+    .alert-banner > span:last-child { display: none; }
+    .alert-banner[data-tipo="aviso"] { background: rgba(26, 22, 14, 0.86); border-color: rgba(201, 164, 92, 0.55); color: #f0dcb2; box-shadow: 0 0 24px -6px rgba(201, 164, 92, 0.5); }
+    .alert-banner[data-tipo="aviso"]::before { background: var(--accent); animation-name: latidoOro; }
+    @keyframes entrarBanner { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translateX(-50%); } }
 
     /* ---------- Botones ---------- */
     .video-controls {
@@ -835,7 +845,8 @@
     @keyframes latidoOro { 0% { box-shadow: 0 0 0 0 rgba(201, 164, 92, 0.6); } 70%, 100% { box-shadow: 0 0 0 7px rgba(201, 164, 92, 0); } }
 
     #webcamViewport { transition: aspect-ratio 0.4s; }
-    #webcamViewport video, #webcamViewport canvas { object-fit: contain; }
+    #webcamViewport video, #webcamViewport canvas, #viewport video, #viewport canvas { object-fit: contain; }
+    #viewport { transition: aspect-ratio 0.4s; }
     .webcam-espera {
       position: absolute;
       inset: 0;
@@ -892,6 +903,7 @@
     .kpi-card { border-radius: 10px; padding: 14px; background: linear-gradient(180deg, #131313, #0d0d0d); }
     .kpi-card::after { content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 1px; background: linear-gradient(90deg, transparent, rgba(201, 164, 92, 0.6), transparent); }
     .kpi-card .num { display: inline-block; font-family: var(--font-mono); font-size: clamp(1.05rem, 1.6vw, 1.4rem); font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .kpi-card .num.texto { font-family: var(--font-sans); font-size: 1.05rem; font-weight: 600; padding: 3px 0; }
     .kpi-card .num.tick { animation: tick 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
     @keyframes tick { from { opacity: 0; transform: translateY(8px); filter: blur(3px); color: var(--accent); } to { opacity: 1; transform: none; filter: none; } }
     .kpi-card .desc { font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-top: 6px; }
@@ -1071,6 +1083,116 @@
     .badge-red { color: #f1a7a9; border-color: rgba(229, 72, 77, 0.4); }
     .badge-blue { color: var(--text-muted); border-color: var(--border-hover); }
 
+    /* ---------- Retos 2 a 7: tarjetas de eventos ---------- */
+    .pi-icono {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid var(--border-hover);
+      background: radial-gradient(circle, #1a1a1a, #0d0d0d 70%);
+      color: var(--text-muted);
+    }
+    .pi-icono svg { width: 20px; height: 20px; }
+    .pi-icono.entrada { color: var(--success); border-color: rgba(63, 178, 127, 0.45); }
+    .pi-icono.salida { color: var(--warning); border-color: rgba(217, 161, 59, 0.45); }
+    .pi-icono.objeto { color: var(--accent); border-color: rgba(201, 164, 92, 0.45); }
+    .pi-estado.aviso { color: #e9c27a; border-color: rgba(217, 161, 59, 0.4); background: rgba(217, 161, 59, 0.08); }
+    .pi-estado.pico { color: var(--accent); border-color: rgba(201, 164, 92, 0.45); margin-left: 0; }
+    .pi-nota { margin-top: 6px; font-size: 0.74rem; color: var(--text-dim); }
+    .chip-prenda .ico { display: inline-grid; width: 14px; height: 14px; margin-left: 4px; color: var(--text-muted); }
+    .chip-prenda .ico svg { width: 14px; height: 14px; }
+    .secuencia { align-items: center; }
+    .secuencia .chip-prenda { padding-left: 8px; }
+    .secuencia .chip-prenda i { width: 7px; height: 7px; border: 0; background: var(--c); }
+    .secuencia .flecha { color: var(--text-dim); font-size: 0.72rem; }
+
+    /* Alerta: borde rojo que recorre la tarjeta */
+    .person-item.alerta { border-color: rgba(229, 72, 77, 0.35); background: linear-gradient(180deg, rgba(38, 18, 19, 0.92), rgba(18, 12, 12, 0.92)); }
+    .person-item.alerta::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      pointer-events: none;
+      background: conic-gradient(from var(--ang, 0deg), transparent 0 65%, rgba(229, 72, 77, 0.95) 85%, transparent 100%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: girar 2.4s linear infinite;
+    }
+    .person-item.alerta .pi-conf i::after { background: linear-gradient(90deg, #8f2b2e, var(--danger)); }
+
+    /* Placa colombiana */
+    .placa-co {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 92px;
+      padding: 4px 8px 6px;
+      border-radius: 6px;
+      background: linear-gradient(180deg, #f2c94c, #d9a92b);
+      border: 2px solid #1a1a1a;
+      box-shadow: 0 0 0 1px rgba(242, 201, 76, 0.4), 0 6px 18px -8px rgba(242, 201, 76, 0.5);
+      color: #111;
+    }
+    .placa-co small { font-family: var(--font-mono); font-size: 0.5rem; letter-spacing: 0.18em; opacity: 0.7; }
+    .placa-co b { font-family: var(--font-mono); font-size: 1rem; letter-spacing: 0.08em; line-height: 1.1; }
+
+    /* Casilleros como mosaico (Bento) */
+    .feed-container.modo-casilleros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .casillero-tile {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 132px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: linear-gradient(180deg, #131313, #0d0d0d);
+      animation: itemIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+      transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+    }
+    .casillero-tile .item-datos { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+    .ct-cabeza { display: flex; flex-direction: column; gap: 1px; font-family: var(--font-mono); }
+    .ct-cabeza b { font-size: 0.82rem; }
+    .ct-cabeza small { font-size: 0.64rem; color: var(--text-dim); white-space: nowrap; }
+    .ct-icono { width: 26px; height: 26px; color: var(--text-dim); }
+    .ct-icono svg { width: 100%; height: 100%; }
+    .ct-estado { font-size: 0.86rem; font-weight: 600; color: var(--text-dim); }
+    .ct-nota { font-size: 0.66rem; color: var(--text-dim); line-height: 1.4; }
+    .casillero-tile.ocupado { box-shadow: 0 0 0 1px var(--c) inset, 0 10px 30px -18px var(--c); --c: rgba(201, 164, 92, 0.55); border-color: transparent; background: linear-gradient(180deg, #1a1712, #0f0d0a); }
+    .casillero-tile.ocupado.recibo { --c: rgba(63, 178, 127, 0.5); background: linear-gradient(180deg, #121a16, #0b0f0d); }
+    .casillero-tile.ocupado .ct-icono, .casillero-tile.ocupado .ct-estado { color: var(--accent); }
+    .casillero-tile.ocupado.recibo .ct-icono, .casillero-tile.ocupado.recibo .ct-estado { color: #9fd9bd; }
+    .casillero-tile.ocupado .ct-icono { animation: llegar 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes llegar { from { transform: translateY(-10px) scale(0.6); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    /* Marcas de eventos sobre la línea de tiempo */
+    .linea-tiempo { position: relative; flex: 1; min-width: 70px; display: flex; align-items: center; }
+    .linea-tiempo .time-slider { width: 100%; }
+    .marcas-tiempo { position: absolute; left: 6px; right: 6px; top: 50%; height: 0; pointer-events: none; }
+    .marca {
+      position: absolute;
+      top: -9px;
+      width: 4px;
+      height: 6px;
+      margin-left: -2px;
+      padding: 0;
+      border: 0;
+      border-radius: 2px;
+      background: var(--c);
+      box-shadow: 0 0 8px var(--c);
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.2s;
+    }
+    .marca:hover { transform: scaleY(1.8); }
+
     /* ---------- Carga de foto ---------- */
     .upload-zone {
       border: 1px dashed var(--border-hover);
@@ -1113,8 +1235,9 @@
       .hud-br-tag { display: none; }
       .module-trigger kbd, .module-pos { display: none; }
       .module-trigger { flex: 1; }
-      .time-slider { order: 10; flex-basis: 100%; }
       .kbd-grid { grid-template-columns: 1fr !important; }
+      .feed-container.modo-casilleros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .linea-tiempo { order: 10; flex-basis: 100%; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
@@ -1176,10 +1299,10 @@
     <div class="hero-mark" aria-hidden="true">
       <svg viewBox="0 0 256 256"><path fill="#EDEDED" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle class="lente" cx="128" cy="104" r="18" fill="#C9A45C"/></svg>
     </div>
-    <span class="hero-eyebrow"><b>RETO 1</b> Demografía y vestimenta</span>
+    <span class="hero-eyebrow"><b>7 CÁMARAS</b> Visión por computador</span>
     <h2 data-blur>SmartBuilding</h2>
     <p class="hero-lead">
-      Cada persona que pasa frente a la cámara: sexo aparente, rango de edad, tipo y color de la prenda superior e inferior.
+      Demografía y vestimenta, conteo de entradas, merodeo, objetos abandonados, placas, caídas y correspondencia: el edificio analizado por inteligencia artificial.
     </p>
     <div class="hero-actions">
       <a class="hero-btn principal magnet" href="#/camaras" onclick="cambiarReto(1)">
@@ -1219,8 +1342,14 @@
     </div>
     <input type="text" id="moduleSearch" placeholder="Buscar módulo…" autocomplete="off" oninput="filtrarModulos(this.value)">
     <div class="animated-list" id="tabsBar">
-      <div class="list-group">Cámaras · Reto 1</div>
+      <div class="list-group">Cámaras del edificio</div>
       <button class="tab-btn active" data-key="1" onclick="cambiarReto(1)"><span class="tab-idx">01</span><span class="tab-body"><b>Demografía y vestimenta</b><small>Recepción y lobby</small></span></button>
+      <button class="tab-btn" data-key="2" onclick="cambiarReto(2)"><span class="tab-idx">02</span><span class="tab-body"><b>Conteo de entradas y salidas</b><small>Acceso principal · hora pico</small></span></button>
+      <button class="tab-btn" data-key="3" onclick="cambiarReto(3)"><span class="tab-idx">03</span><span class="tab-body"><b>Merodeo</b><small>Pasillo común</small></span></button>
+      <button class="tab-btn" data-key="4" onclick="cambiarReto(4)"><span class="tab-idx">04</span><span class="tab-body"><b>Objeto abandonado</b><small>Bolsos, maletas y paquetes</small></span></button>
+      <button class="tab-btn" data-key="5" onclick="cambiarReto(5)"><span class="tab-idx">05</span><span class="tab-body"><b>Lectura de placas</b><small>Portería vehicular · día y noche</small></span></button>
+      <button class="tab-btn" data-key="6" onclick="cambiarReto(6)"><span class="tab-idx">06</span><span class="tab-body"><b>Caídas</b><small>Comportamientos de riesgo</small></span></button>
+      <button class="tab-btn" data-key="7" onclick="cambiarReto(7)"><span class="tab-idx">07</span><span class="tab-body"><b>Correspondencia</b><small>Casilleros por apartamento</small></span></button>
       <div class="list-group">Herramientas</div>
       <button class="tab-btn cam-tab" data-key="webcam" onclick="mostrarWebcamLive()"><span class="tab-idx">CAM</span><span class="tab-body"><b>Mi cámara en vivo</b><small>Detección con tu cámara web</small></span></button>
       <button class="tab-btn" data-key="foto" onclick="mostrarSubirFoto()"><span class="tab-idx">IMG</span><span class="tab-body"><b>Analizar una foto</b><small>Sube una imagen propia</small></span></button>
@@ -1258,7 +1387,10 @@
         <div class="video-controls">
           <button class="btn-ctrl primary" id="btnPlayPause" onclick="togglePlay()">▶ Reproducir</button>
           <button class="btn-ctrl" onclick="reiniciarVideo()">↺ Reiniciar</button>
-          <input type="range" class="time-slider" id="timeSlider" min="0" max="100" value="0" step="0.1" oninput="seekVideo(this.value)">
+          <div class="linea-tiempo">
+            <input type="range" class="time-slider" id="timeSlider" min="0" max="100" value="0" step="0.1" oninput="seekVideo(this.value)" aria-label="Posición del video">
+            <div class="marcas-tiempo" id="marcasTiempo"></div>
+          </div>
           <span class="time-lbl" id="timeLabel">00:00 / 00:00</span>
           <button class="btn-ctrl" onclick="toggleVelocidad()" id="btnSpeed" title="Velocidad de reproducción">1.0x</button>
           <button class="btn-ctrl" onclick="toggleAudioGlobal()" id="btnAudioToggle" title="Activar/Silenciar sonido de alerta (M)">Audio</button>
@@ -1268,12 +1400,12 @@
       </div>
 
       <div class="card">
-        <div class="card-header" data-kicker="Analítica · Demografía y vestimenta">
-          <h2>Personas detectadas</h2>
+        <div class="card-header" id="panelCabecera" data-kicker="Analítica · Demografía y vestimenta">
+          <h2 id="panelTitulo">Personas detectadas</h2>
           <span id="metaRetoLabel" style="font-size:0.8rem;color:var(--muted)">Reto #1</span>
         </div>
 
-        <p class="motor-ia"><span>Modelo</span> YOLO11 + ByteTrack · SegFormer (ropa) · CLIP</p>
+        <p class="motor-ia" id="motorIA"><span>Modelo</span> YOLO11 + ByteTrack · SegFormer (ropa) · CLIP</p>
         <div class="kpi-row" id="kpiContainer"></div>
 
         <div class="feed-container" id="feedContainer">
@@ -1418,6 +1550,7 @@
 
   <script src="app/static/retos_data.js"></script>
   <script src="app/static/clip_textos.js"></script>
+  <script src="app/static/retos_vista.js"></script>
   <script type="module" src="app/static/motor_web.js"></script>
   <script>
     const videoElem = document.getElementById('mainVideo');
@@ -1440,27 +1573,27 @@
         video: "data/videos/reto1_demografia_vestimenta.mp4"
       },
       2: {
-        titulo: "Cámara 2: Control de Acceso y Torniquetes (Conteo y Hora Pico)",
+        titulo: "Acceso principal",
         video: "data/videos/reto2_conteo_flujo.mp4"
       },
       3: {
-        titulo: "Cámara 3: Pasillo Común y Áreas Sociales (Detección de Merodeo)",
+        titulo: "Pasillo común",
         video: "data/videos/reto3_merodeo.mp4"
       },
       4: {
-        titulo: "Cámara 4: Pasillo ABODA (Detección de Objeto Abandonado)",
+        titulo: "Pasillo del piso 2",
         video: "data/videos/reto4_objeto_abandonado.mp4"
       },
       5: {
-        titulo: "Cámara 5: Portería Vehicular (Lectura de Placas Día y Noche)",
+        titulo: "Portería vehicular",
         video: "data/videos/reto5_lectura_placas.mp4"
       },
       6: {
-        titulo: "Cámara 6: Sala y Pasillo Interior (Caídas y Comportamientos de Riesgo)",
+        titulo: "Sala de estar",
         video: "data/videos/reto6_caidas_riesgo.mp4"
       },
       7: {
-        titulo: "Cámara 7: Casilleros de Correspondencia por Apartamento",
+        titulo: "Casilleros de correspondencia",
         video: "data/videos/reto7_casilleros.mp4"
       }
     };
@@ -1494,13 +1627,16 @@
 
       if (webcamStream) detenerWebcam();
 
-      document.querySelectorAll('.tab-btn').forEach((b, idx) => {
-        b.classList.toggle('active', idx + 1 === id);
-      });
-
       const meta = retosMeta[id];
       document.getElementById('camTitle').textContent = meta.titulo;
+      document.querySelector('#cctvView .card-header').dataset.kicker = `Visor · Cámara 0${id}`;
       document.getElementById('metaRetoLabel').textContent = `Reto #${id}`;
+      if (id === 1) {
+        document.getElementById('panelCabecera').dataset.kicker = 'Analítica · Demografía y vestimenta';
+        document.getElementById('panelTitulo').textContent = 'Personas detectadas';
+        document.getElementById('motorIA').innerHTML = '<span>Modelo</span> YOLO11 + ByteTrack · SegFormer (ropa) · CLIP';
+        document.getElementById('feedContainer').classList.remove('modo-casilleros');
+      }
       alertBanner.style.display = 'none';
 
       videoElem.src = meta.video;
@@ -1562,6 +1698,8 @@
     videoElem.addEventListener('loadedmetadata', () => {
       canvas.width = videoElem.videoWidth || 640;
       canvas.height = videoElem.videoHeight || 360;
+      // El visor toma la proporción del video para que las cajas coincidan con la imagen
+      document.getElementById('viewport').style.aspectRatio = `${canvas.width} / ${canvas.height}`;
     });
 
 
@@ -1743,219 +1881,10 @@
         actualizarFeedProgresivoReto1(targetFrame);
       }
       if (currentReto === 1 && currentFrameData.personas) {
-        currentFrameData.personas.forEach(p => {
-          const [x, y, w, h] = p.bbox;
-          const colBox = p.sexo_aparente === "Masculino" ? "#e8e8e8" : "#c9a45c";
-          ctx.strokeStyle = colBox;
-          ctx.lineWidth = 2.5;
-          ctx.strokeRect(x, y, w, h);
-
-          ctx.strokeStyle = "rgba(255,255,255,0.4)";
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(x, y + h * 0.54);
-          ctx.lineTo(x + w, y + h * 0.54);
-          ctx.stroke();
-
-          ctx.fillStyle = "rgba(10, 10, 10, 0.88)";
-          ctx.fillRect(x, Math.max(0, y - 54), 250, 50);
-          ctx.fillStyle = "#ffffff";
-          ctx.font = "bold 12px Inter, sans-serif";
-          ctx.fillText(`ID #${p.person_id} | ${p.sexo_aparente} | ${p.rango_edad}`, x + 6, Math.max(14, y - 36));
-
-          ctx.font = "11px Inter, sans-serif";
-          ctx.fillStyle = "#86efac";
-          ctx.fillText(`Sup: ${p.prenda_superior.tipo} (${p.prenda_superior.color})`, x + 6, Math.max(28, y - 21));
-          ctx.fillStyle = "#d4d4d4";
-          ctx.fillText(`Inf: ${p.prenda_inferior.tipo} (${p.prenda_inferior.color})`, x + 6, Math.max(42, y - 7));
-        });
-      } else if (currentReto === 2) {
-        const yL1 = ch * 0.62;
-        const yL2 = ch * 0.42;
-
-        ctx.strokeStyle = "#3fb27f";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, yL1); ctx.lineTo(cw, yL1);
-        ctx.stroke();
-        ctx.fillStyle = "#3fb27f";
-        ctx.font = "bold 12px JetBrains Mono, monospace";
-        ctx.fillText(`LÍNEA ACCESO PRINCIPAL (Y=${Math.round(yL1)})`, 14, yL1 - 8);
-
-        ctx.strokeStyle = "#e8e8e8";
-        ctx.beginPath();
-        ctx.moveTo(0, yL2); ctx.lineTo(cw, yL2);
-        ctx.stroke();
-        ctx.fillStyle = "#e8e8e8";
-        ctx.fillText(`LÍNEA INTERIOR (Y=${Math.round(yL2)})`, 14, yL2 - 8);
-
-        if (currentFrameData.personas) {
-          currentFrameData.personas.forEach(p => {
-            const [x, y, w, h] = p.bbox;
-            ctx.strokeStyle = "#e8e8e8";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(x, y, w, h);
-            ctx.fillStyle = "#d9a13b";
-            ctx.font = "bold 11px Inter, sans-serif";
-            ctx.fillText(`ID #${p.person_id}`, x, Math.max(12, y - 6));
-          });
-        }
-
-        if (currentFrameData.es_hora_pico) {
-          alertBanner.style.display = 'flex';
-          alertMsg.textContent = `HORA PICO DETECTADA: ${currentFrameData.personas_simultaneas} personas cruzando en simultáneo`;
-        } else {
-          alertBanner.style.display = 'none';
-        }
-      } else if (currentReto === 3 && currentFrameData.personas) {
-        let hayAlerta = false;
-        currentFrameData.personas.forEach(p => {
-          const [x, y, w, h] = p.bbox;
-          let col = "#3fb27f";
-          if (p.comportamiento === "merodeo") col = "#e5484d";
-          else if (p.comportamiento === "esperando") col = "#d9a13b";
-          else if (p.comportamiento === "conversando") col = "#a1a1a1";
-
-          ctx.strokeStyle = col;
-          ctx.lineWidth = 2.5;
-          ctx.strokeRect(x, y, w, h);
-
-          if (p.puntos && p.puntos.length > 1) {
-            ctx.strokeStyle = col;
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            p.puntos.forEach((pt, i) => {
-              if (i === 0) ctx.moveTo(pt[0], pt[1]);
-              else ctx.lineTo(pt[0], pt[1]);
-            });
-            ctx.stroke();
-          }
-
-          ctx.fillStyle = "rgba(10, 10, 10, 0.88)";
-          ctx.fillRect(x, Math.max(0, y - 22), 160, 20);
-          ctx.fillStyle = col;
-          ctx.font = "bold 11px Inter, sans-serif";
-          ctx.fillText(`ID #${p.person_id} • ${p.comportamiento.toUpperCase()}`, x + 5, Math.max(14, y - 8));
-
-          if (p.alerta) hayAlerta = true;
-        });
-
-        if (hayAlerta) {
-          alertBanner.style.display = 'flex';
-          alertMsg.textContent = `ALERTA: Merodeo o deambulación anómala detectada en pasillo común`;
-        } else {
-          alertBanner.style.display = 'none';
-        }
-      } else if (currentReto === 4) {
-        if (currentFrameData.personas) {
-          currentFrameData.personas.forEach(p => {
-            const [x, y, w, h] = p.bbox;
-            ctx.strokeStyle = "#e8e8e8";
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(x, y, w, h);
-            ctx.fillStyle = "#e8e8e8";
-            ctx.font = "11px Inter, sans-serif";
-            ctx.fillText("Persona", x, Math.max(12, y - 5));
-          });
-        }
-        let abandonoActivo = false;
-        if (currentFrameData.objetos) {
-          currentFrameData.objetos.forEach(o => {
-            const [x, y, w, h] = o.bbox;
-            const esAbandono = o.estado === "abandonado";
-            const col = esAbandono ? "#e5484d" : "#d9a13b";
-            ctx.strokeStyle = col;
-            ctx.lineWidth = 2.5;
-            ctx.strokeRect(x, y, w, h);
-
-            if (esAbandono) {
-              abandonoActivo = true;
-              ctx.beginPath();
-              ctx.arc(x + w/2, y + h/2, Math.max(w,h)*0.85, 0, Math.PI*2);
-              ctx.stroke();
-            }
-
-            ctx.fillStyle = "rgba(10, 10, 10, 0.9)";
-            ctx.fillRect(x - 5, Math.max(0, y - 24), 210, 22);
-            ctx.fillStyle = col;
-            ctx.font = "bold 11px Inter, sans-serif";
-            ctx.fillText(`${o.tipo.toUpperCase()} (${o.estado.toUpperCase()}) • d=${o.distancia_persona_px}px`, x, Math.max(15, y - 8));
-          });
-        }
-
-        if (abandonoActivo) {
-          alertBanner.style.display = 'flex';
-          alertMsg.textContent = `OBJETO ABANDONADO: Propietario se alejó y dejó maleta/bolso en el pasillo`;
-        } else {
-          alertBanner.style.display = 'none';
-        }
-      } else if (currentReto === 5 && currentFrameData.vehiculos) {
-        currentFrameData.vehiculos.forEach(v => {
-          const [x, y, w, h] = v.bbox_placa;
-          const col = v.autorizado ? "#3fb27f" : "#d9a13b";
-          ctx.strokeStyle = col;
-          ctx.lineWidth = 3;
-          ctx.strokeRect(x, y, w, h);
-
-          ctx.fillStyle = "rgba(10, 10, 10, 0.92)";
-          ctx.fillRect(15, 15, cw - 30, 55);
-          ctx.fillStyle = col;
-          ctx.font = "bold 14px JetBrains Mono, monospace";
-          ctx.fillText(`PLACA: ${v.placa} [${v.tipo_vehiculo.toUpperCase()} - MODO ${v.condicion_luz.toUpperCase()}]`, 25, 38);
-
-          ctx.fillStyle = "#ffffff";
-          ctx.font = "12px Inter, sans-serif";
-          const resTxt = v.autorizado ? `Residente: ${v.residente} • Torre ${v.torre} - Apto ${v.apartamento} (${v.parqueadero})` : "Vehículo Visitante / No registrado en edificio";
-          ctx.fillText(resTxt, 25, 58);
-        });
-      } else if (currentReto === 6 && currentFrameData.personas) {
-        let hayCaida = false;
-        currentFrameData.personas.forEach(p => {
-          const [x, y, w, h] = p.bbox;
-          let col = "#3fb27f";
-          if (p.estado === "caida_confirmada") col = "#e5484d";
-          else if (p.estado === "sentado" || p.estado === "agachado") col = "#d9a13b";
-          else if (p.estado === "posible_caida_en_observacion") col = "#e07b39";
-
-          ctx.strokeStyle = col;
-          ctx.lineWidth = 2.5;
-          ctx.strokeRect(x, y, w, h);
-
-          ctx.fillStyle = "rgba(10, 10, 10, 0.88)";
-          ctx.fillRect(x, Math.max(0, y - 24), 260, 22);
-          ctx.fillStyle = col;
-          ctx.font = "bold 11px Inter, sans-serif";
-          ctx.fillText(`ID #${p.person_id} • ${p.estado.toUpperCase()} (w/h=${p.ratio_ancho_alto})`, x + 5, Math.max(15, y - 8));
-
-          if (p.alerta) hayCaida = true;
-        });
-
-        if (hayCaida) {
-          alertBanner.style.display = 'flex';
-          alertMsg.textContent = `EMERGENCIA: Caída confirmada en el suelo sin levantarse`;
-        } else {
-          alertBanner.style.display = 'none';
-        }
-      } else if (currentReto === 7 && currentFrameData.casilleros) {
-        currentFrameData.casilleros.forEach(c => {
-          const [x, y, w, h] = c.bbox;
-          if (c.ocupado) {
-            const col = c.tipo_correspondencia === "paquete" ? "#e8e8e8" : "#3fb27f";
-            ctx.strokeStyle = col;
-            ctx.lineWidth = 2.5;
-            ctx.strokeRect(x, y, w, h);
-
-            ctx.fillStyle = "rgba(10, 10, 10, 0.85)";
-            ctx.fillRect(x + 4, y + 6, w - 8, 22);
-            ctx.fillStyle = col;
-            ctx.font = "bold 11px Inter, sans-serif";
-            ctx.fillText(`Apto ${c.apartamento}: ${c.tipo_correspondencia.toUpperCase()}`, x + 8, y + 21);
-          } else {
-            ctx.strokeStyle = "rgba(255,255,255,0.2)";
-            ctx.lineWidth = 1;
-            ctx.strokeRect(x, y, w, h);
-          }
-        });
+        if (window.VistasRetos) VistasRetos.dibujarReto1(ctx, currentFrameData);
+      } else if (window.VistasRetos && VistasRetos.tiene(currentReto)) {
+        VistasRetos.actualizar(currentReto, targetFrame, currentFrameData);
+        VistasRetos.dibujar(currentReto, ctx, targetFrame, currentFrameData);
       }
     }
 
@@ -1970,43 +1899,6 @@
           <div class="kpi-card"><div class="num" id="kpiSexo">0F / 0M</div><div class="desc">Femenino / Masculino</div></div>
           <div class="kpi-card"><div class="num" id="kpiFrames">0 / ${data.total_frames_video || 205}</div><div class="desc">Frames</div></div>
         `;
-      } else if (id === 2) {
-        container.innerHTML = `
-          <div class="kpi-card"><div class="num">${data.total_entradas}</div><div class="desc">Entradas</div></div>
-          <div class="kpi-card"><div class="num">${data.total_salidas}</div><div class="desc">Salidas</div></div>
-          <div class="kpi-card"><div class="num">${data.hubo_hora_pico ? 'SÍ ('+data.max_personas_simultaneas+')' : 'NO'}</div><div class="desc">Pico Máximo</div></div>
-        `;
-      } else if (id === 3) {
-        container.innerHTML = `
-          <div class="kpi-card"><div class="num">${data.total_alertas_merodeo}</div><div class="desc">Alertas Merodeo</div></div>
-          <div class="kpi-card"><div class="num">${data.conteo_estados_observados.conversando}</div><div class="desc">Frames Conversa</div></div>
-          <div class="kpi-card"><div class="num">${data.conteo_estados_observados.paso_normal}</div><div class="desc">Paso Normal</div></div>
-        `;
-      } else if (id === 4) {
-        container.innerHTML = `
-          <div class="kpi-card"><div class="num">${data.total_alertas_abandono}</div><div class="desc">Alertas Abandono</div></div>
-          <div class="kpi-card"><div class="num">ABODA</div><div class="desc">Dataset Real</div></div>
-          <div class="kpi-card"><div class="num">135 px</div><div class="desc">Distancia Dueño</div></div>
-        `;
-      } else if (id === 5) {
-        const aut = data.lecturas_unicas.filter(x => x.autorizado).length;
-        container.innerHTML = `
-          <div class="kpi-card"><div class="num">${data.total_vehiculos_leidos}</div><div class="desc">Vehículos Únicos</div></div>
-          <div class="kpi-card"><div class="num">${aut}</div><div class="desc">Residentes</div></div>
-          <div class="kpi-card"><div class="num">Día/Noche</div><div class="desc">Filtro CLAHE</div></div>
-        `;
-      } else if (id === 6) {
-        container.innerHTML = `
-          <div class="kpi-card"><div class="num">${data.total_alertas_caida}</div><div class="desc">Caídas Reales</div></div>
-          <div class="kpi-card"><div class="num">${data.conteo_posturas_observadas.agachado||0}</div><div class="desc">Agachado (OK)</div></div>
-          <div class="kpi-card"><div class="num">${data.conteo_posturas_observadas.sentado||0}</div><div class="desc">Sentado (OK)</div></div>
-        `;
-      } else if (id === 7) {
-        container.innerHTML = `
-          <div class="kpi-card"><div class="num">${data.total_casilleros_ocupados}</div><div class="desc">Casilleros con Correo</div></div>
-          <div class="kpi-card"><div class="num">${data.estado_todos_los_casilleros.length}</div><div class="desc">Total Casilleros</div></div>
-          <div class="kpi-card"><div class="num">San Carlos</div><div class="desc">Directorio</div></div>
-        `;
       }
     }
 
@@ -2018,50 +1910,9 @@
       if (id === 1) {
         resetearSeguimientoProgresivo();
         actualizarFeedProgresivoReto1(0);
-      } else if (id === 2) {
-        feed.innerHTML = data.eventos_cruce.map(e => `
-          <div class="feed-item">
-            <div>Persona <b>#${e.person_id}</b> cruzó <code>${e.linea}</code></div>
-            <span class="badge-status ${e.sentido==='entrada'?'badge-green':'badge-yellow'}">${e.sentido.toUpperCase()} (F${e.frame})</span>
-          </div>
-        `).join('');
-      } else if (id === 3) {
-        feed.innerHTML = data.alertas.map(a => `
-          <div class="feed-item">
-            <div><b>${a.mensaje}</b><br/><small>Distancia recorrida: ${a.distancia_recorrida}px | Eficiencia: ${a.eficiencia_trayectoria}</small></div>
-            <span class="badge-status badge-red">ALERTA</span>
-          </div>
-        `).join('');
-      } else if (id === 4) {
-        feed.innerHTML = data.alertas.map(a => `
-          <div class="feed-item">
-            <div><b>${a.mensaje}</b><br/><small>Ubicación: [${a.ubicacion}] | Distancia propietario: ${a.distancia_propietario_px}px</small></div>
-            <span class="badge-status badge-red">${a.tipo_objeto.toUpperCase()}</span>
-          </div>
-        `).join('');
-      } else if (id === 5) {
-        feed.innerHTML = data.lecturas_unicas.map(v => `
-          <div class="feed-item">
-            <div><b>Placa ${v.placa}</b> (${v.tipo_vehiculo.toUpperCase()} • ${v.condicion_luz.toUpperCase()})<br/>
-            <small>${v.autorizado ? 'Residente: ' + v.residente + ' • Apto ' + v.apartamento + ' (' + v.parqueadero + ')' : 'Visitante no registrado'}</small></div>
-            <span class="badge-status ${v.autorizado ? 'badge-green' : 'badge-yellow'}">${v.autorizado ? 'AUTORIZADO' : 'VISITANTE'}</span>
-          </div>
-        `).join('');
-      } else if (id === 6) {
-        feed.innerHTML = data.alertas.map(a => `
-          <div class="feed-item">
-            <div><b>${a.mensaje}</b><br/><small>Relación w/h: ${a.ratio_ancho_alto} | Frames en suelo: ${a.frames_en_suelo}</small></div>
-            <span class="badge-status badge-red">EMERGENCIA</span>
-          </div>
-        `).join('');
-      } else if (id === 7) {
-        feed.innerHTML = data.correspondencia_detectada.map(c => `
-          <div class="feed-item">
-            <div><b>Casillero ${c.casillero} (Apto ${c.apartamento})</b> — ${c.tipo_correspondencia.toUpperCase()}<br/>
-            <small>Residentes: ${c.residentes_notificados.join(', ')}</small></div>
-            <span class="badge-status badge-green">NOTIFICADO</span>
-          </div>
-        `).join('');
+        if (window.VistasRetos) VistasRetos.marcasReto1();
+      } else if (window.VistasRetos) {
+        VistasRetos.iniciar(id);
       }
     }
 
@@ -2143,7 +1994,7 @@
       if (k === 'f') return toggleFullscreen();
       if (k === 'm') return toggleAudioGlobal();
       if (k === 'c') return mostrarWebcamLive();
-      if (k === '1') return cambiarReto(1);
+      if (/^[1-7]$/.test(k)) return cambiarReto(Number(k));
     });
 
     // Canvas interno en baja resolución para alto rendimiento (160x120)
@@ -2889,6 +2740,12 @@
   <script>
     const MODULOS = {
       '1': ['Cámara 01', 'Demografía y vestimenta'],
+      '2': ['Cámara 02', 'Conteo de entradas y salidas'],
+      '3': ['Cámara 03', 'Merodeo'],
+      '4': ['Cámara 04', 'Objeto abandonado'],
+      '5': ['Cámara 05', 'Lectura de placas'],
+      '6': ['Cámara 06', 'Caídas'],
+      '7': ['Cámara 07', 'Correspondencia'],
       webcam: ['Herramienta', 'Mi cámara en vivo'],
       foto: ['Herramienta', 'Analizar una foto'],
       residentes: ['Herramienta', 'Directorio de residentes']
