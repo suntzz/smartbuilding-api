@@ -145,148 +145,190 @@
     .pill-cta { cursor: pointer; background: var(--text); color: #0a0a0a; border-color: var(--text); font-weight: 600; }
     .pill-cta:hover { background: #d4d4d4; border-color: #d4d4d4; }
 
-    /* ---------- Portada: texto a la izquierda, la cámara a la derecha ---------- */
+    /* ---------- Portada centrada ---------- */
     .hero {
+      position: relative;
       min-height: calc(100svh - 56px);
-      display: grid;
-      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-      align-items: center;
-      gap: 64px;
-      width: min(1200px, calc(100% - 64px));
-      margin: 0 auto;
-      padding: 64px 0;
-    }
-    .hero-texto { display: flex; flex-direction: column; align-items: flex-start; }
-    .hero-meta { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--text-dim); }
-    .hero h2 {
-      margin-top: 16px;
-      font-size: clamp(2.5rem, 4.6vw, 3.75rem);
-      line-height: 1.06;
-      letter-spacing: -0.03em;
-      font-weight: 500;
-      color: var(--text);
-      text-wrap: balance;
-    }
-    .hero-lead {
-      margin-top: 20px;
-      max-width: 34rem;
-      font-size: 1.125rem;
-      line-height: 1.6;
-      color: var(--text-muted);
-    }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-    .hero-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      height: 44px;
-      padding: 0 20px;
-      border-radius: 10px;
-      border: 1px solid rgba(237, 237, 237, 0.08);
-      background: #1c1c1e;
-      color: var(--text);
-      font-family: var(--font-sans);
-      font-size: 0.9375rem;
-      font-weight: 500;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background-color 160ms cubic-bezier(0.22, 1, 0.36, 1), transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .hero-btn:hover { background: #262628; }
-    .hero-btn:active { transform: scale(0.98); }
-    .hero-btn.principal { background: #ededed; color: #111112; border-color: transparent; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6); }
-    .hero-btn.principal:hover { background: #ffffff; }
-    .hero-btn svg { width: 18px; height: 18px; flex-shrink: 0; stroke-width: 1.5; }
-
-    /* La cámara 01 con sus detecciones reales */
-    .hero-visor {
-      padding: 8px;
-      border-radius: 16px;
-      background: #141415;
-      border: 1px solid rgba(237, 237, 237, 0.08);
-      box-shadow: 0 24px 64px -32px rgba(0, 0, 0, 0.8);
-    }
-    .hv-barra {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      height: 32px;
-      padding: 0 8px;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-dim);
-    }
-    .hv-barra .hv-hora { margin-left: auto; font-variant-numeric: tabular-nums; }
-    .hv-vivo { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
-    .hv-imagen { position: relative; overflow: hidden; border-radius: 8px; aspect-ratio: 16 / 9; background: #000; }
-    .hv-imagen img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    .hv-caja {
-      --c: rgba(237, 237, 237, 0.75);
-      --l: 14px;
-      position: absolute;
-      background:
-        linear-gradient(var(--c), var(--c)) top left / var(--l) 2px no-repeat,
-        linear-gradient(var(--c), var(--c)) top left / 2px var(--l) no-repeat,
-        linear-gradient(var(--c), var(--c)) top right / var(--l) 2px no-repeat,
-        linear-gradient(var(--c), var(--c)) top right / 2px var(--l) no-repeat,
-        linear-gradient(var(--c), var(--c)) bottom left / var(--l) 2px no-repeat,
-        linear-gradient(var(--c), var(--c)) bottom left / 2px var(--l) no-repeat,
-        linear-gradient(var(--c), var(--c)) bottom right / var(--l) 2px no-repeat,
-        linear-gradient(var(--c), var(--c)) bottom right / 2px var(--l) no-repeat;
-    }
-    .hv-caja.destacada { --c: var(--accent); }
-    .hv-etiqueta {
-      position: absolute;
-      left: 0;
-      top: calc(100% + 8px);
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      background: rgba(15, 15, 16, 0.88);
-      border: 1px solid rgba(237, 237, 237, 0.08);
-      white-space: nowrap;
-      font-size: 0.75rem;
-      color: var(--text);
-    }
-    .hv-etiqueta small { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-muted); }
-    .hv-eventos { list-style: none; margin-top: 8px; }
-    .hv-eventos li {
-      display: grid;
-      grid-template-columns: 56px minmax(0, 1fr) auto;
       align-items: center;
-      gap: 12px;
-      height: 40px;
-      padding: 0 8px;
-      border-top: 1px solid rgba(237, 237, 237, 0.06);
-      font-size: 0.8125rem;
+      justify-content: center;
+      text-align: center;
+      padding: 64px 16px 96px;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    /* Radar: barrido con rastro fosforescente y contactos en movimiento */
+    #radarCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 35%, transparent 72%);
+      mask-image: radial-gradient(circle at 50% 50%, #000 35%, transparent 72%);
+    }
+    /* Light Rays: haz cálido que cae desde arriba */
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      width: min(900px, 140vw);
+      height: 90%;
+      transform: translateX(-50%);
+      z-index: -2;
+      pointer-events: none;
+      background:
+        conic-gradient(from 180deg at 50% 0%, transparent 160deg, rgba(201, 164, 92, 0.16) 175deg, rgba(255, 236, 200, 0.10) 180deg, rgba(201, 164, 92, 0.16) 185deg, transparent 200deg);
+      filter: blur(18px);
+      animation: rayos 9s ease-in-out infinite alternate;
+    }
+    @keyframes rayos { from { opacity: 0.65; transform: translateX(-50%) rotate(-2deg); } to { opacity: 1; transform: translateX(-50%) rotate(2deg); } }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 160px;
+      z-index: -1;
+      pointer-events: none;
+      background: linear-gradient(to bottom, transparent, var(--bg));
+    }
+
+    .hero-mark {
+      width: 76px;
+      height: 76px;
+      margin-bottom: 28px;
+      filter: drop-shadow(0 0 28px rgba(201, 164, 92, 0.35));
+      animation: aparecer 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .hero-mark svg { width: 100%; height: 100%; display: block; }
+    .hero-mark .lente { transform-origin: 128px 104px; animation: enfocar 4s ease-in-out infinite; }
+    @keyframes enfocar { 0%, 70%, 100% { transform: scale(1); } 80% { transform: scale(0.7); } 90% { transform: scale(1.12); } }
+
+    /* Star Border en la etiqueta superior */
+    .hero-eyebrow {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
       color: var(--text-muted);
+      background: rgba(17, 17, 17, 0.7);
+      margin-bottom: 26px;
+      isolation: isolate;
+      animation: aparecer 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
     }
-    .hv-eventos li:first-child { border-top: 0; }
-    .hv-eventos b { font-weight: 500; color: var(--text); }
-    .hv-cam, .hv-t { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
-    .hv-eventos span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    /* Una sola entrada al cargar */
-    @keyframes subir { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    .hero-texto > *, .hero-visor { animation: subir 400ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-    .hero-texto > :nth-child(2) { animation-delay: 50ms; }
-    .hero-texto > :nth-child(3) { animation-delay: 100ms; }
-    .hero-texto > :nth-child(4) { animation-delay: 150ms; }
-    .hero-visor { animation-delay: 200ms; }
-    body:has(#vistaInicio:not([hidden])) #dotGrid { display: none; }
-
-    @media (max-width: 960px) {
-      .hero { grid-template-columns: minmax(0, 1fr); gap: 48px; width: calc(100% - 32px); padding: 48px 0 64px; min-height: 0; }
-      .hero h2 { font-size: 2.5rem; }
-      .hero-lead { font-size: 1rem; }
-      .hv-eventos li:nth-child(n + 3) { display: none; }
+    .hero-eyebrow::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: conic-gradient(from var(--ang, 0deg), transparent 0 72%, rgba(201, 164, 92, 0.9) 86%, transparent 100%), var(--border-hover);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: girar 5s linear infinite;
+      z-index: -1;
     }
+    @property --ang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+    @keyframes girar { to { --ang: 360deg; } }
+    .hero-eyebrow b { color: var(--accent); font-weight: 500; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; }
+
+    .hero h2 {
+      font-size: clamp(3rem, 10vw, 7.2rem);
+      line-height: 1.08;
+      letter-spacing: -0.055em;
+      font-weight: 600;
+      background: linear-gradient(180deg, #ffffff 30%, #9a9a9a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    /* Blur Text: cada letra aparece desde el desenfoque */
+    .blur-char {
+      display: inline-block;
+      opacity: 0;
+      filter: blur(12px);
+      transform: translateY(-0.25em);
+      animation: desenfocar 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: calc(0.25s + var(--i) * 45ms);
+      padding-bottom: 0.14em;
+      margin-bottom: -0.14em;
+      background: inherit;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    @keyframes desenfocar { to { opacity: 1; filter: blur(0); transform: none; } }
+    @keyframes aparecer { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+
+    .hero-lead {
+      margin-top: 22px;
+      max-width: 52ch;
+      font-size: clamp(1rem, 1.6vw, 1.12rem);
+      line-height: 1.65;
+      color: var(--text-muted);
+      animation: aparecer 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 38px;
+      animation: aparecer 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.1s both;
+    }
+    .hero-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      height: 50px;
+      padding: 0 26px;
+      border-radius: 999px;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      border: 1px solid var(--border-hover);
+      background: rgba(17, 17, 17, 0.75);
+      color: var(--text);
+      backdrop-filter: blur(8px);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.3s;
+    }
+    .hero-btn:hover { border-color: #555; background: rgba(28, 28, 28, 0.85); }
+    .hero-btn.principal {
+      background: linear-gradient(180deg, #f2f2f2, #cfcfcf);
+      color: #0a0a0a;
+      border-color: transparent;
+      box-shadow: 0 10px 40px -10px rgba(201, 164, 92, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    .hero-btn.principal:hover { box-shadow: 0 14px 50px -8px rgba(201, 164, 92, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.8); }
+    /* Brillo que cruza el botón principal */
+    .hero-btn.principal::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, 0.7) 50%, transparent 65%);
+      transform: translateX(-120%);
+      animation: brillo 3.6s ease-in-out 2s infinite;
+    }
+    @keyframes brillo { 0%, 60% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+    .hero-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .hero-btn .punto { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.6); animation: latido 1.8s infinite; }
+    @keyframes latido { 70% { box-shadow: 0 0 0 8px rgba(229, 72, 77, 0); } 100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0); } }
+
 
     /* ---------- Vistas: portada y cámaras ---------- */
     .vista[hidden] { display: none !important; }
     #vistaApp { flex: 1; display: flex; flex-direction: column; }
+    .hero { min-height: calc(100svh - 56px); }
 
     /* Cortina escalonada entre vistas (inspirada en las transiciones de React Bits) */
     .cortina {
@@ -1183,6 +1225,8 @@
     @media (max-width: 760px) {
       .header-clock, .header-links .pill-green, .header-links .pill-gh { display: none; }
       .brand h1 { font-size: 0.95rem; }
+      .hero { padding: 48px 16px 88px; min-height: calc(100svh - 56px); }
+      .hero-btn { height: 46px; padding: 0 20px; }
       .card { padding: 14px; }
       .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .kpi-row .kpi-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
@@ -1251,32 +1295,25 @@
   </header>
 
   <section class="hero vista" id="vistaInicio">
-    <div class="hero-texto">
-      <p class="hero-meta">Conjunto Residencial San Carlos · 7 cámaras</p>
-      <h2>Las cámaras del edificio, convertidas en avisos</h2>
-      <p class="hero-lead">Quién entra y quién sale, quién merodea, qué bolso quedó solo, qué placa llega, quién se cayó y qué correspondencia espera en cada casillero.</p>
-      <div class="hero-actions">
-        <a class="hero-btn principal" href="#/camaras" onclick="cambiarReto(1)">Ver cámaras</a>
-        <button class="hero-btn" onclick="mostrarWebcamLive()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-          Probar mi cámara
-        </button>
-      </div>
+    <canvas id="radarCanvas" aria-hidden="true"></canvas>
+    <div class="hero-mark" aria-hidden="true">
+      <svg viewBox="0 0 256 256"><path fill="#EDEDED" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle class="lente" cx="128" cy="104" r="18" fill="#C9A45C"/></svg>
     </div>
-    <figure class="hero-visor" aria-label="Cámara 01 con las personas detectadas">
-      <figcaption class="hv-barra"><span class="hv-vivo"></span>Cámara 01 · Recepción y lobby<span class="hv-hora">00:12</span></figcaption>
-      <div class="hv-imagen">
-        <img src="assets/hero-camara.jpg" alt="Recepción del edificio con tres personas caminando" width="768" height="432">
-        <span class="hv-caja destacada" style="left:18.5%;top:12.5%;width:15.8%;height:49.3%"><span class="hv-etiqueta">#4 · Masculino · Adulto (30-54)<small>camisa gris · pantalón negro</small></span></span>
-        <span class="hv-caja" style="left:57.4%;top:21.1%;width:9.8%;height:39.8%"></span>
-        <span class="hv-caja" style="left:67.7%;top:24.3%;width:16.8%;height:51.6%"></span>
-      </div>
-      <ol class="hv-eventos">
-        <li><span class="hv-cam">Cám 01</span><span><b>Persona #4</b> · masculino, adulto, camisa gris</span><span class="hv-t">00:12</span></li>
-        <li><span class="hv-cam">Cám 04</span><span><b>Morral abandonado</b> · 3 s sin nadie cerca</span><span class="hv-t">00:11</span></li>
-        <li><span class="hv-cam">Cám 05</span><span><b>Placa KXW694</b> · residente del apto 101</span><span class="hv-t">00:01</span></li>
-      </ol>
-    </figure>
+    <span class="hero-eyebrow"><b>7 CÁMARAS</b> Visión por computador</span>
+    <h2 data-blur>SmartBuilding</h2>
+    <p class="hero-lead">
+      Demografía y vestimenta, conteo de entradas, merodeo, objetos abandonados, placas, caídas y correspondencia: el edificio analizado por inteligencia artificial.
+    </p>
+    <div class="hero-actions">
+      <a class="hero-btn principal magnet" href="#/camaras" onclick="cambiarReto(1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+        Ver cámaras
+      </a>
+      <button class="hero-btn magnet" onclick="mostrarWebcamLive()">
+        <span class="punto" aria-hidden="true"></span>
+        Probar mi cámara
+      </button>
+    </div>
   </section>
 
   <div class="vista" id="vistaApp" hidden>
@@ -2930,6 +2967,82 @@
       });
       requestAnimationFrame(dibujar);
 
+      // Blur Text: el nombre aparece letra por letra desde el desenfoque
+      document.querySelectorAll('[data-blur]').forEach(el => {
+        const texto = el.textContent.trim();
+        el.setAttribute('aria-label', texto);
+        el.textContent = '';
+        [...texto].forEach((ch, i) => {
+          const s = document.createElement('span');
+          s.className = 'blur-char';
+          s.setAttribute('aria-hidden', 'true');
+          s.style.setProperty('--i', i);
+          s.textContent = ch;
+          el.appendChild(s);
+        });
+      });
+
+      // Radar: barrido giratorio con rastro y contactos que se encienden al ser detectados
+      const radar = document.getElementById('radarCanvas');
+      if (radar) {
+        const rctx = radar.getContext('2d');
+        let rw = 0, rh = 0, rdpr = 1, visible = true;
+        const contactos = Array.from({ length: 9 }, () => ({
+          ang: Math.random() * Math.PI * 2,
+          dist: 0.25 + Math.random() * 0.7,
+          vel: (Math.random() - 0.5) * 0.0009,
+          brillo: 0
+        }));
+        const ajustar = () => {
+          rdpr = Math.min(window.devicePixelRatio || 1, 2);
+          rw = radar.clientWidth; rh = radar.clientHeight;
+          radar.width = rw * rdpr; radar.height = rh * rdpr;
+          rctx.setTransform(rdpr, 0, 0, rdpr, 0, 0);
+        };
+        new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(radar);
+        const PERIODO = 6000;
+        const dibujarRadar = t => {
+          requestAnimationFrame(dibujarRadar);
+          if (!visible) return;
+          const cx = rw / 2, cy = rh / 2, R = Math.max(rw, rh) * 0.48;
+          rctx.clearRect(0, 0, rw, rh);
+          // anillos y ejes
+          rctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+          rctx.lineWidth = 1;
+          for (let k = 1; k <= 5; k++) { rctx.beginPath(); rctx.arc(cx, cy, (R * k) / 5, 0, Math.PI * 2); rctx.stroke(); }
+          rctx.beginPath(); rctx.moveTo(cx - R, cy); rctx.lineTo(cx + R, cy); rctx.moveTo(cx, cy - R); rctx.lineTo(cx, cy + R); rctx.stroke();
+          // barrido con estela
+          const ang = reduce ? -Math.PI / 4 : ((t % PERIODO) / PERIODO) * Math.PI * 2 - Math.PI / 2;
+          const estela = rctx.createConicGradient ? rctx.createConicGradient(ang - 1.1, cx, cy) : null;
+          if (estela) {
+            estela.addColorStop(0, 'rgba(201, 164, 92, 0)');
+            estela.addColorStop(0.175, 'rgba(201, 164, 92, 0.22)');
+            estela.addColorStop(0.1751, 'rgba(201, 164, 92, 0)');
+            rctx.fillStyle = estela;
+            rctx.beginPath(); rctx.moveTo(cx, cy); rctx.arc(cx, cy, R, ang - 1.1, ang); rctx.closePath(); rctx.fill();
+          }
+          rctx.strokeStyle = 'rgba(232, 200, 140, 0.55)';
+          rctx.beginPath(); rctx.moveTo(cx, cy); rctx.lineTo(cx + Math.cos(ang) * R, cy + Math.sin(ang) * R); rctx.stroke();
+          // contactos
+          for (const c of contactos) {
+            c.ang += c.vel;
+            let d = ((ang - c.ang) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            if (d < 0.06) c.brillo = 1;
+            c.brillo *= 0.985;
+            const x = cx + Math.cos(c.ang) * c.dist * R, y = cy + Math.sin(c.ang) * c.dist * R;
+            if (c.brillo > 0.02) {
+              rctx.fillStyle = `rgba(232, 200, 140, ${c.brillo})`;
+              rctx.beginPath(); rctx.arc(x, y, 2.5, 0, Math.PI * 2); rctx.fill();
+              rctx.strokeStyle = `rgba(201, 164, 92, ${c.brillo * 0.5})`;
+              rctx.beginPath(); rctx.arc(x, y, 2.5 + (1 - c.brillo) * 14, 0, Math.PI * 2); rctx.stroke();
+            }
+          }
+        };
+        ajustar();
+        window.addEventListener('resize', ajustar);
+        requestAnimationFrame(dibujarRadar);
+      }
+
       marcarModulo('1');
     })();
   </script>
@@ -3331,6 +3444,7 @@
     window.addEventListener('hashchange', () => mostrarVista(vistaDesdeHash()));
     window.addEventListener('load', () => setTimeout(() => { window.__paginaLista = true; }, 0));
     // Al abrir la página se ve el logo sobre la cortina y luego se retira
+    // No espera a DOMContentLoaded: los módulos (el modelo de IA) lo retrasan varios segundos
     transicion = transicion.then(() => esperar(650)).then(retirarCortina);
     if (vistaDesdeHash() === 'app') aplicarVista('app');
   </script>
