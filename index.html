@@ -7,94 +7,97 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="assets/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <meta name="theme-color" content="#0a0a0a">
+  <meta name="theme-color" content="#100904">
   <meta name="description" content="Consola de videovigilancia inteligente: análisis demográfico y de vestimenta para el Conjunto Residencial San Carlos" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
   <script>
     (function () {
       try {
         var guardado = localStorage.getItem('sb_theme');
-        var tema = guardado || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        var tema = guardado || 'dark';
         document.documentElement.setAttribute('data-theme', tema);
         var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', tema === 'light' ? '#f5f4f1' : '#0a0a0a');
+        if (meta) meta.setAttribute('content', tema === 'light' ? '#f6efe6' : '#100904');
       } catch (e) {
         document.documentElement.setAttribute('data-theme', 'dark');
       }
     })();
   </script>
-    <style>
+  <style>
     /* ==========================================================
-       Identidad visual: consola de monitoreo sobria (Unslop).
-       Retícula de 4px, grafito neutro, tipografía IBM Plex,
-       un solo acento (latón) y colores semánticos contenidos.
+       Identidad visual: ORYZO Darkroom Editorial + React Bits.
+       Fondo Walnut Shadow (#100904), texto Warm Cream (#ffedd7),
+       superficie activa Bark Brown (#382416), acento Ember (#dc5000),
+       tarjetas redondeadas (28px), píldoras (36px / 22.5px) y Ley de Hick.
        ========================================================== */
     :root, [data-theme="dark"] {
-      --bg: #0a0a0a;
-      --panel: #111111;
-      --panel-elevated: #161616;
-      --panel-inset: #0d0d0d;
-      --surface-active: #1a1814;
-      --border: rgba(237, 237, 237, 0.08);
-      --border-hover: rgba(237, 237, 237, 0.16);
-      --text: #ededed;
-      --text-muted: #a6a6a6;
-      --text-dim: #7a7a7a;
-      --muted: #a6a6a6;
-      --accent: #c9a45c;
-      --accent-soft: rgba(201, 164, 92, 0.14);
-      --accent-border: rgba(201, 164, 92, 0.36);
-      --indigo: #a6a6a6;
+      --bg: #100904;
+      --panel: #181009;
+      --panel-elevated: #24170e;
+      --panel-inset: #130b06;
+      --surface-active: #382416;
+      --cork-border: #40372e;
+      --border: rgba(255, 237, 215, 0.11);
+      --border-hover: rgba(255, 237, 215, 0.24);
+      --text: #ffedd7;
+      --text-muted: #c4b29e;
+      --text-dim: #7d6e5d;
+      --muted: #c4b29e;
+      --accent: #dc5000;
+      --accent-soft: rgba(220, 80, 0, 0.14);
+      --accent-border: rgba(255, 237, 215, 0.28);
+      --indigo: #c4b29e;
       --danger: #d95357;
-      --danger-soft: rgba(217, 83, 87, 0.12);
-      --danger-border: rgba(217, 83, 87, 0.36);
-      --danger-text: #f2b8ba;
-      --success: #3ca676;
-      --success-soft: rgba(60, 166, 118, 0.12);
-      --success-border: rgba(60, 166, 118, 0.36);
-      --success-text: #a3dec1;
-      --warning: #cf9b3a;
-      --warning-soft: rgba(207, 155, 58, 0.12);
-      --warning-border: rgba(207, 155, 58, 0.36);
-      --warning-text: #ebd098;
-      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.36);
-      --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.48);
-      --radius-card: 16px;
-      --radius: 8px;
-      --radius-sm: 4px;
+      --danger-soft: rgba(217, 83, 87, 0.14);
+      --danger-border: rgba(217, 83, 87, 0.38);
+      --danger-text: #f5c2c4;
+      --success: #46a878;
+      --success-soft: rgba(70, 168, 120, 0.14);
+      --success-border: rgba(70, 168, 120, 0.36);
+      --success-text: #b8e8cf;
+      --warning: #d99b38;
+      --warning-soft: rgba(217, 155, 56, 0.14);
+      --warning-border: rgba(217, 155, 56, 0.36);
+      --warning-text: #f2d8a7;
+      --spotlight: rgba(255, 237, 215, 0.06);
+      --radius-card: 28px;
+      --radius: 18px;
+      --radius-sm: 12px;
+      --radius-pill: 36px;
+      --radius-ghost: 22.5px;
       --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
       --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
       --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
       --dur-press: 160ms;
       --dur-ui: 220ms;
-      --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-sans: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
     [data-theme="light"] {
-      --bg: #f5f4f1;
-      --panel: #ffffff;
-      --panel-elevated: #eeece7;
-      --panel-inset: #f0eee9;
-      --surface-active: #f2ede2;
-      --border: rgba(20, 20, 19, 0.09);
-      --border-hover: rgba(20, 20, 19, 0.18);
-      --text: #141413;
-      --text-muted: #52514e;
-      --text-dim: #6e6d69;
-      --muted: #52514e;
-      --accent: #8f6d28;
-      --accent-soft: rgba(143, 109, 40, 0.12);
-      --accent-border: rgba(143, 109, 40, 0.32);
+      --bg: #f6efe6;
+      --panel: #fffaf3;
+      --panel-elevated: #ede3d5;
+      --panel-inset: #EFE6D8;
+      --surface-active: #382416;
+      --cork-border: #c9bba9;
+      --border: rgba(24, 16, 9, 0.10);
+      --border-hover: rgba(24, 16, 9, 0.22);
+      --text: #1c120b;
+      --text-muted: #5c4d3c;
+      --text-dim: #7a6a58;
+      --muted: #5c4d3c;
+      --accent: #c44500;
+      --accent-soft: rgba(196, 69, 0, 0.10);
+      --accent-border: rgba(56, 36, 22, 0.28);
       --danger: #c43b3f;
-      --danger-text: #9e282c;
+      --danger-text: #8f2326;
       --success: #267d56;
       --success-text: #1b6141;
       --warning: #9c6d16;
       --warning-text: #7a530c;
-      --shadow-sm: 0 2px 8px rgba(20, 20, 19, 0.06);
-      --shadow-md: 0 8px 24px rgba(20, 20, 19, 0.08);
+      --spotlight: rgba(56, 36, 22, 0.05);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html { scroll-behavior: smooth; overscroll-behavior: none; }
@@ -111,9 +114,27 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-    ::selection { background: var(--accent-soft); color: var(--text); }
+    ::selection { background: var(--surface-active); color: #ffedd7; }
 
-    /* ---------- Indicadores en vivo (Firma) ---------- */
+    /* ---------- Etiqueta editorial vertical (Firma ORYZO) ---------- */
+    .serial-edge {
+      position: fixed;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%) rotate(90deg);
+      transform-origin: center;
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      pointer-events: none;
+      z-index: 40;
+      white-space: nowrap;
+    }
+    @media (max-width: 1120px) { .serial-edge { display: none; } }
+
+    /* ---------- Indicadores en vivo ---------- */
     .radar-dot {
       display: inline-block;
       width: 8px;
@@ -124,29 +145,29 @@
     }
     .radar-dot.red { background: var(--danger); }
 
-    /* ---------- Header (Retícula 4px) ---------- */
+    /* ---------- Header unificado con Pill Nav (Ley de Hick) ---------- */
     header {
       position: sticky;
       top: 0;
       z-index: 100;
-      height: 56px;
-      padding: 0 max(24px, calc((100% - 1280px) / 2));
+      height: 68px;
+      padding: 0 max(24px, calc((100% - 1360px) / 2));
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
+      gap: 16px;
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px dashed var(--cork-border);
     }
     .brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--text); text-decoration: none; }
-    .brand-icon { width: 24px; height: 24px; flex-shrink: 0; color: var(--text); }
+    .brand-icon { width: 28px; height: 28px; flex-shrink: 0; color: var(--text); }
     .brand-icon svg { width: 100%; height: 100%; display: block; }
     .brand h1 {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
       white-space: nowrap;
     }
     .header-links { display: flex; align-items: center; gap: 8px; }
@@ -154,26 +175,26 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      height: 32px;
+      height: 36px;
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      color: var(--text-muted);
+      color: var(--text-dim);
       padding: 0 12px;
       font-variant-numeric: tabular-nums;
     }
 
-    /* ---------- Pills / badges ---------- */
+    /* ---------- Pills / Botones ORYZO (36px y 22.5px) ---------- */
     .pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      height: 32px;
-      padding: 0 12px;
-      border-radius: var(--radius);
+      height: 36px;
+      padding: 0 16px;
+      border-radius: var(--radius-ghost);
       font-size: 0.8125rem;
       font-weight: 500;
       font-family: var(--font-sans);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-hover);
       background: transparent;
       color: var(--text);
       text-decoration: none;
@@ -183,29 +204,25 @@
       touch-action: manipulation;
       transition: background var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out), transform var(--dur-press) var(--ease-out);
     }
-    .pill-green { color: var(--text-muted); }
+    .pill-green { color: var(--text-muted); border-color: var(--border); background: var(--panel-inset); }
     .pill-red { color: var(--danger-text); border-color: var(--danger-border); background: var(--danger-soft); }
-    .pill-blue { color: var(--text-muted); }
+    .pill-blue { color: var(--text-muted); border-color: var(--border); }
     .pill-gh { cursor: pointer; }
     .pill-gh:active { transform: scale(0.97); }
     .icono-gh { width: 16px; height: 16px; flex-shrink: 0; }
     a.pill-gh, .enlace-gh { display: inline-flex; align-items: center; gap: 8px; }
-    .pill-cta { cursor: pointer; background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 500; }
     @media (hover: hover) and (pointer: fine) {
-      .pill-gh:hover { background: var(--panel-elevated); border-color: var(--border-hover); }
-      .pill-cta:hover { opacity: 0.9; }
+      .pill-gh:hover { background: var(--panel-elevated); border-color: var(--text); }
     }
 
-    /* ---------- Portada ---------- */
+    /* ---------- Portada Editorial (ORYZO Darkroom + React Bits) ---------- */
     .hero {
       position: relative;
-      min-height: calc(100svh - 56px);
+      min-height: calc(100svh - 68px);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 64px 24px 96px;
+       justify-content: space-between;
+      padding: clamp(36px, 6vh, 64px) max(24px, calc((100% - 1360px) / 2)) clamp(40px, 6vh, 64px);
       overflow: hidden;
       isolation: isolate;
     }
@@ -216,51 +233,38 @@
       height: 100%;
       z-index: -1;
       pointer-events: none;
-      opacity: 0.72;
-      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 32%, transparent 70%);
-      mask-image: radial-gradient(circle at 50% 50%, #000 32%, transparent 70%);
+      opacity: 0.85;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 36%, transparent 74%);
+      mask-image: radial-gradient(circle at 50% 50%, #000 36%, transparent 74%);
     }
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: auto 0 0 0;
-      height: 160px;
-      z-index: -1;
-      pointer-events: none;
-      background: linear-gradient(to bottom, transparent, var(--bg));
+    .hero-top {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      max-width: 820px;
     }
-
-    .hero-mark {
-      width: 72px;
-      height: 72px;
-      margin-bottom: 24px;
-      animation: aparecer var(--dur-ui) var(--ease-out) both;
-    }
-    .hero-mark svg { width: 100%; height: 100%; display: block; }
-
     .hero-eyebrow {
-      position: relative;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      height: 32px;
-      padding: 0 12px;
-      border-radius: var(--radius);
+      gap: 10px;
+      height: 36px;
+      padding: 0 16px;
+      border-radius: var(--radius-pill);
       border: 1px solid var(--border-hover);
       font-size: 0.8125rem;
       color: var(--text-muted);
-      background: var(--panel);
-      margin-bottom: 24px;
+      background: color-mix(in srgb, var(--panel) 80%, transparent);
       animation: aparecer var(--dur-ui) var(--ease-out) 40ms both;
     }
     .hero-eyebrow b { color: var(--accent); font-weight: 500; font-family: var(--font-mono); font-size: 0.75rem; }
 
     .hero h2 {
-      font-size: clamp(2.75rem, 8vw, 5.5rem);
-      line-height: 1.08;
-      letter-spacing: -0.04em;
-      font-weight: 600;
+      font-size: clamp(3.25rem, 9vw, 6.75rem);
+      line-height: 0.92;
+      font-weight: 500;
       color: var(--text);
+      text-align: left;
     }
     .blur-char {
       display: inline-block;
@@ -268,36 +272,53 @@
       filter: blur(4px);
       transform: translateY(8px);
       animation: desenfocar 280ms var(--ease-out) forwards;
-      animation-delay: calc(60ms + var(--i) * 28ms);
+      animation-delay: calc(60ms + var(--i) * 26ms);
     }
     @keyframes desenfocar { to { opacity: 1; filter: blur(0); transform: none; } }
     @keyframes aparecer { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) auto;
+      align-items: end;
+      gap: 32px;
+      padding-top: 28px;
+      border-top: 1px dashed var(--cork-border);
+      margin-top: 48px;
+    }
     .hero-lead {
-      margin-top: 20px;
-      max-width: 52ch;
-      font-size: clamp(1rem, 1.4vw, 1.125rem);
-      line-height: 1.6;
-      color: var(--text-muted);
+      max-width: 44ch;
+      font-size: clamp(1.1875rem, 2.1vw, 1.625rem);
+      line-height: 1.32;
+      font-weight: 400;
+      color: var(--text);
+      text-align: left;
       animation: aparecer 260ms var(--ease-out) 120ms both;
+    }
+    .hero-lead small {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
     }
     .hero-actions {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 36px;
+      align-items: center;
       animation: aparecer 260ms var(--ease-out) 180ms both;
     }
+    /* Pill Button (Filled Bark Brown #382416) & Ghost Outline Button (22.5px) */
     .hero-btn {
       position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      height: 48px;
-      padding: 0 24px;
-      border-radius: var(--radius);
+      gap: 10px;
+      height: 52px;
+      padding: 0 28px;
+      border-radius: var(--radius-ghost);
       font-family: var(--font-sans);
       font-size: 0.9375rem;
       font-weight: 500;
@@ -305,21 +326,21 @@
       cursor: pointer;
       user-select: none;
       touch-action: manipulation;
-      border: 1px solid var(--border-hover);
-      background: var(--panel);
+      border: 1px solid var(--text);
+      background: transparent;
       color: var(--text);
       transition: border-color var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out), transform var(--dur-press) var(--ease-out);
     }
     .hero-btn:active { transform: scale(0.97); }
     .hero-btn.principal {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
-      font-weight: 600;
+      border-radius: var(--radius-pill);
+      background: var(--surface-active);
+      color: #ffedd7;
+      border-color: var(--border-hover);
     }
     @media (hover: hover) and (pointer: fine) {
-      .hero-btn:hover { border-color: var(--accent-border); background: var(--panel-elevated); }
-      .hero-btn.principal:hover { background: var(--text-muted); border-color: var(--text-muted); color: var(--bg); }
+      .hero-btn:hover { background: var(--panel-elevated); }
+      .hero-btn.principal:hover { background: #4a301d; border-color: var(--text); }
     }
     .hero-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
     .hero-btn .punto { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
@@ -338,16 +359,16 @@
     }
     .cortina > span {
       flex: 1;
-      background: var(--panel-inset);
+      background: var(--bg);
       transform: scaleY(0);
       transform-origin: bottom;
-      border-top: 1px solid var(--accent-border);
+      border-top: 1px dashed var(--cork-border);
       transition: transform 280ms var(--ease-in-out);
-      transition-delay: calc(var(--i) * 32ms);
+      transition-delay: calc(var(--i) * 28ms);
     }
     .cortina.cubrir { pointer-events: auto; }
     .cortina.cubrir > span { transform: scaleY(1); }
-    .cortina.descubrir > span { transform-origin: top; transition-delay: calc((5 - var(--i)) * 28ms); }
+    .cortina.descubrir > span { transform-origin: top; transition-delay: calc((5 - var(--i)) * 24ms); }
     .cortina-logo {
       position: fixed;
       top: 50%;
@@ -361,30 +382,27 @@
       transition: opacity 180ms var(--ease-out), transform 240ms var(--ease-out);
       pointer-events: none;
     }
-    .cortina.cubrir + .cortina-logo { opacity: 1; transform: none; transition-delay: 140ms; }
+    .cortina.cubrir + .cortina-logo { opacity: 1; transform: none; transition-delay: 120ms; }
     .cortina-logo svg { width: 100%; height: 100%; }
 
     /* Entrada escalonada al abrir las cámaras */
     @keyframes entrarArriba { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
     @keyframes entrarCarta {
-      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      from { opacity: 0; transform: translateY(12px) scale(0.985); }
       to { opacity: 1; transform: none; }
     }
     @keyframes entrarItem { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-    #vistaApp.entrando .module-bar { animation: entrarArriba 220ms var(--ease-out) 40ms both; }
+    #vistaApp.entrando .module-bar { animation: entrarArriba 220ms var(--ease-out) 20ms both; }
     #vistaApp.entrando .layout-grid > .card:not(.reveal),
-    #vistaApp.entrando main > .card:not(.reveal) { animation: entrarCarta 260ms var(--ease-out) both; }
-    #vistaApp.entrando .layout-grid > .card:nth-child(1) { animation-delay: 80ms; }
-    #vistaApp.entrando .layout-grid > .card:nth-child(2) { animation-delay: 140ms; }
-    #vistaApp.entrando .kpi-card { animation: entrarItem 220ms var(--ease-out) both; }
-    #vistaApp.entrando .kpi-card:nth-child(1) { animation-delay: 160ms; }
-    #vistaApp.entrando .kpi-card:nth-child(2) { animation-delay: 200ms; }
-    #vistaApp.entrando .kpi-card:nth-child(3) { animation-delay: 240ms; }
+    #vistaApp.entrando main > .card:not(.reveal) { animation: entrarCarta 240ms var(--ease-out) both; }
+    #vistaApp.entrando .layout-grid > .card:nth-child(1) { animation-delay: 40ms; }
+    #vistaApp.entrando .layout-grid > .card:nth-child(2) { animation-delay: 90ms; }
+    #vistaApp.entrando .kpi-card { animation: entrarItem 200ms var(--ease-out) both; }
 
     .reveal { opacity: 0; transform: translateY(16px); transition: opacity 260ms var(--ease-out), transform 260ms var(--ease-out); }
     .reveal.in { opacity: 1; transform: none; }
 
-    /* ---------- Fondo interactivo (Dot Grid de React Bits) ---------- */
+    /* ---------- Fondo interactivo con el cursor (React Bits Cursor Field + Dot Grid) ---------- */
     #dotGrid {
       position: fixed;
       inset: 0;
@@ -394,73 +412,45 @@
       pointer-events: none;
     }
 
-    /* ---------- Barra del módulo actual ---------- */
+    /* ---------- Navegación en Píldoras (React Bits Pill Nav + Ley de Hick) ---------- */
     .module-bar {
       position: sticky;
-      top: 56px;
+      top: 68px;
       z-index: 90;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 12px;
-      padding: 8px max(24px, calc((100% - 1280px) / 2));
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
+      padding: 16px max(24px, calc((100% - 1360px) / 2)) 4px;
+      background: transparent;
+      pointer-events: none;
     }
-    .module-trigger {
+    /* Ocultamos los controles redundantes para cumplir la Ley de Hick (se mantienen en el DOM por compatibilidad) */
+    .module-trigger, .module-step { display: none !important; }
+    .module-pills {
+      pointer-events: auto;
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      min-width: 0;
-      height: 44px;
-      padding: 0 12px;
-      border: 1px solid var(--border-hover);
-      border-radius: var(--radius);
-      background: var(--panel);
-      color: var(--text);
-      font-family: var(--font-sans);
-      text-align: left;
-      cursor: pointer;
-      user-select: none;
-      touch-action: manipulation;
-      transition: border-color var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out), transform var(--dur-press) var(--ease-out);
-    }
-    .module-trigger:active { transform: scale(0.97); }
-    @media (hover: hover) and (pointer: fine) {
-      .module-trigger:hover { border-color: var(--accent-border); background: var(--panel-elevated); }
-      .module-trigger:hover .mt-icon i:nth-child(2) { width: 100%; }
-    }
-    .mt-icon { display: grid; gap: 4px; width: 16px; }
-    .mt-icon i { display: block; height: 1.5px; background: currentColor; border-radius: 1px; transition: width var(--dur-ui) var(--ease-out); }
-    .mt-icon i:nth-child(2) { width: 70%; }
-    .mt-text { display: flex; flex-direction: column; min-width: 0; }
-    .mt-kicker { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--accent); }
-    .mt-name { font-size: 0.875rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .module-trigger kbd { margin-left: 4px; }
-    .module-step { display: flex; align-items: center; gap: 8px; }
-    .module-step .btn-ctrl { width: 36px; padding: 0; font-size: 1rem; }
-    .module-pos { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; }
-    .module-pills {
-      display: flex;
-      align-items: center;
       gap: 4px;
-      padding: 4px;
-      border-radius: var(--radius);
-      background: var(--panel-inset);
-      border: 1px solid var(--border);
+      padding: 6px;
+      border-radius: var(--radius-pill);
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-hover);
     }
     .module-pill {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      height: 32px;
-      padding: 0 12px;
-      border-radius: var(--radius-sm);
+      height: 40px;
+      padding: 0 20px;
+      border-radius: var(--radius-pill);
       border: 1px solid transparent;
       background: transparent;
       color: var(--text-muted);
       font-family: var(--font-sans);
-      font-size: 0.8125rem;
+      font-size: 0.875rem;
       font-weight: 500;
       cursor: pointer;
       user-select: none;
@@ -469,23 +459,22 @@
       transition: background var(--dur-ui) var(--ease-out), color var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out), transform var(--dur-press) var(--ease-out);
     }
     .module-pill:active { transform: scale(0.97); }
-    .module-pill span { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+    .module-pill span { display: none; }
     .module-pill.active {
       background: var(--surface-active);
-      border-color: var(--accent-border);
-      color: var(--text);
+      border-color: var(--border-hover);
+      color: #ffedd7;
     }
-    .module-pill.active span { color: var(--accent); }
     @media (hover: hover) and (pointer: fine) {
       .module-pill:not(.active):hover { color: var(--text); background: var(--panel-elevated); }
     }
 
-    /* ---------- Menú lateral escalonado (Staggered Menu) ---------- */
+    /* ---------- Menú lateral (disponible con tecla L) ---------- */
     .drawer-overlay {
       position: fixed;
       inset: 0;
       z-index: 200;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(16, 9, 4, 0.72);
       opacity: 0;
       pointer-events: none;
       transition: opacity 220ms var(--ease-out);
@@ -507,9 +496,9 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      padding: 20px 16px;
+      padding: 24px 20px;
       background: var(--panel);
-      border-right: 1px solid var(--border-hover);
+      border-right: 1px dashed var(--cork-border);
       transform: translateX(-102%);
       transition: transform 260ms var(--ease-drawer) 50ms;
       visibility: hidden;
@@ -520,19 +509,19 @@
     body.menu-open .module-drawer { visibility: visible; }
     body:not(.menu-open) .module-drawer { transition: transform 200ms var(--ease-out), visibility 0s 200ms; }
     body:not(.menu-open) .drawer-prelayer span { transition-delay: 20ms; }
-    .drawer-head { display: flex; justify-content: space-between; align-items: center; font-size: 0.8125rem; font-weight: 500; color: var(--text-muted); }
+    .drawer-head { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
     .drawer-head .btn-ctrl { width: 36px; padding: 0; }
     #moduleSearch { width: 100%; padding: 0 12px; font-size: 16px; }
     .drawer-foot { font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono); }
 
-    /* ---------- Lista animada (Animated List) ---------- */
+    /* ---------- Lista animada ---------- */
     .animated-list {
       position: relative;
       flex: 1;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       padding: 4px 0 24px;
       scrollbar-width: none;
     }
@@ -545,8 +534,8 @@
       align-items: center;
       gap: 12px;
       width: 100%;
-      min-height: 44px;
-      padding: 8px 12px;
+      min-height: 48px;
+      padding: 10px 16px;
       border: 1px solid transparent;
       border-radius: var(--radius);
       background: transparent;
@@ -566,8 +555,7 @@
       .tab-btn:hover { background: var(--panel-elevated); border-color: var(--border); color: var(--text); }
     }
     .tab-btn.kb-focus { background: var(--panel-elevated); border-color: var(--border); color: var(--text); }
-    .tab-btn.active { background: var(--surface-active); border-color: var(--accent-border); color: var(--text); }
-    .tab-btn.active::before { content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 2px; border-radius: 2px; background: var(--accent); }
+    .tab-btn.active { background: var(--surface-active); border-color: var(--border-hover); color: #ffedd7; }
     .tab-btn[hidden] { display: none; }
     .tab-idx { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); min-width: 28px; font-variant-numeric: tabular-nums; }
     .tab-btn.active .tab-idx { color: var(--accent); }
@@ -575,35 +563,41 @@
     .tab-body b { font-size: 0.875rem; font-weight: 500; }
     .tab-body small { font-size: 0.75rem; color: var(--text-dim); }
 
-    /* ---------- Layout ---------- */
+    /* ---------- Layout amplio y aireado ---------- */
     main {
       scroll-margin-top: 120px;
-      width: min(1280px, calc(100% - 48px));
-      margin: 24px auto 48px;
+      width: min(1360px, calc(100% - 48px));
+      margin: 20px auto 56px;
       flex: 1;
     }
     .layout-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-      gap: 16px;
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+      gap: 24px;
       align-items: start;
     }
     @media (max-width: 1120px) {
       .layout-grid { grid-template-columns: minmax(0, 1fr); }
     }
 
-    /* ---------- Paneles (Radios anidados: 16px exterior - 8px padding = 8px interior) ---------- */
+    /* ---------- Tarjetas Redondeadas con Spotlight (React Bits SpotlightCard) ---------- */
     .card {
       position: relative;
-      background: var(--panel);
+      background:
+        radial-gradient(560px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), var(--spotlight), transparent 45%),
+        var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
-      padding: 20px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
       min-width: 0;
-      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: border-color var(--dur-ui) var(--ease-out);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .card:hover { border-color: var(--border-hover); }
     }
     .card-header[data-kicker]::before {
       content: attr(data-kicker);
@@ -622,42 +616,31 @@
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      border-bottom: 1px dashed var(--cork-border);
     }
-    .card-header h2 { font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .card-header h2 { font-size: 1.25rem; font-weight: 500; display: flex; align-items: center; gap: 8px; }
     .card p { line-height: 1.6; }
 
-    /* Selects e inputs (16px mínimo para evitar zoom en móvil) */
-    .controls-cam-bar label { width: 100%; }
+    /* Input de línea inferior estilo ORYZO */
     select, input[type="text"] {
       appearance: none;
       -webkit-appearance: none;
       height: 40px;
       font-size: 16px !important;
-      background-color: var(--panel-inset) !important;
-      border: 1px solid var(--border) !important;
+      background-color: transparent !important;
+      border: 0 !important;
+      border-bottom: 1px solid var(--border-hover) !important;
       color: var(--text) !important;
-      border-radius: var(--radius) !important;
+      border-radius: 0 !important;
       font-family: var(--font-sans) !important;
       outline: none;
       transition: border-color var(--dur-ui) var(--ease-out);
     }
-    select {
-      padding: 0 36px 0 12px !important;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a6a6a6' stroke-width='1.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
-      background-repeat: no-repeat !important;
-      background-position: right 12px center !important;
-      cursor: pointer;
-      min-width: 0;
-    }
-    select option { background: var(--panel-elevated); color: var(--text); }
-    @media (hover: hover) and (pointer: fine) {
-      select:hover, input[type="text"]:hover { border-color: var(--border-hover) !important; }
-    }
-    select:focus, input[type="text"]:focus { border-color: var(--accent) !important; }
+    select:focus, input[type="text"]:focus { border-bottom-color: var(--text) !important; }
+    input[type="text"]::placeholder { color: var(--text-dim); }
 
-    /* ---------- Visor de video (Momento Rico + Firma HUD) ---------- */
+    /* ---------- Visor de video redondeado (Radio anidado 18px) ---------- */
     .video-viewport {
       position: relative;
       width: 100%;
@@ -672,51 +655,49 @@
     }
     video#mainVideo, video#webcamVideo { width: 100%; height: 100%; object-fit: contain; display: block; }
     canvas#overlayCanvas, canvas#webcamCanvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; }
-    .scanlines, .hud-crosshair { display: none; }
+    .scanlines, .hud-crosshair, .hud-br-tag { display: none; }
     .hud-corner {
       position: absolute;
       z-index: 6;
-      width: 20px;
-      height: 20px;
-      border: 1.5px solid var(--accent);
-      opacity: 0.8;
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid rgba(255, 237, 215, 0.45);
       pointer-events: none;
     }
-    .hud-corner.tl { top: 12px; left: 12px; border-right: 0; border-bottom: 0; border-top-left-radius: var(--radius-sm); }
-    .hud-corner.tr { top: 12px; right: 12px; border-left: 0; border-bottom: 0; border-top-right-radius: var(--radius-sm); }
-    .hud-corner.bl { bottom: 12px; left: 12px; border-right: 0; border-top: 0; border-bottom-left-radius: var(--radius-sm); }
-    .hud-corner.br { bottom: 12px; right: 12px; border-left: 0; border-top: 0; border-bottom-right-radius: var(--radius-sm); }
-    .hud-tl-tag, .hud-br-tag {
+    .hud-corner.tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
+    .hud-corner.tr { top: 14px; right: 14px; border-left: 0; border-bottom: 0; border-top-right-radius: 8px; }
+    .hud-corner.bl { bottom: 14px; left: 14px; border-right: 0; border-top: 0; border-bottom-left-radius: 8px; }
+    .hud-corner.br { bottom: 14px; right: 14px; border-left: 0; border-top: 0; border-bottom-right-radius: 8px; }
+    .hud-tl-tag {
       position: absolute;
-      bottom: 12px;
+      bottom: 14px;
+      left: 14px;
       z-index: 7;
       display: inline-flex;
       align-items: center;
       gap: 8px;
       font-family: var(--font-mono);
       font-size: 0.6875rem;
-      color: var(--text);
-      background: rgba(10, 10, 10, 0.76);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 4px 8px;
+      color: #ffedd7;
+      background: rgba(16, 9, 4, 0.78);
+      border: 1px solid rgba(255, 237, 215, 0.16);
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
       pointer-events: none;
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
-    .hud-tl-tag { left: 40px; }
-    .hud-br-tag { right: 40px; color: var(--text-muted); }
     .alert-banner {
       position: absolute;
-      top: 12px;
+      top: 14px;
       left: 50%;
       transform: translateX(-50%);
-      max-width: calc(100% - 80px);
+      max-width: calc(100% - 64px);
       background: var(--panel);
       border: 1px solid var(--danger-border);
       color: var(--danger-text);
-      padding: 8px 12px;
-      border-radius: var(--radius);
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
       font-size: 0.75rem;
       font-weight: 500;
       font-family: var(--font-mono);
@@ -724,37 +705,35 @@
       align-items: center;
       gap: 8px;
       z-index: 10;
-      box-shadow: var(--shadow-md);
       animation: entrarBanner 200ms var(--ease-out);
     }
     .alert-banner::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--danger); flex-shrink: 0; }
     .alert-banner > span:last-child { display: none; }
-    .alert-banner[data-tipo="aviso"] { border-color: var(--accent-border); color: var(--warning-text); }
-    .alert-banner[data-tipo="aviso"]::before { background: var(--accent); }
     @keyframes entrarBanner { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translateX(-50%); } }
 
-    /* ---------- Controles de video ---------- */
+    /* ---------- Controles simplificados (Ley de Hick: solo lo esencial en píldoras) ---------- */
     .video-controls {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
       flex-wrap: wrap;
-      padding: 8px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: var(--radius-pill);
       background: var(--panel-inset);
     }
-    .video-controls .btn-ctrl:not(.primary):not(.success):not(.danger) { background: transparent; border-color: transparent; color: var(--text-muted); }
+    /* Ocultar botones técnicos secundarios que saturan la vista */
+    #btnSpeed, #btnAudioToggle, .btn-secundario-oculto, .motor-ia { display: none !important; }
     .btn-ctrl {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      height: 36px;
-      padding: 0 12px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: var(--panel-elevated);
+      height: 38px;
+      padding: 0 18px;
+      border-radius: var(--radius-ghost);
+      border: 1px solid var(--border-hover);
+      background: transparent;
       color: var(--text);
       font-family: var(--font-sans);
       font-size: 0.8125rem;
@@ -766,13 +745,17 @@
       transition: background var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out), color var(--dur-ui) var(--ease-out), transform var(--dur-press) var(--ease-out);
     }
     .btn-ctrl:active { transform: scale(0.97); }
-    .btn-ctrl.primary { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+    .btn-ctrl.primary {
+      border-radius: var(--radius-pill);
+      background: var(--surface-active);
+      color: #ffedd7;
+      border-color: var(--border-hover);
+    }
     .btn-ctrl.danger { color: var(--danger-text); border-color: var(--danger-border); background: transparent; }
     .btn-ctrl.success { color: var(--success-text); border-color: var(--success-border); background: transparent; }
     @media (hover: hover) and (pointer: fine) {
-      .video-controls .btn-ctrl:not(.primary):not(.success):not(.danger):hover { background: var(--panel-elevated); border-color: var(--border); color: var(--text); }
-      .btn-ctrl:hover { background: var(--panel-elevated); border-color: var(--border-hover); }
-      .btn-ctrl.primary:hover { background: var(--text-muted); border-color: var(--text-muted); }
+      .btn-ctrl:hover { background: var(--panel-elevated); border-color: var(--text); }
+      .btn-ctrl.primary:hover { background: #4a301d; border-color: var(--text); }
       .btn-ctrl.danger:hover { background: var(--danger-soft); }
       .btn-ctrl.success:hover { background: var(--success-soft); }
     }
@@ -780,41 +763,36 @@
     .time-slider {
       flex: 1;
       min-width: 72px;
-      height: 4px;
+      height: 6px;
       appearance: none;
       -webkit-appearance: none;
-      border-radius: 2px;
+      border-radius: var(--radius-pill);
       background: linear-gradient(90deg, var(--accent) var(--p, 0%), var(--border-hover) var(--p, 0%));
       cursor: pointer;
     }
-    .time-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--text); }
-    .time-slider::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--text); }
-    .time-lbl { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); min-width: 88px; text-align: right; font-variant-numeric: tabular-nums; }
+    .time-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--text); }
+    .time-slider::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--text); }
+    .time-lbl { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); min-width: 84px; text-align: right; font-variant-numeric: tabular-nums; }
 
     .ia-estado {
       position: relative;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border: 1px solid var(--border);
+      gap: 10px;
+      padding: 12px 18px;
+      border: 1px dashed var(--cork-border);
       border-radius: var(--radius);
       background: var(--panel-inset);
       font-size: 0.75rem;
       line-height: 1.5;
-      color: var(--text-dim);
+      color: var(--text-muted);
       font-family: var(--font-mono);
       overflow: hidden;
     }
-    .ia-punto { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--text-dim); }
+    .ia-punto { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--accent); }
     .ia-barra { position: absolute; left: 0; bottom: 0; height: 2px; width: var(--p, 0%); background: var(--accent); transition: width 240ms var(--ease-out); }
-    .ia-estado[data-tipo="cargando"] { color: var(--text-muted); }
-    .ia-estado[data-tipo="cargando"] .ia-punto { background: var(--accent); }
     .ia-estado[data-tipo="ok"] { display: none; }
-    .ia-estado[data-tipo="ok"] .ia-punto { background: var(--success); }
-    .ia-estado[data-tipo="ok"] .ia-barra, .ia-estado[data-tipo="error"] .ia-barra { display: none; }
     .ia-estado[data-tipo="error"] { color: var(--danger-text); border-color: var(--danger-border); }
-    .ia-estado[data-tipo="error"] .ia-punto { background: var(--danger); }
 
     #webcamViewport video, #webcamViewport canvas, #viewport video, #viewport canvas { object-fit: contain; }
     .webcam-espera {
@@ -825,58 +803,56 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       padding: 24px;
       text-align: center;
       background: var(--panel-inset);
     }
-    .webcam-espera b { font-size: 1rem; font-weight: 600; margin-top: 8px; }
-    .webcam-espera span { font-size: 0.8125rem; color: var(--text-dim); max-width: 340px; line-height: 1.55; }
+    .webcam-espera b { font-size: 1.0625rem; font-weight: 500; margin-top: 8px; }
+    .webcam-espera span { font-size: 0.875rem; color: var(--text-dim); max-width: 320px; line-height: 1.55; }
     .webcam-lente {
       position: relative;
       display: grid;
       place-items: center;
-      width: 64px;
-      height: 64px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
-      border: 1px solid var(--accent-border);
-      background: var(--panel);
-      color: var(--accent);
+      border: 1px solid var(--border-hover);
+      background: var(--surface-active);
+      color: #ffedd7;
       cursor: pointer;
       transition: transform var(--dur-press) var(--ease-out), border-color var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out);
     }
     .webcam-lente:active { transform: scale(0.96); }
     .webcam-lente svg { width: 24px; height: 24px; }
     @media (hover: hover) and (pointer: fine) {
-      .webcam-lente:hover { border-color: var(--accent); background: var(--panel-elevated); }
+      .webcam-lente:hover { border-color: var(--text); background: #4a301d; }
     }
-    .motor-ia { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); margin-top: -4px; }
-    .motor-ia span { color: var(--accent); margin-right: 8px; font-weight: 500; }
 
-    /* ---------- KPIs (Tarjetas de cifras sin decoración) ---------- */
-    .kpi-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    /* ---------- KPIs redondeados (Ley de Hick: solo 2 cifras clave) ---------- */
+    .kpi-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     .kpi-card {
       position: relative;
       background: var(--panel-inset);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 12px 16px;
+      padding: 16px 20px;
       overflow: hidden;
     }
-    .kpi-card .num { display: inline-block; font-family: var(--font-mono); font-size: clamp(1.125rem, 1.6vw, 1.375rem); font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
-    .kpi-card .num.texto { font-family: var(--font-sans); font-size: 1rem; font-weight: 600; padding: 2px 0; }
+    .kpi-card.kpi-oculto { display: none !important; }
+    .kpi-card .num { display: inline-block; font-family: var(--font-sans); font-size: clamp(1.375rem, 2vw, 1.75rem); font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .kpi-card .num.tick { animation: tick 220ms var(--ease-out); }
     @keyframes tick { from { opacity: 0.4; transform: translateY(4px); } to { opacity: 1; transform: none; } }
     .kpi-card .desc { font-family: var(--font-sans); font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
 
-    /* ---------- Registro ---------- */
+    /* ---------- Tarjetas de personas (Redondeadas 18px y limpias) ---------- */
     .feed-container {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      max-height: 560px;
+      gap: 10px;
+      max-height: 540px;
       overflow-y: auto;
-      padding: 8px 4px 24px;
+      padding: 4px 2px 16px;
       scrollbar-width: thin;
       scrollbar-color: var(--border-hover) transparent;
     }
@@ -886,13 +862,15 @@
       position: relative;
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
-      gap: 12px;
+      gap: 14px;
       align-items: center;
-      padding: 12px 16px;
+      padding: 14px 18px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      background: var(--panel-inset);
-      font-size: 0.8125rem;
+      background:
+        radial-gradient(360px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), var(--spotlight), transparent 45%),
+        var(--panel-inset);
+      font-size: 0.875rem;
       animation: itemIn 220ms var(--ease-out) both;
       transition: border-color var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out);
     }
@@ -902,21 +880,19 @@
     }
     @keyframes itemIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
-    /* Persona en cuadro: escalón de superficie y línea lateral fina (sin giro neón) */
     .person-item.active-tracking {
-      border-color: var(--success-border);
-      background: var(--success-soft);
-      box-shadow: inset 2px 0 0 var(--success);
+      border-color: var(--border-hover);
+      background: var(--surface-active);
     }
 
-    .item-datos { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; min-width: 0; border-radius: var(--radius-sm); }
+    .item-datos { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; align-items: center; min-width: 0; }
     .item-datos.actualizado .pi-main { animation: refrescar 400ms var(--ease-out); }
     @keyframes refrescar { from { color: var(--accent); } to { color: inherit; } }
 
     .pi-avatar, .pi-foto {
       position: relative;
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       flex-shrink: 0;
       display: grid;
@@ -943,8 +919,8 @@
       position: absolute;
       right: -4px;
       bottom: -4px;
-      padding: 2px 4px;
-      border-radius: var(--radius-sm);
+      padding: 2px 6px;
+      border-radius: var(--radius-pill);
       background: var(--panel);
       border: 1px solid var(--border-hover);
       font-family: var(--font-mono);
@@ -953,17 +929,17 @@
     }
     .pi-main { min-width: 0; }
     .pi-top { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-    .pi-sexo { font-size: 0.9375rem; font-weight: 600; }
-    .pi-edad { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+    .pi-sexo { font-size: 0.9375rem; font-weight: 500; }
+    .pi-edad { font-family: var(--font-sans); font-size: 0.8125rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
     .pi-estado {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       margin-left: auto;
-      padding: 2px 8px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-hover);
-      font-family: var(--font-mono);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      font-family: var(--font-sans);
       font-size: 0.6875rem;
       color: var(--text-dim);
       white-space: nowrap;
@@ -974,55 +950,37 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 8px;
-      border-radius: var(--radius-sm);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
       background: var(--panel);
       border: 1px solid var(--border);
       font-size: 0.75rem;
-      color: var(--text-dim);
-    }
-    .chip-prenda i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--border-hover); flex-shrink: 0; }
-    .chip-prenda b { color: var(--text); font-weight: 500; }
-    .pi-conf { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 68px; font-family: var(--font-mono); }
-    .pi-conf > span { font-size: 1rem; color: var(--text); font-variant-numeric: tabular-nums; }
-    .pi-conf > span small { font-size: 0.6875rem; color: var(--text-dim); margin-left: 2px; }
-    .pi-conf i { position: relative; width: 68px; height: 4px; border-radius: 2px; background: var(--border-hover); overflow: hidden; }
-    .pi-conf i::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--v); background: var(--accent); border-radius: inherit; transition: width 260ms var(--ease-out); }
-    .pi-conf small { font-size: 0.6875rem; color: var(--text-dim); white-space: nowrap; font-variant-numeric: tabular-nums; }
-
-    .feed-vacio { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 40px 20px; text-align: center; border: 1px dashed var(--border-hover); border-radius: var(--radius); }
-    .feed-vacio b { font-weight: 600; }
-    .feed-vacio span { font-size: 0.8125rem; color: var(--text-dim); max-width: 340px; line-height: 1.55; }
-
-    .pid {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
       color: var(--text-muted);
-      border: 1px solid var(--border-hover);
-      border-radius: var(--radius-sm);
-      padding: 4px 8px;
-      white-space: nowrap;
-      font-variant-numeric: tabular-nums;
     }
-    .swatch-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-dim); }
-    .swatch-tag b { color: var(--text-muted); font-weight: 500; }
-    .dot, .swatch {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-      border: 1px solid var(--border-hover);
-      vertical-align: middle;
-      flex-shrink: 0;
+    .chip-prenda i { width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border-hover); flex-shrink: 0; }
+    .chip-prenda b { color: var(--text); font-weight: 500; }
+    /* Ocultar porcentaje técnico por tarjeta para cumplir la Ley de Hick */
+    .pi-conf { display: none; }
+
+    .feed-vacio {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 44px 24px;
+      text-align: center;
+      border: 1px dashed var(--cork-border);
+      border-radius: var(--radius);
     }
-    .swatch { margin-right: 4px; }
-    .feed-thumb { width: 48px; height: 48px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border); background: var(--bg); flex-shrink: 0; }
+    .feed-vacio b { font-weight: 500; font-size: 0.9375rem; }
+    .feed-vacio span { font-size: 0.8125rem; color: var(--text-dim); max-width: 320px; line-height: 1.55; }
+
     .badge-status {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 2px 8px;
-      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
       font-family: var(--font-mono);
       font-size: 0.6875rem;
       font-weight: 500;
@@ -1034,80 +992,6 @@
     .badge-yellow { color: var(--warning-text); border-color: var(--warning-border); background: var(--warning-soft); }
     .badge-red { color: var(--danger-text); border-color: var(--danger-border); background: var(--danger-soft); }
     .badge-blue { color: var(--text-muted); border-color: var(--border-hover); }
-
-    /* ---------- Estilos de soporte para eventos ---------- */
-    .pi-icono {
-      display: grid;
-      place-items: center;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid var(--border-hover);
-      background: var(--panel);
-      color: var(--text-muted);
-    }
-    .pi-icono svg { width: 18px; height: 18px; }
-    .pi-icono.entrada { color: var(--success); border-color: var(--success-border); }
-    .pi-icono.salida { color: var(--warning); border-color: var(--warning-border); }
-    .pi-icono.objeto { color: var(--accent); border-color: var(--accent-border); }
-    .pi-estado.aviso { color: var(--warning-text); border-color: var(--warning-border); background: var(--warning-soft); }
-    .pi-estado.pico { color: var(--accent); border-color: var(--accent-border); margin-left: 0; }
-    .pi-nota { margin-top: 4px; font-size: 0.75rem; color: var(--text-dim); }
-    .chip-prenda .ico { display: inline-grid; width: 16px; height: 16px; margin-left: 4px; color: var(--text-muted); }
-    .chip-prenda .ico svg { width: 16px; height: 16px; }
-    .secuencia { align-items: center; }
-    .secuencia .chip-prenda { padding-left: 8px; }
-    .secuencia .chip-prenda i { width: 8px; height: 8px; border: 0; background: var(--c); }
-    .secuencia .flecha { color: var(--text-dim); font-size: 0.75rem; }
-
-    .person-item.alerta {
-      border-color: var(--danger-border);
-      background: var(--danger-soft);
-      box-shadow: inset 2px 0 0 var(--danger);
-    }
-    .person-item.alerta .pi-conf i::after { background: var(--danger); }
-
-    .placa-co {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-width: 92px;
-      padding: 4px 8px;
-      border-radius: var(--radius-sm);
-      background: var(--warning);
-      border: 1px solid var(--bg);
-      color: var(--bg);
-    }
-    .placa-co small { font-family: var(--font-mono); font-size: 0.5625rem; opacity: 0.8; }
-    .placa-co b { font-family: var(--font-mono); font-size: 1rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
-
-    .feed-container.modo-casilleros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-    .casillero-tile {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 132px;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--panel-inset);
-      animation: itemIn 220ms var(--ease-out) both;
-      transition: border-color var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out);
-    }
-    .casillero-tile .item-datos { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-    .ct-cabeza { display: flex; flex-direction: column; gap: 2px; font-family: var(--font-mono); }
-    .ct-cabeza b { font-size: 0.8125rem; }
-    .ct-cabeza small { font-size: 0.6875rem; color: var(--text-dim); white-space: nowrap; }
-    .ct-icono { width: 24px; height: 24px; color: var(--text-dim); }
-    .ct-icono svg { width: 100%; height: 100%; }
-    .ct-estado { font-size: 0.875rem; font-weight: 600; color: var(--text-dim); }
-    .ct-nota { font-size: 0.6875rem; color: var(--text-dim); line-height: 1.4; }
-    .casillero-tile.ocupado { border-color: var(--accent-border); background: var(--surface-active); }
-    .casillero-tile.ocupado.recibo { border-color: var(--success-border); background: var(--success-soft); }
-    .casillero-tile.ocupado .ct-icono, .casillero-tile.ocupado .ct-estado { color: var(--accent); }
-    .casillero-tile.ocupado.recibo .ct-icono, .casillero-tile.ocupado.recibo .ct-estado { color: var(--success-text); }
 
     /* Marcas de eventos sobre la línea de tiempo */
     .linea-tiempo { position: relative; flex: 1; min-width: 72px; display: flex; align-items: center; }
@@ -1133,22 +1017,22 @@
 
     /* ---------- Carga de foto ---------- */
     .upload-zone {
-      border: 1px dashed var(--border-hover);
+      border: 1px dashed var(--cork-border);
       background: var(--panel-inset);
       border-radius: var(--radius);
-      padding: 32px 24px;
+      padding: 40px 24px;
       text-align: center;
       cursor: pointer;
       transition: border-color var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out);
     }
     @media (hover: hover) and (pointer: fine) {
-      .upload-zone:hover { border-color: var(--accent-border); background: var(--panel-elevated); }
+      .upload-zone:hover { border-color: var(--text); background: var(--panel-elevated); }
     }
     .upload-zone input { display: none; }
 
     footer {
-      border-top: 1px solid var(--border);
-      padding: 20px max(24px, calc((100% - 1280px) / 2));
+      border-top: 1px dashed var(--cork-border);
+      padding: 24px max(24px, calc((100% - 1360px) / 2));
       display: flex;
       justify-content: space-between;
       gap: 12px;
@@ -1156,9 +1040,9 @@
       font-size: 0.75rem;
       color: var(--text-dim);
     }
-    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
     @media (hover: hover) and (pointer: fine) {
-      footer a:hover { color: var(--text); }
+      footer a:hover { text-decoration: underline; }
     }
 
     *:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -1166,22 +1050,17 @@
     /* ---------- Responsive (375px comprobado, objetivos táctiles >= 44px) ---------- */
     @media (max-width: 760px) {
       header, .module-bar, footer { padding-left: 16px; padding-right: 16px; }
-      main { width: calc(100% - 32px); margin: 16px auto 32px; }
-      .header-clock, .header-links .pill-green, .header-links .pill-gh { display: none; }
-      .brand h1 { font-size: 0.9375rem; }
-      .hero { padding: 48px 16px 80px; min-height: calc(100svh - 56px); }
-      .hero-btn { height: 48px; padding: 0 20px; width: 100%; max-width: 280px; }
-      .card { padding: 16px; }
+      main { width: calc(100% - 32px); margin: 12px auto 32px; }
+      .header-clock, #btnAbrirAtajos { display: none; }
+      .hero { padding: 32px 16px 48px; min-height: calc(100svh - 68px); }
+      .hero-bottom { grid-template-columns: 1fr; gap: 24px; }
+      .hero-btn { height: 48px; padding: 0 24px; width: 100%; }
+      .module-pills { width: 100%; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; }
+      .module-pills::-webkit-scrollbar { display: none; }
+      .module-pill { height: 38px; padding: 0 14px; font-size: 0.8125rem; }
+      .card { padding: 18px; border-radius: 22px; }
       .btn-ctrl { min-height: 40px; }
-      .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .kpi-row .kpi-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
-      .item-datos { grid-template-columns: minmax(0, 1fr); }
-      .pi-conf { flex-direction: row; align-items: center; justify-content: flex-start; }
-      .hud-br-tag { display: none; }
-      .module-trigger kbd, .module-pos, .module-pills { display: none; }
-      .module-trigger { flex: 1; }
       .kbd-grid { grid-template-columns: 1fr !important; }
-      .feed-container.modo-casilleros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .linea-tiempo { order: 10; flex-basis: 100%; }
       .modal-overlay { align-items: flex-end; padding: 0; }
       .modal-card {
@@ -1202,13 +1081,12 @@
     /* ---------- Toasts (Salida más rápida que entrada: 150ms vs 220ms) ---------- */
     .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 9999; pointer-events: none; }
     .toast-msg {
-      background: var(--panel-elevated);
+      background: var(--surface-active);
       border: 1px solid var(--border-hover);
-      color: var(--text);
-      padding: 12px 16px;
-      border-radius: var(--radius);
+      color: #ffedd7;
+      padding: 12px 18px;
+      border-radius: var(--radius-pill);
       font-size: 0.8125rem;
-      box-shadow: var(--shadow-md);
       transform: translateY(8px) scale(0.97);
       opacity: 0;
       transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out);
@@ -1219,15 +1097,12 @@
       opacity: 1;
       transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out);
     }
-    .toast-msg.success { box-shadow: inset 2px 0 0 var(--success), var(--shadow-md); }
-    .toast-msg.warning { box-shadow: inset 2px 0 0 var(--warning), var(--shadow-md); }
-    .toast-msg.danger { box-shadow: inset 2px 0 0 var(--danger), var(--shadow-md); }
 
     /* ---------- Diálogo (Escala desde 0.96, salida rápida 140ms) ---------- */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.72);
+      background: rgba(16, 9, 4, 0.78);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1252,8 +1127,7 @@
       max-width: 520px;
       max-height: calc(100dvh - 32px);
       overflow-y: auto;
-      padding: 24px;
-      box-shadow: var(--shadow-md);
+      padding: 28px;
       transform: scale(0.96);
       transition: transform 140ms var(--ease-out);
     }
@@ -1261,19 +1135,20 @@
       transform: scale(1);
       transition: transform 200ms var(--ease-out);
     }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .modal-header h3 { font-size: 1rem; font-weight: 600; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px dashed var(--cork-border); }
+    .modal-header h3 { font-size: 1.0625rem; font-weight: 500; }
     .kbd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .kbd-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; font-size: 0.8125rem; color: var(--text-muted); }
-    kbd { background: var(--panel-elevated); border: 1px solid var(--border-hover); border-radius: var(--radius-sm); padding: 2px 6px; font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text); }
+    .kbd-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; font-size: 0.8125rem; color: var(--text-muted); }
+    kbd { background: var(--panel-elevated); border: 1px solid var(--border-hover); border-radius: 8px; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text); }
   </style>
 </head>
 <body>
   <canvas id="dotGrid" aria-hidden="true"></canvas>
+  <div class="serial-edge" aria-hidden="true">SAN CARLOS · MODELO 01</div>
   <header>
     <a class="brand" href="#/" aria-label="SmartBuilding, inicio">
       <span class="brand-icon" aria-hidden="true">
-        <svg viewBox="0 0 256 256"><path fill="currentColor" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle cx="128" cy="104" r="18" fill="#C9A45C"/></svg>
+        <svg viewBox="0 0 256 256"><path fill="currentColor" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle cx="128" cy="104" r="18" fill="#dc5000"/></svg>
       </span>
       <h1>SmartBuilding</h1>
     </a>
@@ -1284,32 +1159,32 @@
       </div>
       <button class="pill pill-gh" id="themeToggleBtn" onclick="alternarTema()" title="Cambiar entre modo claro y oscuro" aria-label="Cambiar tema">
         <svg class="icono-gh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-14.93 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-14.93 7.07 1.41-1.41m11.32-11.32 1.41-1.41"/></svg>
-        <span id="themeToggleLabel">Tema</span>
+        <span id="themeToggleLabel">Oscuro</span>
       </button>
       <button class="pill pill-gh" id="btnAbrirAtajos" onclick="abrirModalAtajos()" title="Ver atajos de teclado (Presiona ?)">Atajos</button>
-      <a class="pill pill-gh" href="https://github.com/suntzz/smartbuilding-api" target="_blank" rel="noopener"><svg class="icono-gh" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
     </div>
   </header>
 
   <section class="hero vista" id="vistaInicio">
     <canvas id="radarCanvas" aria-hidden="true"></canvas>
-    <div class="hero-mark" aria-hidden="true">
-      <svg viewBox="0 0 256 256"><path fill="currentColor" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle cx="128" cy="104" r="18" fill="#C9A45C"/></svg>
+    <div class="hero-top">
+      <span class="hero-eyebrow"><span class="radar-dot" aria-hidden="true"></span><b>Cámara 01</b> Recepción · San Carlos</span>
+      <h2 data-blur>SmartBuilding</h2>
     </div>
-    <span class="hero-eyebrow"><span class="radar-dot" aria-hidden="true"></span><b>Cámara 01</b> Recepción y lobby</span>
-    <h2 data-blur>SmartBuilding</h2>
-    <p class="hero-lead">
-      Reconocimiento de atributos demográficos y segmentación de vestimenta en tiempo real para la recepción del Conjunto Residencial San Carlos.
-    </p>
-    <div class="hero-actions">
-      <a class="hero-btn principal magnet" href="#/camaras" onclick="cambiarReto(1)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-        Abrir monitor
-      </a>
-      <button class="hero-btn magnet" onclick="mostrarWebcamLive()">
-        <span class="punto" aria-hidden="true"></span>
-        Probar mi cámara
-      </button>
+    <div class="hero-bottom">
+      <p class="hero-lead">
+        Identificación visual de vestimenta y demografía en tiempo real para la recepción residencial.
+        <small>Procesamiento privado en tu propio navegador · Sin cámaras externas</small>
+      </p>
+      <div class="hero-actions">
+        <a class="hero-btn principal magnet" href="#/camaras" onclick="cambiarReto(1)">
+          Abrir monitor
+        </a>
+        <button class="hero-btn magnet" onclick="mostrarWebcamLive()">
+          <span class="punto" aria-hidden="true"></span>
+          Probar mi cámara
+        </button>
+      </div>
     </div>
   </section>
 
@@ -1323,9 +1198,9 @@
       </span>
       <kbd>L</kbd>
     </button>
-    <nav class="module-pills" aria-label="Cambio rápido de módulo">
-      <button class="module-pill active" data-key="1" onclick="cambiarReto(1)"><span>01</span>Demografía</button>
-      <button class="module-pill" data-key="webcam" onclick="mostrarWebcamLive()"><span>CAM</span>Cámara en vivo</button>
+    <nav class="module-pills" aria-label="Selector de modo">
+      <button class="module-pill active" data-key="1" onclick="cambiarReto(1)"><span>01</span>Monitor</button>
+      <button class="module-pill" data-key="webcam" onclick="mostrarWebcamLive()"><span>CAM</span>Mi cámara</button>
       <button class="module-pill" data-key="foto" onclick="mostrarSubirFoto()"><span>IMG</span>Analizar foto</button>
       <button class="module-pill" data-key="residentes" onclick="mostrarDirectorioResidentes()"><span>DIR</span>Directorio</button>
     </nav>
@@ -1340,34 +1215,33 @@
   <div class="drawer-prelayer" aria-hidden="true"><span></span><span></span></div>
   <aside class="module-drawer" id="moduleDrawer" aria-hidden="true" aria-label="Módulos">
     <div class="drawer-head">
-      <span>Módulos</span>
+      <span>Navegación</span>
       <button class="btn-ctrl" onclick="cerrarMenuModulos()" aria-label="Cerrar">✕</button>
     </div>
     <input type="text" id="moduleSearch" placeholder="Buscar" autocomplete="off" oninput="filtrarModulos(this.value)">
     <div class="animated-list" id="tabsBar">
-      <div class="list-group">Cámara activa</div>
-      <button class="tab-btn active" data-key="1" onclick="cambiarReto(1)"><span class="tab-idx">01</span><span class="tab-body"><b>Demografía y vestimenta</b><small>Recepción y lobby</small></span></button>
-      <button class="tab-btn reto-oculto" hidden data-key="2" onclick="cambiarReto(2)"><span class="tab-idx">02</span><span class="tab-body"><b>Conteo de entradas y salidas</b><small>Acceso principal · hora pico</small></span></button>
+      <div class="list-group">Vistas</div>
+      <button class="tab-btn active" data-key="1" onclick="cambiarReto(1)"><span class="tab-idx">01</span><span class="tab-body"><b>Monitor de recepción</b><small>Video en vivo</small></span></button>
+      <button class="tab-btn reto-oculto" hidden data-key="2" onclick="cambiarReto(2)"><span class="tab-idx">02</span><span class="tab-body"><b>Conteo de entradas y salidas</b><small>Acceso principal</small></span></button>
       <button class="tab-btn reto-oculto" hidden data-key="3" onclick="cambiarReto(3)"><span class="tab-idx">03</span><span class="tab-body"><b>Merodeo</b><small>Pasillo común</small></span></button>
-      <button class="tab-btn reto-oculto" hidden data-key="4" onclick="cambiarReto(4)"><span class="tab-idx">04</span><span class="tab-body"><b>Objeto abandonado</b><small>Bolsos, maletas y paquetes</small></span></button>
-      <button class="tab-btn reto-oculto" hidden data-key="5" onclick="cambiarReto(5)"><span class="tab-idx">05</span><span class="tab-body"><b>Lectura de placas</b><small>Portería vehicular · día y noche</small></span></button>
-      <button class="tab-btn reto-oculto" hidden data-key="6" onclick="cambiarReto(6)"><span class="tab-idx">06</span><span class="tab-body"><b>Caídas</b><small>Comportamientos de riesgo</small></span></button>
-      <button class="tab-btn reto-oculto" hidden data-key="7" onclick="cambiarReto(7)"><span class="tab-idx">07</span><span class="tab-body"><b>Correspondencia</b><small>Casilleros por apartamento</small></span></button>
-      <div class="list-group">Herramientas</div>
-      <button class="tab-btn cam-tab" data-key="webcam" onclick="mostrarWebcamLive()"><span class="tab-idx">CAM</span><span class="tab-body"><b>Mi cámara en vivo</b><small>Detección con tu cámara web</small></span></button>
-      <button class="tab-btn" data-key="foto" onclick="mostrarSubirFoto()"><span class="tab-idx">IMG</span><span class="tab-body"><b>Analizar una foto</b><small>Sube una imagen propia</small></span></button>
-      <button class="tab-btn" data-key="residentes" onclick="mostrarDirectorioResidentes()"><span class="tab-idx">DIR</span><span class="tab-body"><b>Directorio de residentes</b><small>Buscar por nombre, apto o placa</small></span></button>
+      <button class="tab-btn reto-oculto" hidden data-key="4" onclick="cambiarReto(4)"><span class="tab-idx">04</span><span class="tab-body"><b>Objeto abandonado</b><small>Pasillo</small></span></button>
+      <button class="tab-btn reto-oculto" hidden data-key="5" onclick="cambiarReto(5)"><span class="tab-idx">05</span><span class="tab-body"><b>Lectura de placas</b><small>Portería</small></span></button>
+      <button class="tab-btn reto-oculto" hidden data-key="6" onclick="cambiarReto(6)"><span class="tab-idx">06</span><span class="tab-body"><b>Caídas</b><small>Sala</small></span></button>
+      <button class="tab-btn reto-oculto" hidden data-key="7" onclick="cambiarReto(7)"><span class="tab-idx">07</span><span class="tab-body"><b>Correspondencia</b><small>Casilleros</small></span></button>
+      <button class="tab-btn cam-tab" data-key="webcam" onclick="mostrarWebcamLive()"><span class="tab-idx">CAM</span><span class="tab-body"><b>Mi cámara</b><small>Detección con tu cámara web</small></span></button>
+      <button class="tab-btn" data-key="foto" onclick="mostrarSubirFoto()"><span class="tab-idx">IMG</span><span class="tab-body"><b>Analizar foto</b><small>Sube una imagen propia</small></span></button>
+      <button class="tab-btn" data-key="residentes" onclick="mostrarDirectorioResidentes()"><span class="tab-idx">DIR</span><span class="tab-body"><b>Directorio</b><small>Residentes y vehículos</small></span></button>
     </div>
     <p class="drawer-foot">↑ ↓ para moverte · Enter para abrir · Esc para cerrar</p>
   </aside>
 
   <main id="camaras">
-    <!-- VISTA PRINCIPAL DE RETOS EN VIDEO -->
+    <!-- VISTA PRINCIPAL DE MONITOR -->
     <div class="layout-grid" id="cctvView">
       <div class="card">
-        <div class="card-header" data-kicker="Visor · Cámara 01">
+        <div class="card-header" data-kicker="Cámara 01 · En vivo">
           <h2 id="camTitle">Recepción y lobby</h2>
-          <span class="pill pill-green" id="streamBadge"><span class="radar-dot"></span> Seguimiento activo</span>
+          <span class="pill pill-green" id="streamBadge"><span class="radar-dot"></span> Activo</span>
         </div>
 
         <div class="video-viewport" id="viewport">
@@ -1378,7 +1252,7 @@
           <div class="hud-crosshair"></div>
           <div class="scanlines"></div>
           <div class="hud-tl-tag"><span class="radar-dot"></span> En vivo</div>
-          <div class="hud-br-tag">San Carlos · 30 FPS</div>
+          <div class="hud-br-tag">San Carlos</div>
           <div class="alert-banner" id="alertBanner">
             <span id="alertMsg">Alerta detectada</span>
             <span>CCTV 01</span>
@@ -1388,41 +1262,41 @@
         </div>
 
         <div class="video-controls">
-          <button class="btn-ctrl primary" id="btnPlayPause" onclick="togglePlay()">Reproducir</button>
-          <button class="btn-ctrl" onclick="reiniciarVideo()">Reiniciar</button>
+          <button class="btn-ctrl primary magnet" id="btnPlayPause" onclick="togglePlay()">Reproducir</button>
           <div class="linea-tiempo">
             <input type="range" class="time-slider" id="timeSlider" min="0" max="100" value="0" step="0.1" oninput="seekVideo(this.value)" aria-label="Posición del video">
             <div class="marcas-tiempo" id="marcasTiempo"></div>
           </div>
           <span class="time-lbl" id="timeLabel">00:00 / 00:00</span>
-          <button class="btn-ctrl" onclick="toggleVelocidad()" id="btnSpeed" title="Velocidad de reproducción">1.0x</button>
-          <button class="btn-ctrl" onclick="toggleAudioGlobal()" id="btnAudioToggle" title="Activar o silenciar sonido de alerta (M)">Audio</button>
+          <button class="btn-ctrl" onclick="reiniciarVideo()">Reiniciar</button>
           <button class="btn-ctrl" onclick="toggleFullscreen()" id="btnFullscreen" title="Pantalla completa (F)">Expandir</button>
-          <button class="btn-ctrl" onclick="descargarReporteJSON()">JSON</button>
+          <button class="btn-ctrl" onclick="toggleVelocidad()" id="btnSpeed">1.0x</button>
+          <button class="btn-ctrl" onclick="toggleAudioGlobal()" id="btnAudioToggle">Audio</button>
+          <button class="btn-ctrl btn-secundario-oculto" onclick="descargarReporteJSON()">JSON</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-header" id="panelCabecera" data-kicker="Analítica · Demografía y vestimenta">
+        <div class="card-header" id="panelCabecera" data-kicker="Flujo de personas">
           <h2 id="panelTitulo">Personas detectadas</h2>
-          <span id="metaRetoLabel" style="font-size:0.75rem;color:var(--text-dim);font-family:var(--font-mono)">Reto 01</span>
+          <span id="metaRetoLabel" style="font-size:0.75rem;color:var(--text-dim);font-family:var(--font-mono)">0 detectadas</span>
         </div>
 
-        <p class="motor-ia" id="motorIA"><span>Modelo</span> YOLO11 + ByteTrack · SegFormer (ropa) · CLIP</p>
+        <p class="motor-ia" id="motorIA"><span>Modelo</span> YOLO11 + ByteTrack · SegFormer · CLIP</p>
         <div class="kpi-row" id="kpiContainer"></div>
 
         <div class="feed-container" id="feedContainer">
-          <div style="color:var(--text-dim);text-align:center;padding:20px">Cargando analítica...</div>
+          <div style="color:var(--text-dim);text-align:center;padding:20px">Cargando...</div>
         </div>
       </div>
     </div>
 
-    <!-- VISTA WEBCAM EN VIVO CON REGISTRO DE EVENTOS -->
+    <!-- VISTA WEBCAM EN VIVO -->
     <div class="layout-grid" id="webcamPanel" style="display:none;">
       <div class="card">
-        <div class="card-header" data-kicker="Visor · Cámara web">
-          <h2>Detección en vivo</h2>
-          <span class="pill pill-red" id="webcamStatusBadge"><span class="radar-dot red"></span> Cámara inactiva</span>
+        <div class="card-header" data-kicker="Tu dispositivo">
+          <h2>Mi cámara en vivo</h2>
+          <span class="pill pill-red" id="webcamStatusBadge"><span class="radar-dot red"></span> Inactiva</span>
         </div>
 
         <div class="video-viewport" id="webcamViewport">
@@ -1432,8 +1306,8 @@
           <div class="hud-corner br"></div>
           <div class="hud-crosshair"></div>
           <div class="scanlines"></div>
-          <div class="hud-tl-tag"><span class="radar-dot red" id="webcamHudDot"></span> Cámara web</div>
-          <div class="hud-br-tag">Procesado local</div>
+          <div class="hud-tl-tag"><span class="radar-dot red" id="webcamHudDot"></span> Cámara local</div>
+          <div class="hud-br-tag">Local</div>
           <div class="alert-banner" id="webcamAlertBanner">
             <span id="webcamAlertMsg">Alerta</span>
             <span>Webcam</span>
@@ -1441,68 +1315,49 @@
           <video id="webcamVideo" playsinline autoplay muted style="transform: scaleX(-1);"></video>
           <canvas id="webcamCanvas" style="transform: scaleX(-1);"></canvas>
           <div id="webcamPlaceholder" class="webcam-espera">
-            <button class="webcam-lente" type="button" onclick="toggleWebcam()" aria-label="Activar cámara web">
+            <button class="webcam-lente magnet" type="button" onclick="toggleWebcam()" aria-label="Activar cámara web">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.55-2.28A1 1 0 0 1 21 8.62v6.76a1 1 0 0 1-1.45.9L15 14"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg>
             </button>
             <b>Activa tu cámara para empezar</b>
-            <span>El modelo detecta sexo aparente, rango de edad y vestimenta. Las imágenes no salen de tu equipo.</span>
+            <span>Detecta sexo aparente, edad y vestimenta directamente en tu navegador.</span>
           </div>
         </div>
 
         <div class="ia-estado" id="iaEstado">
           <span class="ia-punto"></span>
-          <span class="ia-texto">El modelo se descarga al activar la cámara (~135 MB, solo la primera vez). Todo se procesa en tu navegador.</span>
+          <span class="ia-texto">El modelo se prepara al encender la cámara (todo ocurre en tu equipo).</span>
           <i class="ia-barra"></i>
         </div>
 
         <div class="video-controls">
-          <button class="btn-ctrl primary" id="btnToggleWebcam" onclick="toggleWebcam()">Activar cámara</button>
-
-          <label style="font-size:0.8125rem;color:var(--text-muted);display:flex;align-items:center;gap:8px;margin-left:auto">
-            Modo
-            <select id="webcamModeSelect" onchange="cambiarModoWebcam(this.value)">
-              <option value="demografia">1. Demografía y vestimenta</option>
-            </select>
-          </label>
-
-          <button class="btn-ctrl success" onclick="capturarRegistroManual()">Registrar ahora</button>
+          <button class="btn-ctrl primary magnet" id="btnToggleWebcam" onclick="toggleWebcam()">Activar cámara</button>
+          <select id="webcamModeSelect" class="btn-secundario-oculto" onchange="cambiarModoWebcam(this.value)">
+            <option value="demografia">1. Demografía y vestimenta</option>
+          </select>
+          <button class="btn-ctrl" style="margin-left:auto" onclick="capturarRegistroManual()">Guardar captura</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-header" data-kicker="Bitácora · Tiempo real">
+        <div class="card-header" data-kicker="Bitácora">
           <h2>Personas registradas</h2>
-          <span style="font-size:0.75rem;color:var(--text-dim);font-family:var(--font-mono)"><span id="totalCapturasLabel">0</span> eventos</span>
-        </div>
-
-        <div class="kpi-row">
-          <div class="kpi-card">
-            <div class="num" id="webcamKpiPersonas">0</div>
-            <div class="desc">Registros</div>
-          </div>
-          <div class="kpi-card">
-            <div class="num" id="webcamKpiAlertas">0</div>
-            <div class="desc">Capturas manuales</div>
-          </div>
-          <div class="kpi-card">
-            <div class="num" id="webcamKpiConfianza">—</div>
-            <div class="desc">Confianza actual</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:0.75rem;color:var(--text-dim);font-family:var(--font-mono)"><span id="totalCapturasLabel">0</span> registros</span>
+            <button class="btn-ctrl" style="height:30px;padding:0 12px;font-size:0.75rem" onclick="limpiarBitacora()">Limpiar</button>
           </div>
         </div>
 
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <button class="btn-ctrl" onclick="descargarBitacoraJSON()">Exportar JSON</button>
-          <button class="btn-ctrl" onclick="descargarBitacoraCSV()">Exportar CSV</button>
-          <button class="btn-ctrl danger" onclick="limpiarBitacora()">Limpiar</button>
-          <label style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:8px;margin-left:auto">
-            <input type="checkbox" id="autoCaptureCheck" checked> Registro automático
-          </label>
+        <div class="kpi-row" style="display:none">
+          <div class="kpi-card"><div class="num" id="webcamKpiPersonas">0</div></div>
+          <div class="kpi-card"><div class="num" id="webcamKpiAlertas">0</div></div>
+          <div class="kpi-card"><div class="num" id="webcamKpiConfianza">—</div></div>
         </div>
+        <input type="checkbox" id="autoCaptureCheck" checked style="display:none">
 
         <div class="feed-container" id="webcamLogContainer">
           <div class="feed-vacio">
             <b>Aún no hay personas registradas</b>
-            <span>Activa la cámara y ubícate frente a ella: se registrará tu sexo aparente, rango de edad y vestimenta mientras permanezcas en cuadro.</span>
+            <span>Activa la cámara y ponte frente a ella para ver tus atributos en tiempo real.</span>
           </div>
         </div>
       </div>
@@ -1510,18 +1365,15 @@
 
     <!-- Panel de carga de imagen propia -->
     <div class="card" id="customPhotoPanel" style="display:none;margin-top:12px">
-      <div class="card-header" data-kicker="Análisis · Foto">
+      <div class="card-header" data-kicker="Imagen estática">
         <h2>Analizar una foto</h2>
-        <span class="pill pill-blue">Procesado en tu navegador</span>
+        <span class="pill pill-green">Privado en tu navegador</span>
       </div>
-      <p style="color:var(--text-muted);font-size:0.875rem">
-        Sube una foto desde tu equipo. El modelo detecta a la persona, segmenta su ropa y estima sexo aparente, rango de edad, tipo y color de las prendas superior e inferior. La imagen no sale de tu navegador.
-      </p>
 
       <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
         <input type="file" id="fileInput" accept="image/*" onchange="analizarFotoLocal(event)">
-        <div style="font-weight:500;font-size:0.9375rem">Selecciona o arrastra una imagen</div>
-        <div style="font-size:0.75rem;color:var(--text-dim);margin-top:4px">Formatos compatibles: JPG, PNG, WEBP</div>
+        <div style="font-weight:500;font-size:1rem">Selecciona una foto de tu equipo</div>
+        <div style="font-size:0.8125rem;color:var(--text-dim);margin-top:6px">JPG, PNG o WEBP</div>
       </div>
 
       <div id="photoResults" style="display:none;margin-top:16px" class="layout-grid">
@@ -1534,22 +1386,22 @@
 
     <!-- Panel de directorio de residentes -->
     <div class="card" id="residentesPanel" style="display:none;margin-top:12px">
-      <div class="card-header" data-kicker="Directorio">
-        <h2>Directorio residencial — San Carlos</h2>
-        <input type="text" id="filtroResidente" placeholder="Buscar residente, apto o placa" style="padding:0 12px" oninput="filtrarDirectorio(this.value)">
+      <div class="card-header" data-kicker="San Carlos">
+        <h2>Directorio residencial</h2>
+        <input type="text" id="filtroResidente" placeholder="Buscar nombre, apto o placa" style="min-width:240px;padding:0 4px" oninput="filtrarDirectorio(this.value)">
       </div>
-      <div class="feed-container" id="residentesListContainer" style="max-height:500px"></div>
+      <div class="feed-container" id="residentesListContainer" style="max-height:520px"></div>
     </div>
   </main>
 
   <footer>
-    <span>SmartBuilding · Conjunto Residencial San Carlos · Analítica de Visión por Computador</span>
-    <a href="https://github.com/suntzz/smartbuilding-api" target="_blank" rel="noopener" class="enlace-gh"><svg class="icono-gh" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>Código fuente en GitHub</a>
+    <span>SmartBuilding · Conjunto Residencial San Carlos</span>
+    <a href="https://github.com/suntzz/smartbuilding-api" target="_blank" rel="noopener" class="enlace-gh">GitHub</a>
   </footer>
   </div>
 
   <div class="cortina cubrir" id="cortina" aria-hidden="true"><span style="--i:0"></span><span style="--i:1"></span><span style="--i:2"></span><span style="--i:3"></span><span style="--i:4"></span><span style="--i:5"></span></div>
-  <div class="cortina-logo" aria-hidden="true"><svg viewBox="0 0 256 256"><path fill="currentColor" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle cx="128" cy="104" r="18" fill="#C9A45C"/></svg></div>
+  <div class="cortina-logo" aria-hidden="true"><svg viewBox="0 0 256 256"><path fill="currentColor" fill-rule="evenodd" d="M80 16 H176 A24 24 0 0 1 200 40 V240 H56 V40 A24 24 0 0 1 80 16 Z M128 64 A40 40 0 1 0 128.01 64 Z M112 176 H144 V240 H112 Z"/><circle cx="128" cy="104" r="18" fill="#dc5000"/></svg></div>
 
   <script src="app/static/retos_data.js"></script>
   <script src="app/static/clip_textos.js"></script>
@@ -1785,7 +1637,7 @@
             inferior: p.prenda_inferior,
             confianza: p.confianza,
             estado: enPantalla ? ["vivo", "En pantalla"] : ["", "Registrado"],
-            pie: `F${p.primer_frame}–F${p.ultimo_frame}`
+            pie: ""
           });
         }
       });
@@ -1900,7 +1752,7 @@
         container.innerHTML = `
           <div class="kpi-card"><div class="num" id="kpiTotal">0</div><div class="desc">Personas</div></div>
           <div class="kpi-card"><div class="num" id="kpiSexo">0F / 0M</div><div class="desc">Femenino / Masculino</div></div>
-          <div class="kpi-card"><div class="num" id="kpiFrames">0 / ${data.total_frames_video || 205}</div><div class="desc">Frames</div></div>
+          <div class="kpi-card kpi-oculto"><div class="num" id="kpiFrames">0 / ${data.total_frames_video || 205}</div><div class="desc">Frames</div></div>
         `;
       }
     }
@@ -2626,7 +2478,7 @@
       const lbl = document.getElementById('themeToggleLabel');
       if (lbl) lbl.textContent = actual === 'light' ? 'Claro' : 'Oscuro';
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', actual === 'light' ? '#f5f4f1' : '#0a0a0a');
+      if (meta) meta.setAttribute('content', actual === 'light' ? '#f6efe6' : '#100904');
     }
 
     function alternarTema() {
@@ -2879,12 +2731,28 @@
         });
       }
 
-      // Dot Grid interactivo: los puntos se iluminan y se apartan del cursor; un clic genera una onda
+      // SpotlightCard (React Bits): halo radial cálido que sigue al cursor sobre tarjetas y registros
+      if (!reduce && matchMedia('(pointer: fine)').matches) {
+        document.addEventListener('pointermove', e => {
+          const cards = document.querySelectorAll('.card, .person-item');
+          for (let i = 0; i < cards.length; i++) {
+            const c = cards[i];
+            if (!c.offsetParent) continue;
+            const r = c.getBoundingClientRect();
+            if (e.clientX >= r.left - 80 && e.clientX <= r.right + 80 && e.clientY >= r.top - 80 && e.clientY <= r.bottom + 80) {
+              c.style.setProperty('--mouse-x', (e.clientX - r.left) + 'px');
+              c.style.setProperty('--mouse-y', (e.clientY - r.top) + 'px');
+            }
+          }
+        }, { passive: true });
+      }
+
+      // Dot Grid + Aura cálida interactiva (React Bits): los puntos se iluminan en crema/ámbar y se apartan del cursor; un clic genera una onda
       const canvas = document.getElementById('dotGrid');
       const ctx = canvas.getContext('2d');
-      const GAP = 26, RADIO = 1.3, ALCANCE = 150;
+      const GAP = 28, RADIO = 1.25, ALCANCE = 180;
       let dots = [], w = 0, h = 0, dpr = 1;
-      const mouse = { x: -9999, y: -9999 };
+      const mouse = { x: -9999, y: -9999, sx: -9999, sy: -9999 };
       const ondas = [];
 
       function construir() {
@@ -2906,37 +2774,53 @@
           return;
         }
         const esClaro = document.documentElement.getAttribute('data-theme') === 'light';
-        const colorReposo = esClaro ? 'rgba(20, 20, 19, 0.08)' : 'rgba(255, 255, 255, 0.10)';
-        const rgbAcento = esClaro ? '143, 109, 40' : '201, 164, 92';
+        const colorReposo = esClaro ? 'rgba(56, 36, 22, 0.09)' : 'rgba(255, 237, 215, 0.08)';
+        const rgbAcento = esClaro ? '184, 66, 0' : '220, 80, 0';
+        const rgbCrema = esClaro ? '56, 36, 22' : '255, 237, 215';
         ctx.clearRect(0, 0, w, h);
+
+        // Aura suave del cursor en el fondo (ORYZO Darkroom)
+        if (mouse.x > -1000) {
+          if (mouse.sx < -1000) { mouse.sx = mouse.x; mouse.sy = mouse.y; }
+          mouse.sx += (mouse.x - mouse.sx) * 0.14;
+          mouse.sy += (mouse.y - mouse.sy) * 0.14;
+          const grad = ctx.createRadialGradient(mouse.sx, mouse.sy, 0, mouse.sx, mouse.sy, 320);
+          grad.addColorStop(0, esClaro ? 'rgba(184, 66, 0, 0.05)' : 'rgba(220, 80, 0, 0.07)');
+          grad.addColorStop(0.5, esClaro ? 'rgba(56, 36, 22, 0.02)' : 'rgba(255, 237, 215, 0.025)');
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+        }
+
         for (let k = ondas.length - 1; k >= 0; k--) if (t - ondas[k].t0 > 1100) ondas.splice(k, 1);
         for (const d of dots) {
-          let tx = 0, ty = 0, luz = 0;
+          let tx = 0, ty = 0, luz = 0, esOnda = false;
           const mx = d.x - mouse.x, my = d.y - mouse.y;
           const dist = Math.hypot(mx, my);
           if (dist < ALCANCE) {
             const f = 1 - dist / ALCANCE;
             luz = f;
-            tx = (mx / (dist || 1)) * f * 7;
-            ty = (my / (dist || 1)) * f * 7;
+            tx = (mx / (dist || 1)) * f * 9;
+            ty = (my / (dist || 1)) * f * 9;
           }
           for (const o of ondas) {
             const r = (t - o.t0) * 0.6;
             const dd = Math.hypot(d.x - o.x, d.y - o.y);
-            const banda = 1 - Math.min(1, Math.abs(dd - r) / 40);
+            const banda = 1 - Math.min(1, Math.abs(dd - r) / 42);
             if (banda > 0) {
               const fade = 1 - (t - o.t0) / 1100;
+              if (banda * fade > luz) esOnda = true;
               luz = Math.max(luz, banda * fade);
-              tx += ((d.x - o.x) / (dd || 1)) * banda * fade * 10;
-              ty += ((d.y - o.y) / (dd || 1)) * banda * fade * 10;
+              tx += ((d.x - o.x) / (dd || 1)) * banda * fade * 11;
+              ty += ((d.y - o.y) / (dd || 1)) * banda * fade * 11;
             }
           }
-          d.dx += (tx - d.dx) * 0.15;
-          d.dy += (ty - d.dy) * 0.15;
-          const a = 0.16 + luz * 0.7;
-          ctx.fillStyle = luz > 0.05 ? `rgba(${rgbAcento}, ${a})` : colorReposo;
+          d.dx += (tx - d.dx) * 0.16;
+          d.dy += (ty - d.dy) * 0.16;
+          const a = 0.16 + luz * 0.72;
+          ctx.fillStyle = luz > 0.05 ? `rgba(${esOnda || luz > 0.55 ? rgbAcento : rgbCrema}, ${a})` : colorReposo;
           ctx.beginPath();
-          ctx.arc(d.x + d.dx, d.y + d.dy, RADIO + luz * 1.1, 0, Math.PI * 2);
+          ctx.arc(d.x + d.dx, d.y + d.dy, RADIO + luz * 1.2, 0, Math.PI * 2);
           ctx.fill();
         }
         if (activo && !reduce) requestAnimationFrame(dibujar);
@@ -2997,7 +2881,7 @@
           const esClaro = document.documentElement.getAttribute('data-theme') === 'light';
           rctx.clearRect(0, 0, rw, rh);
           // anillos y ejes
-          rctx.strokeStyle = esClaro ? 'rgba(20, 20, 19, 0.07)' : 'rgba(255, 255, 255, 0.06)';
+          rctx.strokeStyle = esClaro ? 'rgba(56, 36, 22, 0.08)' : 'rgba(255, 237, 215, 0.06)';
           rctx.lineWidth = 1;
           for (let k = 1; k <= 5; k++) { rctx.beginPath(); rctx.arc(cx, cy, (R * k) / 5, 0, Math.PI * 2); rctx.stroke(); }
           rctx.beginPath(); rctx.moveTo(cx - R, cy); rctx.lineTo(cx + R, cy); rctx.moveTo(cx, cy - R); rctx.lineTo(cx, cy + R); rctx.stroke();
@@ -3005,13 +2889,13 @@
           const ang = reduce ? -Math.PI / 4 : ((t % PERIODO) / PERIODO) * Math.PI * 2 - Math.PI / 2;
           const estela = rctx.createConicGradient ? rctx.createConicGradient(ang - 1.1, cx, cy) : null;
           if (estela) {
-            estela.addColorStop(0, 'rgba(201, 164, 92, 0)');
-            estela.addColorStop(0.175, esClaro ? 'rgba(143, 109, 40, 0.16)' : 'rgba(201, 164, 92, 0.22)');
-            estela.addColorStop(0.1751, 'rgba(201, 164, 92, 0)');
+            estela.addColorStop(0, 'rgba(220, 80, 0, 0)');
+            estela.addColorStop(0.175, esClaro ? 'rgba(184, 66, 0, 0.14)' : 'rgba(220, 80, 0, 0.18)');
+            estela.addColorStop(0.1751, 'rgba(220, 80, 0, 0)');
             rctx.fillStyle = estela;
             rctx.beginPath(); rctx.moveTo(cx, cy); rctx.arc(cx, cy, R, ang - 1.1, ang); rctx.closePath(); rctx.fill();
           }
-          rctx.strokeStyle = esClaro ? 'rgba(143, 109, 40, 0.55)' : 'rgba(232, 200, 140, 0.55)';
+          rctx.strokeStyle = esClaro ? 'rgba(184, 66, 0, 0.5)' : 'rgba(255, 237, 215, 0.45)';
           rctx.beginPath(); rctx.moveTo(cx, cy); rctx.lineTo(cx + Math.cos(ang) * R, cy + Math.sin(ang) * R); rctx.stroke();
           // contactos
           for (const c of contactos) {
@@ -3021,9 +2905,9 @@
             c.brillo *= 0.985;
             const x = cx + Math.cos(c.ang) * c.dist * R, y = cy + Math.sin(c.ang) * c.dist * R;
             if (c.brillo > 0.02) {
-              rctx.fillStyle = `rgba(232, 200, 140, ${c.brillo})`;
+              rctx.fillStyle = `rgba(255, 237, 215, ${c.brillo})`;
               rctx.beginPath(); rctx.arc(x, y, 2.5, 0, Math.PI * 2); rctx.fill();
-              rctx.strokeStyle = `rgba(201, 164, 92, ${c.brillo * 0.5})`;
+              rctx.strokeStyle = `rgba(220, 80, 0, ${c.brillo * 0.55})`;
               rctx.beginPath(); rctx.arc(x, y, 2.5 + (1 - c.brillo) * 14, 0, Math.PI * 2); rctx.stroke();
             }
           }
@@ -3333,7 +3217,7 @@
       const [x, y, w, h] = obs.bbox.map(v => Math.round(v / esc));
       const grosor = Math.max(3, Math.round(img.width * 0.006));
       ctx.lineWidth = grosor;
-      ctx.strokeStyle = r.sexo === 'Masculino' ? '#e8e8e8' : '#c9a45c';
+      ctx.strokeStyle = r.sexo === 'Masculino' ? '#ffedd7' : '#dc5000';
       ctx.strokeRect(x, y, w, h);
 
       caja.innerHTML = `
@@ -3347,11 +3231,10 @@
               inferior: r.prenda_inferior,
               confianza: r.confianza,
               estado: ['vivo', 'Identificada'],
-              pie: `${img.width}×${img.height}`
+              pie: ''
             })}
           </div>
-        </div>
-        <pre style="background:var(--panel-inset);border:1px solid var(--border);padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);overflow-x:auto;margin-top:8px;">${JSON.stringify({ sexo_aparente: r.sexo, rango_edad: r.edad, prenda_superior: r.prenda_superior, prenda_inferior: r.prenda_inferior, confianza: r.confianza }, null, 2)}</pre>`;
+        </div>`;
     };
   </script>
   <!-- Navegación entre la portada (#/) y las cámaras (#/camaras) con transición de cortina -->
