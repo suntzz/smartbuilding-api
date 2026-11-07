@@ -12,6 +12,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        var guardado = localStorage.getItem('sb_theme');
+        var tema = guardado || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', tema);
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', tema === 'light' ? '#f5f4f1' : '#0a0a0a');
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
     <style>
     /* ==========================================================
        Identidad visual: consola de monitoreo sobria (Unslop).
@@ -427,6 +440,45 @@
     .module-step { display: flex; align-items: center; gap: 8px; }
     .module-step .btn-ctrl { width: 36px; padding: 0; font-size: 1rem; }
     .module-pos { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; }
+    .module-pills {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border-radius: var(--radius);
+      background: var(--panel-inset);
+      border: 1px solid var(--border);
+    }
+    .module-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      white-space: nowrap;
+      transition: background var(--dur-ui) var(--ease-out), color var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out), transform var(--dur-press) var(--ease-out);
+    }
+    .module-pill:active { transform: scale(0.97); }
+    .module-pill span { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+    .module-pill.active {
+      background: var(--surface-active);
+      border-color: var(--accent-border);
+      color: var(--text);
+    }
+    .module-pill.active span { color: var(--accent); }
+    @media (hover: hover) and (pointer: fine) {
+      .module-pill:not(.active):hover { color: var(--text); background: var(--panel-elevated); }
+    }
 
     /* ---------- Menú lateral escalonado (Staggered Menu) ---------- */
     .drawer-overlay {
@@ -1126,11 +1178,20 @@
       .item-datos { grid-template-columns: minmax(0, 1fr); }
       .pi-conf { flex-direction: row; align-items: center; justify-content: flex-start; }
       .hud-br-tag { display: none; }
-      .module-trigger kbd, .module-pos { display: none; }
+      .module-trigger kbd, .module-pos, .module-pills { display: none; }
       .module-trigger { flex: 1; }
       .kbd-grid { grid-template-columns: 1fr !important; }
       .feed-container.modo-casilleros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .linea-tiempo { order: 10; flex-basis: 100%; }
+      .modal-overlay { align-items: flex-end; padding: 0; }
+      .modal-card {
+        max-width: 100%;
+        border-radius: var(--radius-card) var(--radius-card) 0 0;
+        border-bottom: 0;
+        padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+        transform: translateY(24px);
+      }
+      .modal-overlay.is-open .modal-card { transform: translateY(0); }
     }
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 120ms !important; }
@@ -1138,7 +1199,7 @@
       .cortina { display: none !important; }
     }
 
-    /* ---------- Toasts ---------- */
+    /* ---------- Toasts (Salida más rápida que entrada: 150ms vs 220ms) ---------- */
     .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 9999; pointer-events: none; }
     .toast-msg {
       background: var(--panel-elevated);
@@ -1148,19 +1209,58 @@
       border-radius: var(--radius);
       font-size: 0.8125rem;
       box-shadow: var(--shadow-md);
-      transform: translateY(8px);
+      transform: translateY(8px) scale(0.97);
       opacity: 0;
-      transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out);
+      transition: opacity 150ms var(--ease-out), transform 150ms var(--ease-out);
       pointer-events: auto;
     }
-    .toast-msg.show { transform: none; opacity: 1; }
+    .toast-msg.show {
+      transform: none;
+      opacity: 1;
+      transition: opacity var(--dur-ui) var(--ease-out), transform var(--dur-ui) var(--ease-out);
+    }
     .toast-msg.success { box-shadow: inset 2px 0 0 var(--success), var(--shadow-md); }
     .toast-msg.warning { box-shadow: inset 2px 0 0 var(--warning), var(--shadow-md); }
     .toast-msg.danger { box-shadow: inset 2px 0 0 var(--danger), var(--shadow-md); }
 
-    /* ---------- Diálogo ---------- */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
-    .modal-card { background: var(--panel); border: 1px solid var(--border-hover); border-radius: var(--radius-card); width: 100%; max-width: 520px; max-height: calc(100dvh - 32px); overflow-y: auto; padding: 24px; box-shadow: var(--shadow-md); }
+    /* ---------- Diálogo (Escala desde 0.96, salida rápida 140ms) ---------- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 140ms var(--ease-out), visibility 0s 140ms;
+    }
+    .modal-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 200ms var(--ease-out), visibility 0s;
+    }
+    .modal-card {
+      background: var(--panel);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-card);
+      width: 100%;
+      max-width: 520px;
+      max-height: calc(100dvh - 32px);
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      transform: scale(0.96);
+      transition: transform 140ms var(--ease-out);
+    }
+    .modal-overlay.is-open .modal-card {
+      transform: scale(1);
+      transition: transform 200ms var(--ease-out);
+    }
     .modal-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
     .modal-header h3 { font-size: 1rem; font-weight: 600; }
     .kbd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -1182,7 +1282,11 @@
         <span class="radar-dot"></span>
         <span id="clockDigits">00:00:00 COT</span>
       </div>
-      <button class="pill pill-gh" onclick="abrirModalAtajos()" title="Ver atajos de teclado (Presiona ?)">Atajos</button>
+      <button class="pill pill-gh" id="themeToggleBtn" onclick="alternarTema()" title="Cambiar entre modo claro y oscuro" aria-label="Cambiar tema">
+        <svg class="icono-gh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-14.93 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-14.93 7.07 1.41-1.41m11.32-11.32 1.41-1.41"/></svg>
+        <span id="themeToggleLabel">Tema</span>
+      </button>
+      <button class="pill pill-gh" id="btnAbrirAtajos" onclick="abrirModalAtajos()" title="Ver atajos de teclado (Presiona ?)">Atajos</button>
       <a class="pill pill-gh" href="https://github.com/suntzz/smartbuilding-api" target="_blank" rel="noopener"><svg class="icono-gh" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
     </div>
   </header>
@@ -1219,6 +1323,12 @@
       </span>
       <kbd>L</kbd>
     </button>
+    <nav class="module-pills" aria-label="Cambio rápido de módulo">
+      <button class="module-pill active" data-key="1" onclick="cambiarReto(1)"><span>01</span>Demografía</button>
+      <button class="module-pill" data-key="webcam" onclick="mostrarWebcamLive()"><span>CAM</span>Cámara en vivo</button>
+      <button class="module-pill" data-key="foto" onclick="mostrarSubirFoto()"><span>IMG</span>Analizar foto</button>
+      <button class="module-pill" data-key="residentes" onclick="mostrarDirectorioResidentes()"><span>DIR</span>Directorio</button>
+    </nav>
     <div class="module-step">
       <button class="btn-ctrl" onclick="moverModulo(-1)" aria-label="Módulo anterior">‹</button>
       <span class="module-pos" id="modulePos">1 / 4</span>
@@ -1868,12 +1978,30 @@
       }
     }
 
+    let ultimoFocoModal = null;
+
     function abrirModalAtajos() {
-      document.getElementById('shortcutsModal').style.display = 'flex';
+      ultimoFocoModal = document.activeElement;
+      const modal = document.getElementById('shortcutsModal');
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      const btnCerrar = modal.querySelector('.btn-ctrl');
+      if (btnCerrar) setTimeout(() => btnCerrar.focus({ preventScroll: true }), 40);
     }
 
     function cerrarModalAtajos() {
-      document.getElementById('shortcutsModal').style.display = 'none';
+      const modal = document.getElementById('shortcutsModal');
+      if (!modal.classList.contains('is-open')) return;
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      if (ultimoFocoModal && typeof ultimoFocoModal.focus === 'function') {
+        ultimoFocoModal.focus({ preventScroll: true });
+      }
+    }
+
+    function ejecutarSinAnimacionTeclado(fn) {
+      window.__accionTeclado = true;
+      try { fn(); } finally { setTimeout(() => { window.__accionTeclado = false; }, 0); }
     }
 
     document.addEventListener('keydown', e => {
@@ -1886,8 +2014,8 @@
       if (k === 'r') return reiniciarVideo();
       if (k === 'f') return toggleFullscreen();
       if (k === 'm') return toggleAudioGlobal();
-      if (k === 'c') return mostrarWebcamLive();
-      if (k === '1') return cambiarReto(1);
+      if (k === 'c') return ejecutarSinAnimacionTeclado(() => mostrarWebcamLive());
+      if (k === '1') return ejecutarSinAnimacionTeclado(() => cambiarReto(1));
     });
 
     // Canvas interno en baja resolución para alto rendimiento (160x120)
@@ -2403,102 +2531,6 @@
       if (webcamStream) detenerWebcam();
     }
 
-    function analizarFotoLocal(evt) {
-      const file = evt.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const cvs = document.getElementById('photoCanvas');
-          cvs.width = img.width;
-          cvs.height = img.height;
-          const pctx = cvs.getContext('2d');
-          pctx.drawImage(img, 0, 0);
-
-          const imgData = pctx.getImageData(0, 0, img.width, img.height);
-          const data = imgData.data;
-          const w = img.width;
-          const h = img.height;
-
-          function extraerColorRegion(y1, y2) {
-            let rTot = 0, gTot = 0, bTot = 0, count = 0;
-            for (let y = Math.floor(h * y1); y < Math.floor(h * y2); y += 3) {
-              for (let x = Math.floor(w * 0.25); x < Math.floor(w * 0.75); x += 3) {
-                const idx = (y * w + x) * 4;
-                rTot += data[idx];
-                gTot += data[idx + 1];
-                bTot += data[idx + 2];
-                count++;
-              }
-            }
-            const r = Math.round(rTot / Math.max(1, count));
-            const g = Math.round(gTot / Math.max(1, count));
-            const b = Math.round(bTot / Math.max(1, count));
-            return { r, g, b, hex: `#${((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1).toUpperCase()}` };
-          }
-
-          const colSup = extraerColorRegion(0.22, 0.52);
-          const colInf = extraerColorRegion(0.55, 0.85);
-          const nombreSup = clasificarNombreColor(colSup);
-          const nombreInf = clasificarNombreColor(colInf);
-          const tipoInf = (colInf.r > 180 && colInf.g > 180 && colInf.b > 180) ? "falda" : (nombreInf.includes("azul") ? "jean" : "pantalon");
-          const tipoSup = nombreSup === "negro" ? "buso" : "camiseta";
-          const sexo = tipoInf === "falda" ? "Femenino" : "Masculino";
-          let edad = "Joven (18-25)";
-          if (tipoSup === "camisa" && nombreSup === "blanco") {
-            edad = "Adulto Joven (26-35)";
-          }
-
-          const bx = Math.round(w * 0.15);
-          const by = Math.round(h * 0.05);
-          const bw = Math.round(w * 0.70);
-          const bh = Math.round(h * 0.90);
-
-          pctx.strokeStyle = sexo === "Masculino" ? "#e8e8e8" : "#c9a45c";
-          pctx.lineWidth = Math.max(3, Math.round(w * 0.008));
-          pctx.strokeRect(bx, by, bw, bh);
-
-          pctx.fillStyle = "rgba(10, 10, 10, 0.9)";
-          pctx.fillRect(bx, Math.max(0, by - 60), Math.min(320, bw), 55);
-          pctx.fillStyle = "#ffffff";
-          pctx.font = `bold ${Math.max(12, Math.round(w*0.026))}px Inter, sans-serif`;
-          pctx.fillText(`ID #1 | ${sexo} | ${edad}`, bx + 8, Math.max(20, by - 38));
-
-          pctx.fillStyle = "#86efac";
-          pctx.fillText(`Sup: ${tipoSup} (${nombreSup})`, bx + 8, Math.max(35, by - 22));
-          pctx.fillStyle = "#d4d4d4";
-          pctx.fillText(`Inf: ${tipoInf} (${nombreInf})`, bx + 8, Math.max(50, by - 8));
-
-          document.getElementById('photoResults').style.display = 'grid';
-          document.getElementById('photoReportBox').innerHTML = `
-            <div class="feed-item">
-              <div>
-                <b>Detección Completa</b> — Sexo: <b>${sexo}</b> | Rango: <b>${edad}</b><br/>
-                <small>
-                  <span class="swatch" style="background:${colSup.hex}"></span>Prenda Superior: <b>${tipoSup}</b> (Color: ${nombreSup} • ${colSup.hex})<br/>
-                  <span class="swatch" style="background:${colInf.hex}"></span>Prenda Inferior: <b>${tipoInf}</b> (Color: ${nombreInf} • ${colInf.hex})
-                </small>
-              </div>
-              <span class="badge-status badge-green">94% Confianza</span>
-            </div>
-            <div style="background:#0a0a0a;padding:12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#d4d4d4;overflow-x:auto;">
-{
-  "sexo_aparente": "${sexo}",
-  "rango_edad": "${edad}",
-  "prenda_superior": { "tipo": "${tipoSup}", "color": "${nombreSup}", "hex": "${colSup.hex}" },
-  "prenda_inferior": { "tipo": "${tipoInf}", "color": "${nombreInf}", "hex": "${colInf.hex}" },
-  "dimensiones_imagen": "${w}x${h}"
-}
-            </div>
-          `;
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
     // Funciones del directorio de residentes
     function mostrarDirectorioResidentes() {
       ocultarTodosLosPaneles();
@@ -2522,17 +2554,36 @@
         );
       });
 
+      if (filtered.length === 0) {
+        cont.innerHTML = `
+          <div class="feed-vacio">
+            <b>Sin coincidencias en el directorio</b>
+            <span>No encontramos residentes con "${q.replace(/[<>&"]/g, '')}". Prueba buscando por nombre, número de apartamento o placa.</span>
+          </div>`;
+        return;
+      }
+
+      const capitalizar = s => s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : 'Residente';
       cont.innerHTML = filtered.map(r => `
-        <div class="feed-item">
-          <div>
-            <b>${r.full_name}</b> (${r.tipo.toUpperCase()}) — Torre ${r.tower}, Apto <b>${r.apartment}</b><br/>
-            <small>
-              Casillero: <code>${r.casillero||'N/A'}</code> |
-              Placa 1: <code>${r.placa_1||'N/A'}</code> (${r.parqueadero_1||'N/A'}) |
-              Placa 2: <code>${r.placa_2||'N/A'}</code> (${r.parqueadero_2||'N/A'})
-            </small>
+        <div class="person-item">
+          <div class="pi-avatar"><span>${r.apartment}</span></div>
+          <div class="item-datos">
+            <div class="pi-main">
+              <div class="pi-top">
+                <b class="pi-sexo">${r.full_name}</b>
+                <span class="pi-edad">Torre ${r.tower} · Apto ${r.apartment}</span>
+                <span class="pi-estado">${capitalizar(r.tipo)}</span>
+              </div>
+              <div class="garments">
+                <span class="chip-prenda">Casillero <b>${r.casillero || '—'}</b></span>
+                <span class="chip-prenda">Placa 1 <b>${r.placa_1 || 'Sin vehículo'}</b>${r.parqueadero_1 ? ' · ' + r.parqueadero_1 : ''}</span>
+                ${r.placa_2 ? `<span class="chip-prenda">Placa 2 <b>${r.placa_2}</b>${r.parqueadero_2 ? ' · ' + r.parqueadero_2 : ''}</span>` : ''}
+              </div>
+            </div>
+            <div class="pi-conf">
+              <small>${r.telefono || '—'}</small>
+            </div>
           </div>
-          <span class="badge-status badge-blue">Tel: ${r.telefono}</span>
         </div>
       `).join('');
     }
@@ -2570,6 +2621,25 @@
 
   <!-- Utilidades de interfaz -->
   <script>
+    function sincronizarBotonTema() {
+      const actual = document.documentElement.getAttribute('data-theme') || 'dark';
+      const lbl = document.getElementById('themeToggleLabel');
+      if (lbl) lbl.textContent = actual === 'light' ? 'Claro' : 'Oscuro';
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', actual === 'light' ? '#f5f4f1' : '#0a0a0a');
+    }
+
+    function alternarTema() {
+      const actual = document.documentElement.getAttribute('data-theme') || 'dark';
+      const siguiente = actual === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', siguiente);
+      try { localStorage.setItem('sb_theme', siguiente); } catch (e) {}
+      sincronizarBotonTema();
+      window.dispatchEvent(new Event('resize'));
+    }
+    sincronizarBotonTema();
+
+    // Toasts tipo Sonner: pausa el temporizador cuando la pestaña está oculta y sale en 150ms
     function mostrarToast(msg, tipo) {
       const cont = document.getElementById('toastContainer');
       const t = document.createElement('div');
@@ -2578,7 +2648,29 @@
       cont.appendChild(t);
       while (cont.children.length > 3) cont.firstChild.remove();
       requestAnimationFrame(() => t.classList.add('show'));
-      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 250); }, 3000);
+
+      let restante = 3000;
+      let inicio = performance.now();
+      let timer = null;
+      const cerrar = () => {
+        document.removeEventListener('visibilitychange', onVis);
+        t.classList.remove('show');
+        setTimeout(() => t.remove(), 160);
+      };
+      const programar = () => {
+        inicio = performance.now();
+        timer = setTimeout(cerrar, restante);
+      };
+      const onVis = () => {
+        if (document.hidden) {
+          clearTimeout(timer);
+          restante = Math.max(400, restante - (performance.now() - inicio));
+        } else {
+          programar();
+        }
+      };
+      document.addEventListener('visibilitychange', onVis);
+      if (!document.hidden) programar();
     }
 
     (function () {
@@ -2632,6 +2724,7 @@
     function marcarModulo(key) {
       moduloActual = String(key);
       document.querySelectorAll('#tabsBar .tab-btn:not(.reto-oculto)').forEach(b => b.classList.toggle('active', b.dataset.key === moduloActual));
+      document.querySelectorAll('.module-pills .module-pill').forEach(b => b.classList.toggle('active', b.dataset.key === moduloActual));
       const [kicker, nombre] = MODULOS[moduloActual] || MODULOS['1'];
       document.getElementById('moduleKicker').textContent = kicker;
       document.getElementById('moduleName').textContent = nombre;
@@ -2651,27 +2744,27 @@
       abrirModulo(ORDEN_MODULOS[(i + delta + ORDEN_MODULOS.length) % ORDEN_MODULOS.length]);
     }
 
-    // Cada vista actualiza la barra del módulo y cierra el menú
+    // Cada vista actualiza la barra del módulo y cierra el menú.
+    // Regla Emil Kowalski: dentro de la consola (#vistaApp) el cambio entre herramientas es inmediato y nítido (sin cortina de 860ms);
+    // si se invoca con atajo de teclado (1, C), no se anima el contenedor.
     [['cambiarReto', id => id], ['mostrarWebcamLive', () => 'webcam'], ['mostrarSubirFoto', () => 'foto'], ['mostrarDirectorioResidentes', () => 'residentes']]
       .forEach(([nombre, clave]) => {
         const original = window[nombre];
         window[nombre] = function (...args) {
           const key = String(clave(...args));
+          const eraOtroModulo = key !== moduloActual;
           const abrir = () => {
             const r = original.apply(this, args);
             marcarModulo(key);
             return r;
           };
           cerrarMenuModulos();
-          // Cambiar de módulo dentro de las cámaras también pasa por la cortina
-          if (vistaActual === 'app' && window.__paginaLista && key !== moduloActual) {
-            conCortina(() => { abrir(); animarEntradaApp(); });
-            return;
-          }
           const r = abrir();
-          // La carga inicial también llama a cambiarReto(1): solo se navega por acción del usuario
-          if (vistaActual !== 'app' && window.__paginaLista) irA('camaras');
-          else if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: 'smooth' });
+          if (vistaActual !== 'app' && window.__paginaLista) {
+            irA('camaras');
+          } else if (vistaActual === 'app' && window.__paginaLista && eraOtroModulo && !window.__accionTeclado) {
+            animarEntradaApp();
+          }
           return r;
         };
       });
@@ -2756,17 +2849,33 @@
         step();
       });
 
-      // Magnet: los botones siguen levemente al cursor
+      // Magnet (React Bits + muelle físico Emil Kowalski: stiffness 0.18, damping 0.72)
       if (!reduce && matchMedia('(pointer: fine)').matches) {
         document.querySelectorAll('.magnet').forEach(el => {
-          el.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+          let tx = 0, ty = 0, cx = 0, cy = 0, vx = 0, vy = 0, raf = 0;
+          const animarMuelle = () => {
+            vx = (vx + (tx - cx) * 0.18) * 0.72;
+            vy = (vy + (ty - cy) * 0.18) * 0.72;
+            cx += vx;
+            cy += vy;
+            if (Math.abs(tx - cx) < 0.08 && Math.abs(ty - cy) < 0.08 && Math.abs(vx) < 0.05 && Math.abs(vy) < 0.05) {
+              cx = tx; cy = ty; vx = 0; vy = 0; raf = 0;
+              el.style.transform = (cx || cy) ? `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0)` : '';
+              return;
+            }
+            el.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0)`;
+            raf = requestAnimationFrame(animarMuelle);
+          };
           el.addEventListener('pointermove', e => {
             const r = el.getBoundingClientRect();
-            const x = (e.clientX - r.left - r.width / 2) * 0.18;
-            const y = (e.clientY - r.top - r.height / 2) * 0.3;
-            el.style.transform = `translate(${x}px, ${y}px)`;
+            tx = (e.clientX - r.left - r.width / 2) * 0.16;
+            ty = (e.clientY - r.top - r.height / 2) * 0.24;
+            if (!raf) raf = requestAnimationFrame(animarMuelle);
           });
-          el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+          el.addEventListener('pointerleave', () => {
+            tx = 0; ty = 0;
+            if (!raf) raf = requestAnimationFrame(animarMuelle);
+          });
         });
       }
 
@@ -2796,6 +2905,9 @@
           if (activo && !reduce) requestAnimationFrame(dibujar);
           return;
         }
+        const esClaro = document.documentElement.getAttribute('data-theme') === 'light';
+        const colorReposo = esClaro ? 'rgba(20, 20, 19, 0.08)' : 'rgba(255, 255, 255, 0.10)';
+        const rgbAcento = esClaro ? '143, 109, 40' : '201, 164, 92';
         ctx.clearRect(0, 0, w, h);
         for (let k = ondas.length - 1; k >= 0; k--) if (t - ondas[k].t0 > 1100) ondas.splice(k, 1);
         for (const d of dots) {
@@ -2822,7 +2934,7 @@
           d.dx += (tx - d.dx) * 0.15;
           d.dy += (ty - d.dy) * 0.15;
           const a = 0.16 + luz * 0.7;
-          ctx.fillStyle = luz > 0.05 ? `rgba(201, 164, 92, ${a})` : 'rgba(255, 255, 255, 0.11)';
+          ctx.fillStyle = luz > 0.05 ? `rgba(${rgbAcento}, ${a})` : colorReposo;
           ctx.beginPath();
           ctx.arc(d.x + d.dx, d.y + d.dy, RADIO + luz * 1.1, 0, Math.PI * 2);
           ctx.fill();
@@ -2882,9 +2994,10 @@
           requestAnimationFrame(dibujarRadar);
           if (!visible) return;
           const cx = rw / 2, cy = rh / 2, R = Math.max(rw, rh) * 0.48;
+          const esClaro = document.documentElement.getAttribute('data-theme') === 'light';
           rctx.clearRect(0, 0, rw, rh);
           // anillos y ejes
-          rctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+          rctx.strokeStyle = esClaro ? 'rgba(20, 20, 19, 0.07)' : 'rgba(255, 255, 255, 0.06)';
           rctx.lineWidth = 1;
           for (let k = 1; k <= 5; k++) { rctx.beginPath(); rctx.arc(cx, cy, (R * k) / 5, 0, Math.PI * 2); rctx.stroke(); }
           rctx.beginPath(); rctx.moveTo(cx - R, cy); rctx.lineTo(cx + R, cy); rctx.moveTo(cx, cy - R); rctx.lineTo(cx, cy + R); rctx.stroke();
@@ -2893,12 +3006,12 @@
           const estela = rctx.createConicGradient ? rctx.createConicGradient(ang - 1.1, cx, cy) : null;
           if (estela) {
             estela.addColorStop(0, 'rgba(201, 164, 92, 0)');
-            estela.addColorStop(0.175, 'rgba(201, 164, 92, 0.22)');
+            estela.addColorStop(0.175, esClaro ? 'rgba(143, 109, 40, 0.16)' : 'rgba(201, 164, 92, 0.22)');
             estela.addColorStop(0.1751, 'rgba(201, 164, 92, 0)');
             rctx.fillStyle = estela;
             rctx.beginPath(); rctx.moveTo(cx, cy); rctx.arc(cx, cy, R, ang - 1.1, ang); rctx.closePath(); rctx.fill();
           }
-          rctx.strokeStyle = 'rgba(232, 200, 140, 0.55)';
+          rctx.strokeStyle = esClaro ? 'rgba(143, 109, 40, 0.55)' : 'rgba(232, 200, 140, 0.55)';
           rctx.beginPath(); rctx.moveTo(cx, cy); rctx.lineTo(cx + Math.cos(ang) * R, cy + Math.sin(ang) * R); rctx.stroke();
           // contactos
           for (const c of contactos) {
@@ -3139,16 +3252,14 @@
       else wctx.rect(x, y, Math.max(0, w), h);
     }
 
-    // Esquinas de mira alrededor de la persona; mientras analiza, laten
+    // Esquinas de mira alrededor de la persona (nítidas, sin brillo neón)
     function dibujarMira(x, y, w, h, color, analizando) {
       const l = Math.max(14, Math.min(w, h) * 0.16);
       wctx.save();
       wctx.strokeStyle = color;
-      wctx.lineWidth = 3;
+      wctx.lineWidth = 2.5;
       wctx.lineCap = 'round';
       wctx.globalAlpha = analizando ? 0.55 + 0.45 * Math.sin(Date.now() / 160) : 1;
-      wctx.shadowColor = color;
-      wctx.shadowBlur = 8;
       const esquinas = [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]];
       wctx.beginPath();
       esquinas.forEach(([cx, cy, sx, sy]) => {
@@ -3157,8 +3268,7 @@
         wctx.lineTo(cx + sx * l, cy);
       });
       wctx.stroke();
-      wctx.shadowBlur = 0;
-      wctx.globalAlpha = 0.12;
+      wctx.globalAlpha = 0.14;
       wctx.lineWidth = 1;
       wctx.strokeRect(x, y, w, h);
       wctx.restore();
@@ -3226,20 +3336,22 @@
       ctx.strokeStyle = r.sexo === 'Masculino' ? '#e8e8e8' : '#c9a45c';
       ctx.strokeRect(x, y, w, h);
 
-      const inf = r.prenda_inferior;
-      const infTexto = inf.tipo === 'no visible' ? 'no visible en la foto' : `${inf.tipo} · ${inf.color} <span class="swatch" style="background:${inf.hex}"></span>${inf.hex}`;
       caja.innerHTML = `
-        <div class="feed-item" style="display:block;">
-          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px;">
-            <b>${r.sexo} · ${r.edad}</b>
-            <span class="badge-status badge-green">Confianza ${Math.round(r.confianza * 100)} %</span>
-          </div>
-          <div style="color:var(--text-muted);font-size:0.84rem;line-height:1.7;">
-            Superior: ${r.prenda_superior.tipo} · ${r.prenda_superior.color} <span class="swatch" style="background:${r.prenda_superior.hex}"></span>${r.prenda_superior.hex}<br>
-            Inferior: ${infTexto}
+        <div class="person-item">
+          ${avatarPersona(1, r.prenda_superior.hex, r.prenda_inferior.hex)}
+          <div class="item-datos">
+            ${datosPersona({
+              sexo: r.sexo,
+              edad: r.edad,
+              superior: r.prenda_superior,
+              inferior: r.prenda_inferior,
+              confianza: r.confianza,
+              estado: ['vivo', 'Identificada'],
+              pie: `${img.width}×${img.height}`
+            })}
           </div>
         </div>
-        <pre style="background:var(--panel-inset);border:1px solid var(--border);padding:12px;border-radius:6px;font-family:var(--font-mono);font-size:0.74rem;color:#d4d4d4;overflow-x:auto;margin-top:8px;">${JSON.stringify({ sexo_aparente: r.sexo, rango_edad: r.edad, prenda_superior: r.prenda_superior, prenda_inferior: r.prenda_inferior, confianza: r.confianza }, null, 2)}</pre>`;
+        <pre style="background:var(--panel-inset);border:1px solid var(--border);padding:12px;border-radius:var(--radius);font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);overflow-x:auto;margin-top:8px;">${JSON.stringify({ sexo_aparente: r.sexo, rango_edad: r.edad, prenda_superior: r.prenda_superior, prenda_inferior: r.prenda_inferior, confianza: r.confianza }, null, 2)}</pre>`;
     };
   </script>
   <!-- Navegación entre la portada (#/) y las cámaras (#/camaras) con transición de cortina -->

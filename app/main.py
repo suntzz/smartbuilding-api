@@ -1,9 +1,10 @@
+from collections import deque
 from pathlib import Path
 import time
 import cv2
 import numpy as np
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.datos import cargar_residentes
@@ -13,14 +14,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 VIDEOS_DIR = BASE_DIR / "data" / "videos"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
+MAX_HISTORIAL_ANALISIS = 100
+MAX_IMAGEN_BYTES = 10 * 1024 * 1024  # 10 MB
+
 app = FastAPI(
     title="SmartBuilding API - Reto 1: Demografía y Vestimenta",
     description=(
         "API REST para administración de edificios residenciales e inspección de "
         "demografía aparente y vestimenta en cámaras de seguridad."
     ),
-    version="1.1.0",
+    version="1.2.0",
 )
+
+
+@app.middleware("http")
+async def agregar_cabeceras_seguridad(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
+
+@app.exception_handler(Exception)
+async def manejador_central_errores(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "Error interno al procesar la solicitud. Verifique los parámetros e intente nuevamente."
+        },
+    )
+
 
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -28,7 +52,8 @@ if VIDEOS_DIR.exists():
     app.mount("/data/videos", StaticFiles(directory=VIDEOS_DIR), name="videos")
 
 residentes = cargar_residentes()
-historial_analisis_demografia: list[dict] = []
+residentes_por_id: dict[int, dict] = {r["id"]: r for r in residentes}
+historial_analisis_demografia: deque[dict] = deque(maxlen=MAX_HISTORIAL_ANALISIS)
 
 
 @app.get("/")
@@ -36,16 +61,43 @@ def root():
     return {"message": "Bienvenido a SmartBuilding API"}
 
 
+@app.get("/salud")
+def verificar_salud():
+    return {
+        "estado": "ok",
+        "servicio": "SmartBuilding API",
+        "version": app.version,
+        "residentes_cargados": len(residentes),
+        "videos_disponibles": VIDEOS_DIR.exists(),
+    }
+
+
 @app.get("/residentes")
-def get_residentes():
-    return residentes
+def get_residentes(
+    q: str | None = Query(default=None, max_length=80, description="Filtro por nombre, apto o placa"),
+    torre: int | None = Query(default=None, ge=1, le=20),
+):
+    resultado = residentes
+    if torre is not None:
+        resultado = [r for r in resultado if r["tower"] == torre]
+    if q:
+        termino = q.strip().lower()
+        resultado = [
+            r
+            for r in resultado
+            if termino in r["full_name"].lower()
+            or termino in str(r["apartment"])
+            or termino in (r.get("placa_1") or "").lower()
+            or termino in (r.get("casillero") or "").lower()
+        ]
+    return resultado
 
 
 @app.get("/residentes/{residente_id}")
 def get_residente_por_id(residente_id: int):
-    for residente in residentes:
-        if residente["id"] == residente_id:
-            return residente
+    residente = residentes_por_id.get(residente_id)
+    if residente is not None:
+        return residente
     raise HTTPException(status_code=404, detail="Residente no encontrado")
 
 
@@ -134,9 +186,14 @@ def analizar_video_demografia(
 
 @app.post("/vision/demografia-vestimenta/analizar-imagen")
 async def analizar_imagen_demografia(archivo: UploadFile = File(...)):
-    contenido = await archivo.read()
+    contenido = await archivo.read(MAX_IMAGEN_BYTES + 1)
     if not contenido:
         raise HTTPException(status_code=400, detail="El archivo de imagen está vacío")
+    if len(contenido) > MAX_IMAGEN_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail="La imagen supera el tamaño máximo permitido de 10 MB",
+        )
 
     arr = np.frombuffer(contenido, dtype=np.uint8)
     frame_bgr = cv2.imdecode(arr, cv2.IMREAD_COLOR)
@@ -157,7 +214,7 @@ async def analizar_imagen_demografia(archivo: UploadFile = File(...)):
 def obtener_eventos_demografia():
     return {
         "total_analisis": len(historial_analisis_demografia),
-        "historial": historial_analisis_demografia,
+        "historial": list(historial_analisis_demografia),
     }
 
 

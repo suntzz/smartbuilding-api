@@ -17,7 +17,7 @@
     else ctx.rect(x, y, Math.max(0, w), h);
   }
 
-  // Esquinas de mira alrededor de una caja (como en la cámara web)
+  // Esquinas de mira alrededor de una caja (nítida, sin sombra de color)
   function mira(ctx, [x, y, w, h], color, { grosor = 2.5, latido = false, tenue = false } = {}) {
     const l = Math.max(10, Math.min(w, h) * 0.22);
     ctx.save();
@@ -25,8 +25,6 @@
     ctx.lineWidth = grosor;
     ctx.lineCap = 'round';
     ctx.globalAlpha = tenue ? 0.55 : latido ? 0.6 + 0.4 * Math.sin(Date.now() / 140) : 1;
-    ctx.shadowColor = color;
-    ctx.shadowBlur = tenue ? 0 : 8;
     ctx.beginPath();
     [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(([cx, cy, sx, sy]) => {
       ctx.moveTo(cx, cy + sy * l);
@@ -34,7 +32,6 @@
       ctx.lineTo(cx + sx * l, cy);
     });
     ctx.stroke();
-    ctx.shadowBlur = 0;
     ctx.globalAlpha = tenue ? 0.08 : 0.14;
     ctx.lineWidth = 1;
     ctx.strokeRect(x, y, w, h);
