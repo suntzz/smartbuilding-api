@@ -15,3 +15,6 @@ node_modules/
 
 # Pesos de modelos (se descargan con scripts/descargar_modelos.py)
 models/
+
+# Credenciales locales de PostgreSQL
+.env

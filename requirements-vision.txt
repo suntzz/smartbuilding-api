@@ -1,0 +1,12 @@
+# Visión por computador (opcional): rutas /vision y motores de los 7 retos
+-r requirements.txt
+numpy==2.4.6
+opencv-python-headless==5.0.0.93
+pillow==13.0.0
+# Motor IA del Reto 1 (opcional): YOLO11 + SegFormer + CLIP
+ultralytics>=8.3
+lap>=0.5.12
+onnxruntime>=1.20
+open_clip_torch>=3.0
+# Retos 2 a 7: YOLO11m / YOLO11-pose (ultralytics) y OCR de placas y etiquetas
+rapidocr-onnxruntime>=1.3

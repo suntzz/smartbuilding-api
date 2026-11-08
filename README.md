@@ -82,6 +82,22 @@ Limitaciones: los videos de los retos 5, 6 y 7 son animaciones sintéticas; con 
 
 ---
 
+## 🐧 Residentes con PostgreSQL y React (máquina virtual Debian)
+
+La API de residentes consulta PostgreSQL (en Docker) y la página `frontend/` está hecha con React + Vite.
+Los pasos completos, comando por comando, están en **[GUIA-DEBIAN.md](GUIA-DEBIAN.md)**. En resumen:
+
+```bash
+cp .env.example .env && docker compose up -d        # PostgreSQL con las 8 tablas
+pip install -r requirements.txt && python cargar_csv.py
+uvicorn app.main:app --reload                        # API en :8000
+cd frontend && npm install && npm run dev            # página en :5173
+```
+
+La parte de cámaras es opcional: `pip install -r requirements-vision.txt`.
+
+---
+
 ## 🚀 Instalación y Ejecución
 
 ```bash

@@ -17,7 +17,7 @@ from collections import Counter, defaultdict
 import cv2
 import numpy as np
 
-from app.datos import cargar_residentes
+from app.residentes_csv import cargar_residentes
 
 from .seguimiento import fondo_mediana, info_video, leer_frames
 

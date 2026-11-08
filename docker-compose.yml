@@ -1,0 +1,20 @@
+# PostgreSQL de SmartBuilding. Toma usuario, contraseña y base del archivo .env.
+#   docker compose up -d      enciende la base (la primera vez crea las 8 tablas)
+#   docker compose down       la apaga (los datos se conservan en el volumen)
+services:
+  db:
+    image: postgres:16
+    container_name: smartbuilding-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - datos_postgres:/var/lib/postgresql/data
+      - ./db/esquema.sql:/docker-entrypoint-initdb.d/01-esquema.sql:ro
+
+volumes:
+  datos_postgres:
